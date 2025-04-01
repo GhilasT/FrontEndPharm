@@ -1,0 +1,103 @@
+/* responsive.css */
+
+/* Styles pour les écrans de taille moyenne (tablettes) */
+@media screen and (max-width: 1024px) {
+    /* Ajuster la taille des colonnes du tableau */
+    .table-view .column-header,
+    .table-view .table-cell {
+        -fx-padding: 8 4;
+    }
+    
+    /* Réduire la taille du texte */
+    .header-label {
+        -fx-font-size: 20px;
+    }
+    
+    /* Ajuster la taille des boutons */
+    .button {
+        -fx-padding: 8 12;
+    }
+    
+    /* Réduire la largeur du champ de recherche */
+    .search-field {
+        -fx-pref-width: 250;
+    }
+}
+
+/* Styles pour les petits écrans (smartphones) */
+@media screen and (max-width: 768px) {
+    /* Réorganiser l'en-tête en mode vertical */
+    .header-container {
+        -fx-orientation: vertical;
+        -fx-alignment: center;
+        -fx-spacing: 10;
+    }
+    
+    /* Ajuster la taille du texte */
+    .header-label {
+        -fx-font-size: 18px;
+    }
+    
+    /* Réduire la taille des boutons et les empiler si nécessaire */
+    .button-container {
+        -fx-wrap: true;
+        -fx-spacing: 5;
+    }
+    
+    .button {
+        -fx-padding: 6 10;
+        -fx-font-size: 11px;
+    }
+    
+    /* Réduire la largeur du champ de recherche */
+    .search-field {
+        -fx-pref-width: 200;
+    }
+    
+    /* Ajuster la taille des colonnes du tableau */
+    .table-view .column-header,
+    .table-view .table-cell {
+        -fx-padding: 6 2;
+        -fx-font-size: 11px;
+    }
+    
+    /* Masquer certaines colonnes moins importantes sur les petits écrans */
+    .hide-on-small {
+        -fx-visible: false;
+    }
+}
+
+/* Styles pour l'adaptation dynamique de la hauteur */
+.dynamic-height {
+    -fx-pref-height: -1;
+    -fx-max-height: infinity;
+    -fx-fit-to-height: true;
+}
+
+/* Styles pour l'adaptation dynamique de la largeur */
+.dynamic-width {
+    -fx-pref-width: -1;
+    -fx-max-width: infinity;
+    -fx-fit-to-width: true;
+}
+
+/* Styles pour les conteneurs flexibles */
+.flex-container {
+    -fx-flex-wrap: wrap;
+}
+
+/* Styles pour les éléments qui doivent s'adapter à l'espace disponible */
+.grow {
+    -fx-hgrow: always;
+    -fx-vgrow: always;
+}
+
+/* Styles pour les éléments qui doivent rester visibles en priorité */
+.priority {
+    -fx-shrink: 0;
+}
+
+/* Styles pour les éléments qui peuvent être masqués si nécessaire */
+.optional {
+    -fx-shrink: 1;
+}

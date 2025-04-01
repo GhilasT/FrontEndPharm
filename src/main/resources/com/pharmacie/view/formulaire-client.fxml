@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pharmacie.controller.FormulaireClientController">
+   <top>
+      <VBox alignment="CENTER" prefHeight="80.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Informations du client" textFill="#007b3d">
+               <font>
+                  <Font name="Open Sans Semibold" size="24.0" />
+               </font>
+            </Label>
+            <Label text="Veuillez remplir les informations du client pour la vente sans ordonnance" textFill="#333333">
+               <font>
+                  <Font name="Open Sans" size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Label>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <center>
+      <GridPane hgap="15.0" vgap="15.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="150.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Nom *" textFill="#333333">
+               <font>
+                  <Font name="Open Sans Semibold" size="14.0" />
+               </font>
+            </Label>
+            <Label text="Prénom *" textFill="#333333" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Open Sans Semibold" size="14.0" />
+               </font>
+            </Label>
+            <Label text="Téléphone *" textFill="#333333" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Open Sans Semibold" size="14.0" />
+               </font>
+            </Label>
+            <Label text="Email" textFill="#333333" GridPane.rowIndex="3">
+               <font>
+                  <Font name="Open Sans Semibold" size="14.0" />
+               </font>
+            </Label>
+            <Label text="Adresse" textFill="#333333" GridPane.rowIndex="4">
+               <font>
+                  <Font name="Open Sans Semibold" size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="nomField" promptText="Entrez le nom" GridPane.columnIndex="1" />
+            <TextField fx:id="prenomField" promptText="Entrez le prénom" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="telephoneField" promptText="Entrez le numéro de téléphone" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="emailField" promptText="Entrez l'email (optionnel)" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="adresseField" promptText="Entrez l'adresse (optionnelle)" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </BorderPane.margin>
+      </GridPane>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" prefHeight="80.0" prefWidth="600.0" spacing="20.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="errorLabel" textFill="RED">
+               <font>
+                  <Font name="Open Sans" size="14.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="btnAnnuler" mnemonicParsing="false" onAction="#handleAnnuler" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #E74C3C; -fx-background-radius: 5;" text="Annuler" textFill="WHITE">
+                     <font>
+                        <Font name="Open Sans Semibold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="btnSuivant" mnemonicParsing="false" onAction="#handleSuivant" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #007B3D; -fx-background-radius: 5;" text="Suivant" textFill="WHITE">
+                     <font>
+                        <Font name="Open Sans Semibold" size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+</BorderPane>

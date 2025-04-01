@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.pharmacie.controller.FournisseursController"
+      spacing="10" 
+      style="-fx-padding: 20;">
+    
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="searchFieldFournisseur" promptText="Rechercher un fournisseur..." prefWidth="1200" prefHeight="30"/>
+        <Button fx:id="btnSearch" text="Rechercher" disable="true"/>
+    </HBox>
+
+    <TableView fx:id="fournisseursTable" prefHeight="400">
+        <columns>
+            <TableColumn text="Nom" reorderable="false" resizable="false" prefWidth="120"/>
+            <TableColumn text="Prénom" reorderable="false" resizable="false" prefWidth="120"/>
+            <TableColumn text="Tél" reorderable="false" resizable="false" prefWidth="150"/>
+            <TableColumn text="Email" reorderable="false" resizable="false" prefWidth="150"/>
+            <TableColumn text="Adresse" reorderable="false" resizable="false" prefWidth="150"/>
+            <TableColumn text="Societe" reorderable="false" resizable="false" prefWidth="80"/>
+            <TableColumn text="Fax" reorderable="false" resizable="false" prefWidth="120"/>
+            <TableColumn text="Sujet fonction" reorderable="false" resizable="false" prefWidth="200"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="btnAddFournisseur" text="Ajouter" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <Button fx:id="btnEditFournisseur" text="Modifier" disable="true" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+        <Button fx:id="btnDeleteFournisseur" text="Supprimer" disable="true" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+        <Button fx:id="btnDetailsFournisseur" text="Détails" disable="true" style="-fx-background-color: #9E9E9E; -fx-text-fill: white;"/>
+        <Button fx:id="btnCommanderFournisseur" text="Passer une commande" disable="true" style="-fx-background-color: #9E9E9E; -fx-text-fill: white;"/>
+
+    </HBox>
+</VBox>

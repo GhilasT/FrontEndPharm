@@ -1,0 +1,71 @@
+.pagination-control {
+    background-color: transparent;
+    border-color: #e0e0e0;
+    border-radius: 5px;
+    -fx-background-color: transparent;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 5px;
+}
+
+.pagination-control .pagination-button {
+    -fx-background-color: white;
+    background-color: white;
+    border-color: #e0e0e0;
+    border-radius: 3px;
+    cursor: hand;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 3px;
+    -fx-cursor: hand;
+}
+
+.pagination-control .pagination-button:hover {
+    background-color: #f5f5f5;
+    -fx-background-color: #f5f5f5;
+}
+
+.pagination-control .pagination-button:selected {
+    background-color: #3498db;
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.pagination-label {
+    font-weight: bold;
+    -fx-font-weight: bold;
+    -fx-text-fill: #34495e;
+}
+
+.pagination-info {
+    font-style: italic;
+    -fx-font-style: italic;
+    -fx-text-fill: #7f8c8d;
+}
+
+/* Styles pour les indicateurs de chargement */
+.loading-indicator {
+    background-color: rgba(255, 255, 255, 0.8);
+    -fx-background-color: rgba(255, 255, 255, 0.8);
+    -fx-background-radius: 5px;
+    padding: 10px;
+    -fx-padding: 10px;
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+}
+
+.loading-spinner {
+    -fx-progress-color: #3498db;
+}
+
+/* Styles pour les messages d'erreur */
+.error-message {
+    -fx-text-fill: #e74c3c;
+    font-weight: bold;
+    -fx-font-weight: bold;
+}
+
+/* Styles pour les messages de succès */
+.success-message {
+    -fx-text-fill: #2ecc71;
+    font-weight: bold;
+    -fx-font-weight: bold;
+}

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pharmacie.controller.RechercheMedicamentsController">
+   <top>
+      <VBox alignment="CENTER" prefHeight="100.0" prefWidth="900.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Recherche de médicaments" textFill="#007b3d">
+               <font>
+                  <Font name="Open Sans Semibold" size="24.0" />
+               </font>
+            </Label>
+            <Label text="Recherchez et ajoutez des médicaments sans ordonnance au panier" textFill="#333333">
+               <font>
+                  <Font name="Open Sans" size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Label>
+            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <TextField fx:id="searchField" prefHeight="40.0" prefWidth="500.0" promptText="Rechercher un médicament...">
+                     <font>
+                        <Font name="Open Sans" size="14.0" />
+                     </font>
+                  </TextField>
+                  <Button fx:id="btnRechercher" mnemonicParsing="false" onAction="#handleRechercher" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #007B3D; -fx-background-radius: 5;" text="Rechercher" textFill="WHITE">
+                     <font>
+                        <Font name="Open Sans Semibold" size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <center>
+      <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox prefHeight="400.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="Résultats de recherche" textFill="#333333">
+                     <font>
+                        <Font name="Open Sans Semibold" size="16.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <TableView fx:id="medicamentsTable" prefHeight="400.0" prefWidth="500.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                      <TableColumn fx:id="idColumn" prefWidth="75.0" text="ID" />
+                      <TableColumn fx:id="libelleColumn" prefWidth="200.0" text="Libellé" />
+                        <TableColumn fx:id="prixColumn" prefWidth="100.0" text="Prix" />
+                        <TableColumn fx:id="quantiteColumn" prefWidth="100.0" text="Quantité" />
+                        <TableColumn fx:id="actionColumn" prefWidth="100.0" text="Action" />
+                    </columns>
+                  </TableView>
+               </children>
+            </VBox>
+            <VBox prefHeight="400.0" prefWidth="300.0">
+               <children>
+                  <Label text="Panier" textFill="#333333">
+                     <font>
+                        <Font name="Open Sans Semibold" size="16.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <ListView fx:id="panierListView" prefHeight="300.0" prefWidth="300.0" VBox.vgrow="ALWAYS" />
+                  <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <Label text="Total:" textFill="#333333">
+                           <font>
+                              <Font name="Open Sans Semibold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="totalLabel" text="0.00 €" textFill="#007b3d">
+                           <font>
+                              <Font name="Open Sans Semibold" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </BorderPane.margin>
+      </HBox>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" prefHeight="80.0" prefWidth="900.0" spacing="20.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="errorLabel" textFill="RED">
+               <font>
+                  <Font name="Open Sans" size="14.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="btnAnnuler" mnemonicParsing="false" onAction="#handleAnnuler" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #E74C3C; -fx-background-radius: 5;" text="Annuler" textFill="WHITE">
+                     <font>
+                        <Font name="Open Sans Semibold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="btnValider" mnemonicParsing="false" onAction="#handleValider" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #007B3D; -fx-background-radius: 5;" text="Valider commande" textFill="WHITE">
+                     <font>
+                        <Font name="Open Sans Semibold" size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+</BorderPane>

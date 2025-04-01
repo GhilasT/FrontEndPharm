@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="400.0" spacing="20.0" style="-fx-background-color: white; -fx-border-color: #007B3D; -fx-border-width: 2px; -fx-border-radius: 5px;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pharmacie.controller.PopupVenteController">
+   <children>
+      <Label text="Choisissez le type de vente" textFill="#007b3d">
+         <font>
+            <Font name="Open Sans Semibold" size="18.0" />
+         </font>
+      </Label>
+      <HBox alignment="CENTER" spacing="20.0">
+         <children>
+            <Button fx:id="btnAvecOrdonnance" mnemonicParsing="false" onAction="#handleAvecOrdonnance" prefHeight="50.0" prefWidth="180.0" style="-fx-background-color: #007B3D; -fx-background-radius: 5;" text="Vente avec ordonnance" textFill="WHITE">
+               <font>
+                  <Font name="Open Sans Semibold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnSansOrdonnance" mnemonicParsing="false" onAction="#handleSansOrdonnance" prefHeight="50.0" prefWidth="180.0" style="-fx-background-color: #007B3D; -fx-background-radius: 5;" text="Vente sans ordonnance" textFill="WHITE">
+               <font>
+                  <Font name="Open Sans Semibold" size="14.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>

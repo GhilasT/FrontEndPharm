@@ -1,0 +1,179 @@
+/* styles.css */
+
+/* Styles généraux */
+.root {
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-background-color: #f5f5f5;
+}
+
+/* En-tête */
+.header-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Champ de recherche */
+.search-field {
+    -fx-background-radius: 20;
+    -fx-padding: 8 15 8 15;
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 20;
+    -fx-background-color: white;
+}
+
+.search-field:focused {
+    -fx-border-color: #3498db;
+}
+
+/* Boutons */
+.button {
+    -fx-background-radius: 5;
+    -fx-padding: 10 15;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.button:hover {
+    -fx-opacity: 0.9;
+}
+
+.button-add {
+    -fx-background-color: #2ecc71;
+    -fx-text-fill: white;
+}
+
+.button-edit {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.button-delete {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+}
+
+.button-details {
+    -fx-background-color: #9b59b6;
+    -fx-text-fill: white;
+}
+
+/* Tableau */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 5;
+}
+
+.table-view .column-header {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-padding: 10 5;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #f9f9f9;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #d4e6f1;
+}
+
+/* Pagination */
+.pagination {
+    -fx-page-information-visible: false;
+}
+
+.pagination .pagination-control .button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.pagination .pagination-control .page-number {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+}
+
+.pagination .pagination-control .page-number:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+/* Barre de statut */
+.status-bar {
+    -fx-background-color: #ecf0f1;
+    -fx-padding: 5 10;
+    -fx-background-radius: 5;
+}
+
+/* Filtres */
+.titled-pane {
+    -fx-text-fill: #2c3e50;
+}
+
+.titled-pane > .title {
+    -fx-background-color: #ecf0f1;
+    -fx-border-color: #dcdcdc;
+}
+
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 3;
+}
+
+/* Dialogues */
+.dialog-pane {
+    -fx-background-color: #f5f5f5;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #3498db;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Alertes */
+.alert {
+    -fx-background-color: #f5f5f5;
+}
+
+.alert .header-panel {
+    -fx-background-color: #3498db;
+}
+
+.alert .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Styles spécifiques pour les colonnes */
+.stock-low {
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+}
+
+.stock-medium {
+    -fx-text-fill: orange;
+}
+
+.stock-high {
+    -fx-text-fill: green;
+}
+
+.ordonnance-avec {
+    -fx-text-fill: #e74c3c;
+    -fx-font-weight: bold;
+}
+
+.ordonnance-sans {
+    -fx-text-fill: #2ecc71;
+}
