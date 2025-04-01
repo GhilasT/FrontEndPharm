@@ -9,7 +9,7 @@ public class MedicamentPanier {
     private int quantite;
     private double prixUnitaire;
     private String nomMedicament;
-    
+    private String stockId;
     // Constructeur par défaut
     public MedicamentPanier() {
     }

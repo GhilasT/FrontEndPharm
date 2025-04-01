@@ -338,7 +338,7 @@ public class RechercheMedicamentsController {
                 VenteCreateRequest request = new VenteCreateRequest();
                 request.setClientId(clientId.toString());
                 // Utiliser un ID de pharmacien adjoint fixe pour éviter les problèmes
-                request.setPharmacienAdjointId("1");
+                request.setPharmacienAdjointId("178ee63d-fcf4-4db1-a63c-bfdfa84bdd6e");
                 request.setDateVente(DATE_FORMAT.format(new Date()));
                 request.setModePaiement("Carte bancaire");
                 request.setMontantTotal(total);

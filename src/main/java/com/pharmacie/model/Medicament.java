@@ -20,7 +20,16 @@ public class Medicament {
     private BigDecimal taxe; // Nouveau champ pour la taxe
     private String agrementCollectivites; // Nouveau champ pour l'agrément aux collectivités
     private String tauxRemboursement; // Nouveau champ pour le taux de remboursement
-    
+    private String stockId;
+
+    // getters / setters
+    public String getStockId() {
+        return stockId;
+    }
+
+    public void setStockId(String stockId) {
+        this.stockId = stockId;
+    }
     // Constructeur par défaut
     public Medicament() {
         this.stock = 0; // Initialisation du stock à 0 comme demandé

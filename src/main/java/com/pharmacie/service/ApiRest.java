@@ -449,7 +449,6 @@ public class ApiRest {
      */
     private static List<Medicament> parseMedicamentsResponse(String jsonResponse) {
         List<Medicament> medicaments = new ArrayList<>();
-        
         try {
             JSONObject jsonObject = new JSONObject(jsonResponse);
             JSONArray contentArray = jsonObject.getJSONArray("content");
@@ -457,21 +456,27 @@ public class ApiRest {
             for (int i = 0; i < contentArray.length(); i++) {
                 JSONObject medicamentJson = contentArray.getJSONObject(i);
                 Medicament medicament = new Medicament();
-                
+    
+                // Champs existants
                 medicament.setId(medicamentJson.getLong("id"));
                 medicament.setCodeCip13(medicamentJson.getString("codeCip13"));
                 medicament.setLibelle(medicamentJson.getString("libelle"));
                 medicament.setPrix(medicamentJson.getDouble("prix"));
                 medicament.setQuantite(medicamentJson.getInt("quantite"));
-                
+    
+                // Nouveau champ pour stockId
+                if (medicamentJson.has("stockId")) {
+                    medicament.setStockId(medicamentJson.getString("stockId"));
+                }
+    
                 medicaments.add(medicament);
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors du parsing de la réponse JSON des médicaments", e);
+            LOGGER.log(Level.SEVERE, "Erreur lors du parsing JSON", e);
         }
-        
         return medicaments;
     }
+    
     /**
      * Vérifie si le backend est accessible.
      * 
