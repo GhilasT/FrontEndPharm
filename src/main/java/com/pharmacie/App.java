@@ -2,10 +2,13 @@ package com.pharmacie;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -22,6 +25,8 @@ public class App extends Application {
 
     private static final String API_URL = "http://localhost:8080/api/auth/login";
     PharmacyDashboard dashboard = new PharmacyDashboard();
+    private Parent dashboardAdmin;
+    Scene adminScene;
     public static void main(String[] args) {
         launch(args);
     }
@@ -31,7 +36,15 @@ public class App extends Application {
         Login login = new Login();
         Scene loginScene = new Scene(login);
         Scene dashBoardScene = new Scene(dashboard);
+        try {
+            dashboardAdmin = FXMLLoader.load(getClass().getResource("/com/pharmacie/view/DashboardAdmin.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible de charger le tableau de bord administrateur.");
+            return;
+        }
         PharmacyDashboardModifier.modifyDashboard(dashboard);
+        adminScene = new Scene(dashboardAdmin);
 
         primaryStage.setTitle("Pharmacie - Connexion");
         primaryStage.setScene(loginScene);
@@ -60,18 +73,18 @@ public class App extends Application {
             protected LoginResponse call() throws Exception {
                 try {
                     String jsonBody = String.format("{\"email\":\"%s\", \"password\":\"%s\"}", email, password);
-                    
+
                     HttpRequest request = HttpRequest.newBuilder()
                             .uri(URI.create(API_URL))
                             .header("Content-Type", "application/json")
                             .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                             .build();
-    
+
                     HttpResponse<String> response = HttpClient.newHttpClient()
                             .send(request, HttpResponse.BodyHandlers.ofString());
-    
+
                     return new Gson().fromJson(response.body(), LoginResponse.class);
-                    
+
                 } catch (Exception e) {
                     return new LoginResponse();
                 }
@@ -84,23 +97,34 @@ public class App extends Application {
             try {
                 LoginResponse response = loginTask.getValue();
                 
-                if (response != null && response.isSuccess()) {
-                    String role = response.getRole();
-                    
-                    if("PHARMACIEN_ADJOINT".equalsIgnoreCase(role) || "APPRENTI".equalsIgnoreCase(role)) {
-                        LoggedSeller.getInstance().setUser(
-                            response.getId(),
-                            response.getNom(),
-                            response.getPrenom(), 
-                            role
-                        );
-                        dashboard.refreshUserInfo();
-                        primaryStage.setTitle("Dashboard - " + LoggedSeller.getInstance().getNomComplet());
-                        primaryStage.setScene(dashBoardScene);
-                    } else {
-                        showAlert("Accès refusé", "Rôle non autorisé (" + role + ")");
-                    }
-                } else {
+                // Dans setupLoginTaskHandlers (App.java)
+if (response != null && response.isSuccess()) {
+    String role = response.getRole();
+    
+    if ("PHARMACIEN_ADJOINT".equalsIgnoreCase(role) 
+        || "APPRENTI".equalsIgnoreCase(role) 
+        || "ADMINISTRATEUR".equalsIgnoreCase(role)) { // Ajout du rôle ADMINISTRATEUR
+        
+        LoggedSeller.getInstance().setUser(
+            response.getId(),
+            response.getNom(),
+            response.getPrenom(), 
+            role
+        );
+        
+        if ("ADMINISTRATEUR".equalsIgnoreCase(role)) {
+            primaryStage.setScene(adminScene); // Charger la scène admin
+        } else {
+            dashboard.refreshUserInfo();
+            primaryStage.setScene(dashBoardScene); // Scène normale
+        }
+        
+        primaryStage.setTitle("Dashboard - " + LoggedSeller.getInstance().getNomComplet());
+    } else {
+        showAlert("Accès refusé", "Rôle non autorisé (" + role + ")");
+    }
+}
+                 else {
                     String errorMessage = response == null 
                         ? "Pas de réponse du serveur" 
                         : "Erreur d'authentification";
@@ -110,13 +134,14 @@ public class App extends Application {
                 showAlert("Erreur", "Erreur de traitement: " + e.getMessage());
             }
         });
-        
-        loginTask.setOnFailed(event -> {
-            showAlert("Connexion impossible", 
+
+    loginTask.setOnFailed(event->
+
+    {
+        showAlert("Connexion impossible",
                 "Erreur réseau: " + loginTask.getException().getMessage());
-        });
+    });
     }
-    
 
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
