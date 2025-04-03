@@ -11,14 +11,17 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import com.google.gson.Gson;
 import com.pharmacie.controller.Login;
 import com.pharmacie.controller.PharmacyDashboard;
 import com.pharmacie.controller.PharmacyDashboardModifier;
+import com.pharmacie.model.dto.LoginResponse;
+import com.pharmacie.util.LoggedSeller;
 
 public class App extends Application {
 
     private static final String API_URL = "http://localhost:8080/api/auth/login";
-
+    PharmacyDashboard dashboard = new PharmacyDashboard();
     public static void main(String[] args) {
         launch(args);
     }
@@ -27,7 +30,6 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         Login login = new Login();
         Scene loginScene = new Scene(login);
-        PharmacyDashboard dashboard = new PharmacyDashboard();
         Scene dashBoardScene = new Scene(dashboard);
         PharmacyDashboardModifier.modifyDashboard(dashboard);
 
@@ -47,15 +49,15 @@ public class App extends Application {
             return;
         }
 
-        Task<Boolean> loginTask = createLoginTask(email, password);
+        Task<LoginResponse> loginTask = createLoginTask(email, password);
         setupLoginTaskHandlers(loginTask, primaryStage, dashBoardScene);
         new Thread(loginTask).start();
     }
 
-    private Task<Boolean> createLoginTask(String email, String password) {
+    private Task<LoginResponse> createLoginTask(String email, String password) {
         return new Task<>() {
             @Override
-            protected Boolean call() throws Exception {
+            protected LoginResponse call() throws Exception {
                 try {
                     String jsonBody = String.format("{\"email\":\"%s\", \"password\":\"%s\"}", email, password);
                     
@@ -64,29 +66,54 @@ public class App extends Application {
                             .header("Content-Type", "application/json")
                             .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                             .build();
-
+    
                     HttpResponse<String> response = HttpClient.newHttpClient()
                             .send(request, HttpResponse.BodyHandlers.ofString());
-
-                    return response.statusCode() == 200;
+    
+                    return new Gson().fromJson(response.body(), LoginResponse.class);
+                    
                 } catch (Exception e) {
-                    return false;
+                    return new LoginResponse();
                 }
             }
         };
     }
 
-    private void setupLoginTaskHandlers(Task<Boolean> loginTask, Stage primaryStage, Scene dashBoardScene) {
+    private void setupLoginTaskHandlers(Task<LoginResponse> loginTask, Stage primaryStage, Scene dashBoardScene) {
         loginTask.setOnSucceeded(event -> {
-            if (Boolean.TRUE.equals(loginTask.getValue())) {
-                primaryStage.setScene(dashBoardScene);
-            } else {
-                showAlert("Échec de connexion", "Identifiants incorrects ou problème de connexion au serveur");
+            try {
+                LoginResponse response = loginTask.getValue();
+                
+                if (response != null && response.isSuccess()) {
+                    String role = response.getRole();
+                    
+                    if("PHARMACIEN_ADJOINT".equalsIgnoreCase(role) || "APPRENTI".equalsIgnoreCase(role)) {
+                        LoggedSeller.getInstance().setUser(
+                            response.getId(),
+                            response.getNom(),
+                            response.getPrenom(), 
+                            role
+                        );
+                        dashboard.refreshUserInfo();
+                        primaryStage.setTitle("Dashboard - " + LoggedSeller.getInstance().getNomComplet());
+                        primaryStage.setScene(dashBoardScene);
+                    } else {
+                        showAlert("Accès refusé", "Rôle non autorisé (" + role + ")");
+                    }
+                } else {
+                    String errorMessage = response == null 
+                        ? "Pas de réponse du serveur" 
+                        : "Erreur d'authentification";
+                    showAlert("Échec", errorMessage);
+                }
+            } catch (Exception e) {
+                showAlert("Erreur", "Erreur de traitement: " + e.getMessage());
             }
         });
-
+        
         loginTask.setOnFailed(event -> {
-            showAlert("Erreur technique", "Impossible de contacter le serveur. Vérifiez votre connexion.");
+            showAlert("Connexion impossible", 
+                "Erreur réseau: " + loginTask.getException().getMessage());
         });
     }
     

@@ -3,6 +3,8 @@ package com.pharmacie.controller;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.pharmacie.util.LoggedSeller;
+
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -33,6 +35,7 @@ public class PharmacyDashboard extends StackPane {
     @FXML private Button btnAnalytics;
     @FXML private Button btnSettings;
     @FXML private Label headerTitle;
+    @FXML private Label userLabel;
 
     private BooleanProperty menuVisible = new SimpleBooleanProperty(false);
     private TilePane dashboardTilePane;
@@ -61,8 +64,23 @@ public class PharmacyDashboard extends StackPane {
         menuButton.setOnAction(event -> toggleMenu());
         setupMenuActions();
         loadDashboard();
-    }
+        userLabel.setText(LoggedSeller.getInstance().getNomComplet());
 
+    }
+private boolean isAuthorizedRole() {
+    String role = LoggedSeller.getInstance().getRole();
+    return "PHARMACIEN_ADJOINT".equals(role) || "APPRENTI".equals(role);
+}
+public void refreshUserInfo() {
+    userLabel.setText(LoggedSeller.getInstance().getNomComplet());
+}
+
+private void showAccessDenied() {
+    contentPane.getChildren().clear();
+    contentPane.getChildren().add(new Label("Accès non autorisé"));
+    sideMenu.setVisible(false);
+    menuButton.setVisible(false);
+}
 
 
     private void configureMenuButton(Button button, String iconName, String text) {

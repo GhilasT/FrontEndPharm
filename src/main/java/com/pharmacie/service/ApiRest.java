@@ -64,7 +64,7 @@ public class ApiRest {
         String url = API_BASE_URL + "/medicaments/1";
         
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            url = API_BASE_URL + "/medicaments/search?searchTerm=" + searchTerm;
+            url = API_BASE_URL + "/medicaments/search?search=" + searchTerm;
         }
         
         LOGGER.log(Level.INFO, "Envoi d'une requête GET à {0}", url);
@@ -355,37 +355,36 @@ public class ApiRest {
      */
     public static Vente createVente(VenteCreateRequest request) throws Exception {
         String url = API_BASE_URL + "/ventes";
-        
         LOGGER.log(Level.INFO, "Envoi d'une requête POST pour créer une vente");
         
         try {
-            // Conversion de la requête en JSON
+            // On fixe directement le JSON à envoyer
             JSONObject jsonRequest = new JSONObject();
-            jsonRequest.put("pharmacienAdjointId", request.getPharmacienAdjointId());
-            jsonRequest.put("clientId", request.getClientId());
-            jsonRequest.put("dateVente", request.getDateVente());
-            jsonRequest.put("modePaiement", request.getModePaiement());
-            jsonRequest.put("montantTotal", request.getMontantTotal());
-            jsonRequest.put("montantRembourse", request.getMontantRembourse());
-            
+            jsonRequest.put("pharmacienAdjointId", "178ee63d-fcf4-4db1-a63c-bfdfa84bdd6e");
+            jsonRequest.put("clientId", "567b0d52-108e-4ecf-a19a-4e60c50a85d5");
+            jsonRequest.put("modePaiement", "Carte");
+            jsonRequest.put("montantTotal", 50.0);
+            jsonRequest.put("montantRembourse", 10.0);
+    
+            // Tableau de médicaments
             JSONArray medicamentsArray = new JSONArray();
-            for (MedicamentPanier medicament : request.getMedicaments()) {
-                JSONObject medicamentJson = new JSONObject();
-                // Convertir l'ID en String pour s'assurer qu'il est correctement formaté
-                medicamentJson.put("medicamentId", medicament.getMedicamentId().toString());
-                medicamentJson.put("quantite", medicament.getQuantite());
-                medicamentJson.put("prixUnitaire", medicament.getPrixUnitaire());
-                medicamentsArray.put(medicamentJson);
-            }
+    
+            JSONObject medicamentJson = new JSONObject();
+            JSONObject stockMedicamentJson = new JSONObject();
+            stockMedicamentJson.put("id", "98042");
+            medicamentJson.put("stockMedicament", stockMedicamentJson);
+            medicamentJson.put("quantite", 2);
+    
+            medicamentsArray.put(medicamentJson);
             jsonRequest.put("medicaments", medicamentsArray);
-            
+    
             HttpRequest httpRequest = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
                     .timeout(Duration.ofSeconds(15))
                     .POST(HttpRequest.BodyPublishers.ofString(jsonRequest.toString()))
                     .build();
-            
+    
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             
             LOGGER.log(Level.INFO, "Réponse reçue avec le code {0}", response.statusCode());
@@ -404,6 +403,8 @@ public class ApiRest {
             throw new Exception("Erreur de communication avec le serveur: " + e.getMessage(), e);
         }
     }
+    
+    
     
     /**
      * Supprime une vente via l'API.
