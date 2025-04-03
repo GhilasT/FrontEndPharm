@@ -31,7 +31,11 @@ public class DashboardAdminController {
         // Ajoutez ici les gestionnaires pour les autres boutons
     }
 
-    private void loadGestionPersonnel() {
+    public StackPane getContentArea() {
+        return contentArea;
+    }
+    
+    public void loadGestionPersonnel() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionPersonnel.fxml"));
             Parent gestionPersonnelView = loader.load();

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<Pane xmlns="http://javafx.com/javafx/23.0.1" 
+      xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.pharmacie.controller.GestionPreparateurController" 
+      prefHeight="710.0" prefWidth="1300.0" 
+      style="-fx-background-color: #FFFFFF;">
+
+   <children>
+      <!-- En-tête -->
+      <Pane prefHeight="60.0" prefWidth="1300.0" style="-fx-background-color: #1F82F2;">
+         <children>
+            <Button fx:id="backButton" layoutX="20.0" layoutY="15.0" mnemonicParsing="false" 
+                    onAction="#handleBack" style="-fx-background-color: #0066CC;" text="Retour" 
+                    textFill="WHITE">
+               <font>
+                  <Font name="Open Sans Semibold" size="14.0"/>
+               </font>
+            </Button>
+            <Label layoutX="100.0" layoutY="15.0" text="Gestion des Préparateurs" textFill="WHITE">
+               <font>
+                  <Font name="Open Sans Bold" size="20.0"/>
+               </font>
+            </Label>
+         </children>
+      </Pane>
+
+      <!-- Contenu principal -->
+      <VBox layoutY="70.0" prefWidth="1300.0" prefHeight="640.0" spacing="20.0" style="-fx-padding: 20px;">
+         <children>
+            <TableView fx:id="preparateurTable" prefHeight="500.0" prefWidth="1260.0">
+               <columns>
+                  <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
+                  <TableColumn fx:id="nomColumn" text="Nom" prefWidth="100"/>
+                  <TableColumn fx:id="prenomColumn" text="Prénom" prefWidth="100"/>
+                  <TableColumn fx:id="emailColumn" text="Email" prefWidth="150"/>
+                  <TableColumn fx:id="telephoneColumn" text="Téléphone" prefWidth="100"/>
+                  <TableColumn fx:id="adresseColumn" text="Adresse" prefWidth="200"/>
+                  <TableColumn fx:id="matriculeColumn" text="Matricule" prefWidth="100"/>
+                  <TableColumn fx:id="dateEmbaucheColumn" text="Date Embauche" prefWidth="120"/>
+                  <TableColumn fx:id="salaireColumn" text="Salaire" prefWidth="100"/>
+                  <TableColumn fx:id="posteColumn" text="Poste" prefWidth="100"/>
+                  <TableColumn fx:id="statutContratColumn" text="Statut Contrat" prefWidth="120"/>
+                  <TableColumn fx:id="diplomeColumn" text="Diplôme" prefWidth="100"/>
+                  <TableColumn fx:id="emailProColumn" text="Email Pro" prefWidth="150"/>
+               </columns>
+            </TableView>
+
+            <!-- Boutons d'action -->
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+               <children>
+                  <Button text="Ajouter" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" 
+                          onAction="#handleAjouter"/>
+                  <Button fx:id="modifierButton" text="Modifier" style="-fx-background-color: #FFC107;" 
+                          onAction="#handleModifier" disable="true"/>
+                  <Button fx:id="supprimerButton" text="Supprimer" style="-fx-background-color: #F44336; -fx-text-fill: white;" 
+                          onAction="#handleSupprimer" disable="true"/>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</Pane>

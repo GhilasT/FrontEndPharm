@@ -1,6 +1,10 @@
 package com.pharmacie.controller;
 
+import java.io.IOException;
+
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 
 public class GestionPersonnelController {
@@ -27,24 +31,52 @@ public class GestionPersonnelController {
     
     // Méthodes pour gérer les différentes sections de personnel
     private void handleAdminSection() {
-        System.out.println("Gestion des administrateurs sélectionnée");
-        // Implémentez ici la logique pour la gestion des administrateurs
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionAdmin.fxml"));
+        Parent view = loader.load();
+        GestionAdminController controller = loader.getController();
+        controller.setParentController(parentController);
+        parentController.getContentArea().getChildren().setAll(view);
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
     
-    private void handlePreparateursSection() {
-        System.out.println("Gestion des préparateurs sélectionnée");
-        // Implémentez ici la logique pour la gestion des préparateurs
+private void handlePreparateursSection() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionPreparateur.fxml"));
+        Parent view = loader.load();
+        GestionPreparateurController controller = loader.getController();
+        controller.setParentController(parentController);
+        parentController.getContentArea().getChildren().setAll(view);
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
     
-    private void handlePharmacienSection() {
-        System.out.println("Gestion des pharmaciens sélectionnée");
-        // Implémentez ici la logique pour la gestion des pharmaciens
+private void handlePharmacienSection() { 
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionPharmacienAdjoint.fxml"));
+        Parent view = loader.load();
+        GestionPharmacienAdjointController controller = loader.getController();
+        controller.setParentController(parentController);
+        parentController.getContentArea().getChildren().setAll(view);
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
     
-    private void handleApprentiSection() {
-        System.out.println("Gestion des apprentis sélectionnée");
-        // Implémentez ici la logique pour la gestion des apprentis
+private void handleApprentiSection() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionApprenti.fxml"));
+        Parent view = loader.load();
+        GestionApprentiController controller = loader.getController();
+        controller.setParentController(parentController);
+        parentController.getContentArea().getChildren().setAll(view);
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
 
     public void setParentController(DashboardAdminController controller) {
         this.parentController = controller;
