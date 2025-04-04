@@ -18,26 +18,27 @@ public class Admin {
     private final StringProperty statutContrat = new SimpleStringProperty();
     private final StringProperty diplome = new SimpleStringProperty();
     private final StringProperty emailPro = new SimpleStringProperty();
+    private final StringProperty role = new SimpleStringProperty();
 
     // Constructeur
     public Admin(UUID idPersonne, String nom, String prenom, String email, String telephone, String adresse,
              String matricule, LocalDate dateEmbauche, double salaire, String poste, String statutContrat,
-             String diplome, String emailPro) {
-    setIdPersonne(idPersonne);
-    setNom(nom);
-    setPrenom(prenom);
-    setEmail(email);
-    setTelephone(telephone);
-    setAdresse(adresse);
-    setMatricule(matricule);
-    setDateEmbauche(dateEmbauche);
-    setSalaire(salaire);
-    setPoste(poste);
-    setStatutContrat(statutContrat);
-    setDiplome(diplome);
-    setEmailPro(emailPro);
-}
-
+             String diplome, String emailPro, String role) {
+        setIdPersonne(idPersonne);
+        setNom(nom);
+        setPrenom(prenom);
+        setEmail(email);
+        setTelephone(telephone);
+        setAdresse(adresse);
+        setMatricule(matricule);
+        setDateEmbauche(dateEmbauche);
+        setSalaire(salaire);
+        setPoste(poste);
+        setStatutContrat(statutContrat);
+        setDiplome(diplome);
+        setEmailPro(emailPro);
+        setRole(role);
+    }
 
     // Getters et Setters pour chaque propriété
     public UUID getIdPersonne() { return idPersonne.get(); }
@@ -91,4 +92,8 @@ public class Admin {
     public String getEmailPro() { return emailPro.get(); }
     public void setEmailPro(String value) { emailPro.set(value); }
     public StringProperty emailProProperty() { return emailPro; }
+
+    public String getRole() { return role.get(); }
+    public void setRole(String value) { role.set(value); }
+    public StringProperty roleProperty() { return role; }
 }

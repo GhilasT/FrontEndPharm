@@ -3,6 +3,8 @@ C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\co
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\model\dto\LoginResponse.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\util\LoggedSeller.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\model\Admin.java
+C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\controller\EditAdminDialogController.java
+C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\service\AdminApi.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\controller\FournisseursController.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\SystemInfo.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\controller\FormulaireClientController.java
@@ -14,9 +16,9 @@ C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\mo
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\App.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\model\PharmacienAdjoint.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\model\Preparateur.java
-C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\service\AdminService.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\service\ApiRest.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\model\MedicamentPanier.java
+C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\model\dto\AdminUpdateRequest.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\controller\GestionApprentiController.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\controller\PopupVenteController.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\controller\PharmacyDashboard.java
@@ -24,9 +26,11 @@ C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\mo
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\controller\VentesController.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\model\VenteCreateRequest.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\controller\Login.java
+C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\model\dto\AdministrateurCreateRequest.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\controller\RechercheMedicamentsController.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\model\PageResponse.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\controller\GestionPreparateurController.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\model\Apprenti.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\model\Medicament.java
+C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\controller\AddAdminDialogController.java
 C:\Users\Dell\Desktop\NewProjet\gestion-pharmacie\src\main\java\com\pharmacie\controller\PharmacyDashboardModifier.java

@@ -1,12 +1,18 @@
 package com.pharmacie.controller;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.cell.PropertyValueFactory;
 import com.pharmacie.model.Admin;
-import com.pharmacie.service.AdminService;
+import com.pharmacie.model.dto.AdminUpdateRequest;
+import com.pharmacie.model.dto.AdministrateurCreateRequest;
+import com.pharmacie.service.AdminApi;
 import javafx.collections.*;
 import javafx.concurrent.Task;
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -33,12 +39,12 @@ public class GestionAdminController {
     
     private ObservableList<Admin> adminData = FXCollections.observableArrayList();
     private DashboardAdminController parentController;
-    private AdminService adminService;
+    private AdminApi adminService;
 
     @FXML
     public void initialize() {
         // Initialiser le service
-        adminService = new AdminService();
+        adminService = new AdminApi();
         
         // Configuration des colonnes
         idColumn.setCellValueFactory(new PropertyValueFactory<>("idPersonne"));
@@ -105,7 +111,8 @@ public class GestionAdminController {
                 "Développeur",
                 "CDI",
                 "Bac+5",
-                "jean.dupont@pro.com"
+                "jean.dupont@pro.com",
+                "Administrateur"
             );
             adminData.add(adm);
             adminTable.setItems(adminData);
@@ -163,20 +170,44 @@ public class GestionAdminController {
     }
 
     @FXML
-    private void handleAjouter() {
-        // Logique d'ajout d'un nouvel administrateur
-        // Vous pouvez ouvrir une nouvelle fenêtre ou un dialogue pour saisir les informations
-    }
-
-    @FXML
-    private void handleModifier() {
-        Admin selected = adminTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            // Logique de modification de l'administrateur sélectionné
-            // Vous pouvez ouvrir une fenêtre ou un dialogue pour modifier les informations
+private void handleAjouter() {
+    AddAdminDialogController dialogController = new AddAdminDialogController();
+    
+    Optional<ButtonType> result = dialogController.showAndWait();
+    
+    if (result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
+        AdministrateurCreateRequest request = dialogController.getCreateRequest();
+        boolean success = adminService.createAdmin(request);
+        if (success) {
+            loadAllAdmins();
+            new Alert(Alert.AlertType.INFORMATION, "Administrateur ajouté avec succès").show();
+        } else {
+            new Alert(Alert.AlertType.ERROR, "Échec de l'ajout de l'administrateur").show();
         }
     }
+}
 
+    @FXML
+private void handleModifier() {
+    Admin selected = adminTable.getSelectionModel().getSelectedItem();
+    if (selected != null) {
+        EditAdminDialogController dialogController = new EditAdminDialogController();
+        dialogController.setAdmin(selected);
+        
+        Optional<ButtonType> result = dialogController.showAndWait();
+        
+        if (result.isPresent() && result.get().getButtonData() == ButtonData.OK_DONE) {
+            AdminUpdateRequest request = dialogController.getUpdateRequest();
+            boolean success = adminService.updateAdmin(selected.getIdPersonne(), request);
+            if (success) {
+                loadAllAdmins();
+                new Alert(Alert.AlertType.INFORMATION, "Administrateur mis à jour").show();
+            } else {
+                new Alert(Alert.AlertType.ERROR, "Échec de la mise à jour").show();
+            }
+        }
+    }
+}
     @FXML
 private void handleSupprimer() {
     Admin selected = adminTable.getSelectionModel().getSelectedItem();
