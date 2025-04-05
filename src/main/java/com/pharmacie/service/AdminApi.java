@@ -5,6 +5,7 @@ import com.pharmacie.model.dto.AdminUpdateRequest;
 import com.pharmacie.model.dto.AdministrateurCreateRequest;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import java.util.ArrayList;
@@ -30,16 +31,16 @@ public class AdminApi {
     public AdminApi() {
         this.httpClient = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                .registerModule(new JavaTimeModule())
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public List<Admin> getAllAdmins() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(ADMIN_URL))
-                .GET()
-                .build();
+                    .uri(URI.create(ADMIN_URL))
+                    .GET()
+                    .build();
 
             HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
 
@@ -60,9 +61,9 @@ public class AdminApi {
         try {
             String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(ADMIN_URL + "/search?query=" + encodedQuery))
-                .GET()
-                .build();
+                    .uri(URI.create(ADMIN_URL + "/search?query=" + encodedQuery))
+                    .GET()
+                    .build();
 
             HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
 
@@ -82,9 +83,9 @@ public class AdminApi {
     public boolean deleteAdmin(UUID idPersonne) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(ADMIN_URL + "/" + idPersonne))
-                .DELETE()
-                .build();
+                    .uri(URI.create(ADMIN_URL + "/" + idPersonne))
+                    .DELETE()
+                    .build();
 
             HttpResponse<Void> response = httpClient.send(request, HttpResponse.BodyHandlers.discarding());
             return response.statusCode() == 204;
@@ -99,21 +100,21 @@ public class AdminApi {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             String requestBody = objectMapper.writeValueAsString(updateRequest);
-            
+
             // Log du corps de la requête
             System.out.println("Corps de la requête envoyé : " + requestBody);
-    
+
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(ADMIN_URL + "/" + idPersonne))
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(requestBody))
-                .build();
-    
+                    .uri(URI.create(ADMIN_URL + "/" + idPersonne))
+                    .header("Content-Type", "application/json")
+                    .PUT(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
+
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            
+
             // Log de la réponse
             System.out.println("Réponse du serveur : Code " + response.statusCode() + ", Body: " + response.body());
-            
+
             return response.statusCode() == 200;
         } catch (Exception e) {
             System.err.println("Erreur lors de la mise à jour: " + e.getMessage());
@@ -137,7 +138,14 @@ public class AdminApi {
 
                 LocalDate dateEmbauche = null;
                 if (node.has("dateEmbauche") && !node.get("dateEmbauche").isNull()) {
-                    dateEmbauche = LocalDate.parse(node.get("dateEmbauche").asText());
+                    String dateStr = node.get("dateEmbauche").asText();
+                    if (dateStr.contains("T")) {
+                        dateEmbauche = LocalDate.parse(
+                                dateStr.substring(0, 10),
+                                DateTimeFormatter.ISO_DATE);
+                    } else {
+                        dateEmbauche = LocalDate.parse(dateStr);
+                    }
                 }
 
                 double salaire = node.has("salaire") ? node.get("salaire").asDouble() : 0.0;
@@ -149,10 +157,9 @@ public class AdminApi {
                 String role = node.has("role") ? node.get("role").asText() : "";
 
                 Admin admin = new Admin(
-                    idPersonne, nom, prenom, email, telephone, adresse,
-                    matricule, dateEmbauche, salaire, poste, statutContrat,
-                    diplome, emailPro, role
-                );
+                        idPersonne, nom, prenom, email, telephone, adresse,
+                        matricule, dateEmbauche, salaire, poste, statutContrat,
+                        diplome, emailPro, role);
 
                 admins.add(admin);
             }
@@ -162,28 +169,28 @@ public class AdminApi {
     }
 
     public boolean createAdmin(AdministrateurCreateRequest createRequest) {
-    try {
-        String requestBody = objectMapper.writeValueAsString(createRequest);
-        
-        // Log du corps de la requête
-        System.out.println("Corps de la requête d'ajout : " + requestBody);
+        try {
+            String requestBody = objectMapper.writeValueAsString(createRequest);
 
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(ADMIN_URL))
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-            .build();
+            // Log du corps de la requête
+            System.out.println("Corps de la requête d'ajout : " + requestBody);
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        
-        // Log de la réponse
-        System.out.println("Réponse du serveur : Code " + response.statusCode() + ", Body: " + response.body());
-        
-        return response.statusCode() == 201; // HTTP 201 Created
-    } catch (Exception e) {
-        System.err.println("Erreur lors de la création d'un administrateur: " + e.getMessage());
-        e.printStackTrace();
-        return false;
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(ADMIN_URL))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Log de la réponse
+            System.out.println("Réponse du serveur : Code " + response.statusCode() + ", Body: " + response.body());
+
+            return response.statusCode() == 201; // HTTP 201 Created
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la création d'un administrateur: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
-}
 }

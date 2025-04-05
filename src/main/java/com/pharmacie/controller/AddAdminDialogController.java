@@ -186,7 +186,7 @@ public class AddAdminDialogController {
         request.setTelephone(telephoneField.getText().trim());
         request.setAdresse(adresseField.getText().trim());
         LocalDate date = dateEmbauchePicker.getValue();
-        String formattedDate = date.format(DateTimeFormatter.ISO_DATE);
+        String formattedDate = date.toString();
         request.setDateEmbauche(formattedDate);
         request.setSalaire(Double.parseDouble(salaireField.getText().trim()));
         request.setStatutContrat(statutContratCombo.getValue());
