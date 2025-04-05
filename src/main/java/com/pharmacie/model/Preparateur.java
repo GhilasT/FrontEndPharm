@@ -2,9 +2,10 @@ package com.pharmacie.model;
 
 import javafx.beans.property.*;
 import java.time.LocalDate;
+import java.util.UUID;
 
 public class Preparateur {
-    private final IntegerProperty idPersonne = new SimpleIntegerProperty();
+    private final ObjectProperty<UUID> idPersonne = new SimpleObjectProperty<>();
     private final StringProperty nom = new SimpleStringProperty();
     private final StringProperty prenom = new SimpleStringProperty();
     private final StringProperty email = new SimpleStringProperty();
@@ -19,7 +20,7 @@ public class Preparateur {
     private final StringProperty emailPro = new SimpleStringProperty();
 
     // Constructeur
-    public Preparateur(int idPersonne, String nom, String prenom, String email, String telephone,
+    public Preparateur(UUID idPersonne, String nom, String prenom, String email, String telephone,
                        String adresse, String matricule, LocalDate dateEmbauche, double salaire,
                        String poste, String statutContrat, String diplome, String emailPro) {
         setIdPersonne(idPersonne);
@@ -38,9 +39,9 @@ public class Preparateur {
     }
 
     // Getters et Setters pour chaque propriété
-    public int getIdPersonne() { return idPersonne.get(); }
-    public void setIdPersonne(int value) { idPersonne.set(value); }
-    public IntegerProperty idPersonneProperty() { return idPersonne; }
+    public UUID getIdPersonne() { return idPersonne.get(); }
+    public void setIdPersonne(UUID value) { idPersonne.set(value); }
+    public ObjectProperty<UUID> idPersonneProperty() { return idPersonne; }
 
     public String getNom() { return nom.get(); }
     public void setNom(String value) { nom.set(value); }

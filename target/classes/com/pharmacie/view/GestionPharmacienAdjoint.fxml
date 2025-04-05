@@ -31,6 +31,15 @@
 
       <VBox layoutY="70.0" prefWidth="1300.0" prefHeight="640.0" spacing="20.0" style="-fx-padding: 20px;">
          <children>
+            <!-- Ajout du champ de recherche -->
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+               <children>
+                  <TextField fx:id="searchField" promptText="Rechercher..." prefWidth="300.0"/>
+                  <Button text="Rechercher" onAction="#handleSearch"/>
+                  <Button text="Réinitialiser" onAction="#handleResetSearch"/>
+               </children>
+            </HBox>
+
             <TableView fx:id="pharmacienTable" prefHeight="500.0" prefWidth="1260.0">
                <columns>
                   <TableColumn fx:id="idColumn" text="ID" prefWidth="50">

@@ -47,7 +47,8 @@
             <TextField fx:id="diplomeField" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
             <TextField fx:id="emailProField" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
             <TextField fx:id="roleField" GridPane.columnIndex="1" GridPane.rowIndex="9"/>
-
+            <Label fx:id="errorLabel" GridPane.columnIndex="0" GridPane.rowIndex="10" 
+                    GridPane.columnSpan="2" style="-fx-text-fill: red;"/>
             <!-- Configuration des contraintes -->
             <columnConstraints>
                 <ColumnConstraints hgrow="NEVER" minWidth="120"/>
@@ -57,7 +58,7 @@
     </content>
 
     <buttonTypes>
-        <ButtonType buttonData="CANCEL_CLOSE" text="Annuler"/>
-        <ButtonType buttonData="OK_DONE" text="Enregistrer"/>
+    <ButtonType buttonData="CANCEL_CLOSE" text="Annuler"/>
+    <ButtonType buttonData="OK_DONE" text="Enregistrer"/>
     </buttonTypes>
 </DialogPane>

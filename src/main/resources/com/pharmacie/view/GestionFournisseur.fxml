@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+
+<Pane xmlns="http://javafx.com/javafx/17"
+   xmlns:fx="http://javafx.com/fxml/1"
+   fx:controller="com.pharmacie.controller.GestionFournisseurController"
+   prefHeight="600" prefWidth="1300"
+   style="-fx-background-color: #FFFFFF;">
+
+   <children>
+      <!-- En-tête -->
+      <Pane prefHeight="60" prefWidth="1300" style="-fx-background-color: #1F82F2;">
+         <children>
+            <Button fx:id="backButton" layoutX="20" layoutY="15"
+               onAction="#handleBack" text="Retour"
+               style="-fx-background-color: #0066CC; -fx-text-fill: white;">
+               <font>
+                  <Font name="Open Sans Semibold" size="14" />
+               </font>
+            </Button>
+            <Label layoutX="100" layoutY="15" text="Gestion des Fournisseurs" textFill="WHITE">
+               <font>
+                  <Font name="Open Sans Bold" size="20" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+
+      <!-- Barre de recherche -->
+      <HBox layoutY="70" spacing="10" alignment="CENTER_LEFT"
+         prefWidth="1300" prefHeight="50">
+         <padding>
+            <Insets left="20" right="20" />
+         </padding>
+         <children>
+            <Label text="Rechercher:" />
+            <TextField fx:id="searchField" prefWidth="300" promptText="Nom société..." />
+            <Button text="Rechercher" onAction="#handleSearch" />
+            <Button text="Réinitialiser" onAction="#handleResetSearch" />
+         </children>
+      </HBox>
+
+      <!-- Tableau -->
+      <TableView fx:id="fournisseurTable" layoutY="130" prefHeight="400" prefWidth="1260">
+         <columns>
+            <TableColumn fx:id="idFournisseurColumn" text="ID" prefWidth="100" />
+            <TableColumn fx:id="nomSocieteColumn" text="Nom Société" prefWidth="200" />
+            <TableColumn fx:id="sujetFonctionColumn" text="Sujet/Fonction" prefWidth="200" />
+            <TableColumn fx:id="faxColumn" text="Fax" prefWidth="120" />
+            <TableColumn fx:id="emailColumn" text="Email" prefWidth="200" />
+            <TableColumn fx:id="telephoneColumn" text="Téléphone" prefWidth="120" />
+            <TableColumn fx:id="adresseColumn" text="Adresse" prefWidth="250" />
+         </columns>
+      </TableView>
+
+      <!-- Boutons -->
+      <HBox layoutY="550" spacing="10" alignment="CENTER_RIGHT"
+         prefWidth="1300" style="-fx-padding: 20;">
+         <children>
+            <Button fx:id="ajouterButton" text="Ajouter"
+               style="-fx-background-color: #4CAF50; -fx-text-fill: white;"
+               onAction="#handleAjouter" />
+            <Button fx:id="modifierButton" text="Modifier"
+               style="-fx-background-color: #FFC107;"
+               onAction="#handleModifier" disable="true" />
+            <Button fx:id="supprimerButton" text="Supprimer"
+               style="-fx-background-color: #F44336; -fx-text-fill: white;"
+               onAction="#handleSupprimer" disable="true" />
+         </children>
+      </HBox>
+   </children>
+</Pane>

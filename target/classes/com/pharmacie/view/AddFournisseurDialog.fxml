@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<DialogPane xmlns="http://javafx.com/javafx/17"
+    xmlns:fx="http://javafx.com/fxml"
+    prefWidth="600"
+    prefHeight="500">
+
+    <content>
+        <ScrollPane fitToWidth="true" style="-fx-padding: 0;">
+            <GridPane hgap="10" vgap="10" style="-fx-padding: 20;">
+                <!-- Colonne 0 : Labels -->
+                <Label text="Nom Société:*" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Label text="Email:*" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Label text="Téléphone:*" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Label text="Adresse:*" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <Label text="Sujet/Fonction:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <Label text="Fax:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                <Label text="* Champs obligatoires" GridPane.columnIndex="0" GridPane.rowIndex="6"
+                    GridPane.columnSpan="2" style="-fx-text-fill: red;" />
+
+                <!-- Colonne 1 : Champs -->
+                <TextField fx:id="nomSocieteField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <TextField fx:id="emailField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <TextField fx:id="telephoneField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextField fx:id="adresseField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <TextField fx:id="sujetFonctionField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <TextField fx:id="faxField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Label fx:id="errorLabel" GridPane.columnIndex="0" GridPane.rowIndex="7"
+                    GridPane.columnSpan="2" style="-fx-text-fill: red;" />
+
+                <columnConstraints>
+                    <ColumnConstraints hgrow="NEVER" minWidth="180" />
+                    <ColumnConstraints hgrow="ALWAYS" minWidth="250" />
+                </columnConstraints>
+            </GridPane>
+        </ScrollPane>
+    </content>
+
+    <buttonTypes>
+        <ButtonType buttonData="CANCEL_CLOSE" text="Annuler" />
+        <ButtonType buttonData="OK_DONE" text="Ajouter" />
+    </buttonTypes>
+</DialogPane>
