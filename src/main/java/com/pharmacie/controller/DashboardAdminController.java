@@ -28,7 +28,7 @@ public class DashboardAdminController {
 
     private void setupButtonHandlers() {
         GestPerso.setOnAction(e -> loadGestionPersonnel());
-        // Ajoutez ici les gestionnaires pour les autres boutons
+        GestFournisseurs.setOnAction(e -> loadGestionFournisseurs());
     }
 
     public StackPane getContentArea() {
@@ -50,7 +50,20 @@ public class DashboardAdminController {
             ex.printStackTrace();
         }
     }
-
+    public void loadGestionFournisseurs() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionFournisseur.fxml"));
+            Parent gestionFournisseurView = loader.load();
+            
+            // Transfère la référence au contrôleur parent
+            GestionFournisseurController controller = loader.getController();
+            controller.setParentController(this);
+            
+            contentArea.getChildren().setAll(gestionFournisseurView);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
     public void showDashboard() {
         // Remet le dashboardPane comme seul enfant du contentArea
         contentArea.getChildren().setAll(dashboardPane);
