@@ -151,7 +151,7 @@ public class FournisseurApi {
         try {
             String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(FOURNISSEUR_URL + "/search?term=" + encodedQuery))
+                    .uri(URI.create(FOURNISSEUR_URL + "/search?q=" + encodedQuery))
                     .GET()
                     .build();
     
