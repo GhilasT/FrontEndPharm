@@ -1,26 +1,29 @@
 package com.pharmacie.model;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
- * Modèle représentant une requête de création de vente.
+ * Modèle représentant une requête de création de vente. du front
  */
 public class VenteCreateRequest {
-    private String pharmacienAdjointId;
-    private String clientId;
+    private UUID pharmacienAdjointId;
+    private UUID clientId;
     private List<MedicamentPanier> medicaments;
-    private String dateVente;
+    private Date dateVente;
     private String modePaiement;
     private double montantTotal;
     private double montantRembourse;
+    private boolean ordonnanceAjoutee;
     
     // Constructeur par défaut
     public VenteCreateRequest() {
     }
     
     // Constructeur avec tous les paramètres
-    public VenteCreateRequest(String pharmacienAdjointId, String clientId, List<MedicamentPanier> medicaments,
-                             String dateVente, String modePaiement, double montantTotal, double montantRembourse) {
+    public VenteCreateRequest(UUID pharmacienAdjointId, UUID clientId, List<MedicamentPanier> medicaments,
+                             Date dateVente, String modePaiement, double montantTotal, double montantRembourse) {
         this.pharmacienAdjointId = pharmacienAdjointId;
         this.clientId = clientId;
         this.medicaments = medicaments;
@@ -31,19 +34,17 @@ public class VenteCreateRequest {
     }
     
     // Getters et Setters
-    public String getPharmacienAdjointId() {
+    public UUID getPharmacienAdjointId() {
         return pharmacienAdjointId;
     }
-    
-    public void setPharmacienAdjointId(String pharmacienAdjointId) {
+    public void setPharmacienAdjointId(UUID pharmacienAdjointId) {
         this.pharmacienAdjointId = pharmacienAdjointId;
     }
-    
-    public String getClientId() {
+
+    public UUID getClientId() {
         return clientId;
     }
-    
-    public void setClientId(String clientId) {
+    public void setClientId(UUID clientId) {
         this.clientId = clientId;
     }
     
@@ -55,11 +56,11 @@ public class VenteCreateRequest {
         this.medicaments = medicaments;
     }
     
-    public String getDateVente() {
+    public Date getDateVente() {
         return dateVente;
     }
     
-    public void setDateVente(String dateVente) {
+    public void setDateVente(Date dateVente) {
         this.dateVente = dateVente;
     }
     
@@ -85,5 +86,12 @@ public class VenteCreateRequest {
     
     public void setMontantRembourse(double montantRembourse) {
         this.montantRembourse = montantRembourse;
+    }
+    public boolean isOrdonnanceAjoutee() {
+        return ordonnanceAjoutee;
+    }
+
+    public void setOrdonnanceAjoutee(boolean ordonnanceAjoutee) {
+        this.ordonnanceAjoutee = ordonnanceAjoutee;
     }
 }

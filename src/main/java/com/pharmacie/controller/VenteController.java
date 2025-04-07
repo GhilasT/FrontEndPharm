@@ -1,0 +1,292 @@
+package com.pharmacie.controller;
+
+import com.pharmacie.model.Medicament;
+import com.pharmacie.model.MedicamentPanier;
+import com.pharmacie.model.PageResponse;
+import com.pharmacie.model.VenteCreateRequest;
+import com.pharmacie.service.ApiRest;
+import com.pharmacie.util.LoggedSeller;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.event.ActionEvent;
+import javafx.stage.Stage;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.logging.Log;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kong.unirest.json.JSONObject;
+
+public class VenteController {
+
+    @FXML
+    private TextField barDeRecherche;
+    @FXML
+    private Button btnbarRecherche;
+    @FXML
+    private Button btnPayer;
+    @FXML
+    private GridPane gridPanePanier;
+    @FXML
+    private ListView<String> listView;
+    @FXML
+    private Label LabelQuantierValue;
+    @FXML
+    private Label LabelPrixValue;
+
+    @FXML
+    private Button btnAjouterOrdonnance;
+
+    private boolean ordonnanceAjoutee = false;
+
+    private UUID clientId;
+    private UUID pharmacienAdjointId;
+
+    private int rowCount = 1;
+    private ObservableList<Medicament> suggestions = FXCollections.observableArrayList();
+    private final Logger LOGGER = Logger.getLogger(VenteController.class.getName());
+
+    @FXML
+    public void initialize() {
+        barDeRecherche.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.length() >= 2) {
+                rechercherMedicaments(newVal);
+            } else {
+                listView.getItems().clear();
+            }
+        });
+
+        listView.setOnMouseClicked(event -> {
+            String selected = listView.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                ajouterMedicament(selected);
+                listView.getItems().clear();
+            }
+        });
+
+        barDeRecherche.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER && !listView.getItems().isEmpty()) {
+                ajouterMedicament(listView.getItems().get(0));
+                listView.getItems().clear();
+            }
+        });
+    }
+
+    public void setClientId(UUID clientId) {
+        this.clientId = clientId;
+    }
+
+    @FXML
+    private void ajouterMedicament(ActionEvent event) {
+        if (!listView.getItems().isEmpty()) {
+            String selected = listView.getItems().get(0);
+            if (selected.contains("null")) {
+                showAlert(Alert.AlertType.WARNING, "Prix manquant",
+                        "Impossible d'ajouter ce médicament", "Le prix est manquant (null).");
+                return;
+            }
+            ajouterMedicament(selected); // utilise la première suggestion
+            listView.getItems().clear();
+        }
+    }
+
+    public void setPharmacienAdjointId(UUID pharmId) {
+        this.pharmacienAdjointId = pharmId;
+    }
+    @FXML
+    private void rechercherMedicaments(String searchTerm) {
+        System.out.println("🔎 Terme de recherche envoyé au backend : [" + searchTerm + "]");
+        try {
+            PageResponse<Medicament> pageResponse = ApiRest.getMedicamentsPagines(0, searchTerm);
+            List<String> results = new ArrayList<>();
+            for (Medicament m : pageResponse.getContent()) {
+                String nom = (m.getDenomination() != null) ? m.getDenomination() : m.getLibelle();
+                if (nom.toLowerCase().startsWith(searchTerm.toLowerCase())) {
+                    String prix = (m.getPrixTTC() != null) ? String.format("%.2f", m.getPrixTTC()).replace(",", ".") : "0.00";
+                    results.add(nom + " - " + prix + "€ ");
+                }
+
+            }
+            listView.getItems().clear(); // on vide bien la liste à chaque fois
+            listView.getItems().setAll(results.subList(0, Math.min(5, results.size())));
+            suggestions.setAll(pageResponse.getContent());
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche", e);
+        }
+    }
+
+    @FXML
+    public void ajouterMedicament(String selected) {
+        try {
+            String[] parts = selected.split(" - ");
+            if (parts.length < 2) {
+                LOGGER.warning("Format invalide : " + selected);
+                return;
+            }
+
+            String nom = parts[0].trim();
+            double prix = Double.parseDouble(parts[1].replace("€", "").replace(",", ".").trim());
+
+            Optional<Medicament> match = suggestions.stream()
+                    .filter(m -> {
+                        String nomMedoc = (m.getDenomination() != null) ? m.getDenomination() : m.getLibelle();
+                        return selected.startsWith(nomMedoc);
+                    })
+                    .findFirst();
+
+            if (match.isEmpty()) {
+                LOGGER.warning("Aucun médicament correspondant trouvé pour : " + nom);
+                return;
+            }
+
+            Medicament med = match.get();
+            String codeCIS = med.getCodeCIS();
+            if (codeCIS == null || codeCIS.isBlank()) {
+                LOGGER.warning("Code CIS manquant pour le médicament : " + med.getLibelle());
+                return;
+            }
+
+            Label labelNom = new Label(nom);
+            labelNom.setTextFill(Color.WHITE);
+            labelNom.setUserData(codeCIS); // ✅ Associer le codeCIS au label
+
+            TextField qteField = new TextField("1");
+            qteField.setStyle("-fx-text-fill: white; -fx-control-inner-background: rgba(0,122,255,1);");
+            qteField.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (!newVal.matches("\\d*")) {
+                    qteField.setText(newVal.replaceAll("[^\\d]", ""));
+                }
+                majInfosPanier();
+            });
+
+            Label labelPrix = new Label(String.format("%.2f €", prix));
+            labelPrix.setTextFill(Color.WHITE);
+
+            gridPanePanier.add(labelNom, 0, rowCount);
+            gridPanePanier.add(qteField, 1, rowCount);
+            gridPanePanier.add(labelPrix, 2, rowCount);
+
+            rowCount++;
+            barDeRecherche.clear();
+            majInfosPanier();
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de l'ajout du médicament", e);
+        }
+    }
+
+    private void majInfosPanier() {
+        double total = 0.0;
+        int sommeQte = 0;
+        for (int i = 1; i < rowCount; i++) {
+            Node qteNode = gridPanePanier.getChildren().get(i * 3 + 1);
+            Node prixNode = gridPanePanier.getChildren().get(i * 3 + 2);
+
+            if (qteNode instanceof TextField && prixNode instanceof Label) {
+                TextField qteField = (TextField) qteNode;
+                Label prixLabel = (Label) prixNode;
+
+                String qteText = qteField.getText().trim();
+                if (!qteText.isEmpty() && qteText.matches("\\d+")) {
+                    int qte = Integer.parseInt(qteText);
+                    double prixUnit = Double.parseDouble(prixLabel.getText().replace(" €", "").replace(",", "."));
+                    total += qte * prixUnit;
+                    sommeQte += qte;
+                }
+            }
+        }
+        LabelQuantierValue.setText(String.valueOf(sommeQte));
+        LabelPrixValue.setText(String.format("%.2f €", total));
+    }
+    @FXML
+    private void handlePayer(ActionEvent event) {
+        List<MedicamentPanier> panier = new ArrayList<>();
+
+        for (int i = 1; i < rowCount; i++) {
+            Label labelNom = (Label) gridPanePanier.getChildren().get(i * 3);
+            TextField qteField = (TextField) gridPanePanier.getChildren().get(i * 3 + 1);
+            Label prixLabel = (Label) gridPanePanier.getChildren().get(i * 3 + 2);
+
+            Object userData = labelNom.getUserData();
+            if (userData == null) {
+                LOGGER.warning("Code CIS manquant pour la ligne : " + labelNom.getText());
+                continue;
+            }
+
+            String codeCIS = userData.toString();
+            int qte = Integer.parseInt(qteField.getText());
+            double prixUnit = Double.parseDouble(prixLabel.getText().replace("€", "").replace(",", ".").trim());
+
+            MedicamentPanier mp = new MedicamentPanier(codeCIS, qte, prixUnit);
+            mp.setNomMedicament(labelNom.getText());
+            panier.add(mp);
+        }
+
+        if (clientId == null || pharmacienAdjointId == null || panier.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Champs manquants", "Informations incomplètes",
+                    "Vérifiez que le client, le pharmacien et les médicaments sont bien sélectionnés.");
+            return;
+        }
+
+        VenteCreateRequest request = new VenteCreateRequest();
+        request.setPharmacienAdjointId(LoggedSeller.getInstance().getId());
+        request.setClientId(clientId);
+        request.setDateVente(new Date());
+        request.setModePaiement("Carte bancaire");
+        request.setMontantTotal(calculerMontantTotal(panier));
+        request.setMontantRembourse(0.0);
+        request.setMedicaments(panier);
+
+        try {
+            ApiRest.createVente(request);
+            showAlert(Alert.AlertType.INFORMATION, "Succès", "Vente créée", "La vente a bien été enregistrée.");
+            ((Stage) btnPayer.getScene().getWindow()).close();
+        } catch (Exception e) {
+            String message = e.getMessage();
+            try {
+                JSONObject json = new JSONObject(message.substring(message.indexOf("{")));
+                message = json.getString("message"); // <- nécessite que le backend renvoie {"message": "..."}
+            } catch (Exception ex) {
+                // fallback si parsing JSON échoue
+            }
+
+            showAlert(Alert.AlertType.ERROR, "Création échouée", "Vente bloquée", message);
+        }
+    }
+
+    private double calculerMontantTotal(List<MedicamentPanier> panier) {
+        return panier.stream().mapToDouble(mp -> mp.getPrixUnitaire() * mp.getQuantite()).sum();
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String header, String content){
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void handleAjouterOrdonnance(ActionEvent event) {
+        showAlert(
+                Alert.AlertType.INFORMATION,
+                "Fonctionnalité non disponible",
+                "Ajout d'ordonnance",
+                "Cette fonctionnalité n'est pas encore disponible."
+        );
+    }
+}

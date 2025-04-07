@@ -1,8 +1,9 @@
 package com.pharmacie.controller;
 
-import com.pharmacie.model.Medicament;
+import com.pharmacie.model.Employe;
 import com.pharmacie.model.Vente;
 import com.pharmacie.service.ApiRest;
+import com.pharmacie.util.SessionUtilisateur;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,15 +14,14 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,6 +44,7 @@ public class VentesController {
 
     @FXML
     private TableColumn<Vente, String> clientColumn;
+    private UUID utilisateurConnecte;
 
     @FXML
     private TableColumn<Vente, String> montantColumn;
@@ -67,79 +68,82 @@ public class VentesController {
 
     private void configureTableColumns() {
         // Configuration des colonnes
-        idColumn.setCellValueFactory(cellData -> 
-            new SimpleStringProperty(cellData.getValue().getIdVente().toString().substring(0, 8) + "..."));
-        
-        dateColumn.setCellValueFactory(cellData -> 
-            new SimpleStringProperty(DATE_FORMAT.format(cellData.getValue().getDateVente())));
-        
-        clientColumn.setCellValueFactory(cellData -> 
-            new SimpleStringProperty(cellData.getValue().getClientId().toString().substring(0, 8) + "..."));
-        
-        montantColumn.setCellValueFactory(cellData -> 
-            new SimpleStringProperty(String.format("%.2f €", cellData.getValue().getMontantTotal())));
-        
-        paiementColumn.setCellValueFactory(cellData -> 
-            new SimpleStringProperty(cellData.getValue().getModePaiement()));
-        
+        idColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(tronquerUUID(cellData.getValue().getIdVente())));
+
+        dateColumn.setCellValueFactory(cellData -> {
+            Date date = cellData.getValue().getDateVente();
+            String formattedDate = (date != null) ? DATE_FORMAT.format(date) : "";
+            return new SimpleStringProperty(formattedDate);
+        });
+        clientColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(tronquerUUID(cellData.getValue().getClientId())));
+
+        montantColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(String.format("%.2f €", cellData.getValue().getMontantTotal())));
+
+        paiementColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getModePaiement()));
+
         // Configuration de la colonne d'actions
         actionsColumn.setCellFactory(createActionsColumnCellFactory());
     }
 
+    private String tronquerUUID(UUID uuid) {
+        if (uuid == null) return "???";
+        return uuid.toString().substring(0, 8) + "...";
+    }
+
     private Callback<TableColumn<Vente, Void>, TableCell<Vente, Void>> createActionsColumnCellFactory() {
-        return new Callback<TableColumn<Vente, Void>, TableCell<Vente, Void>>() {
+        return param -> new TableCell<Vente, Void>() {
+            private final Button btnSupprimer = new Button("Supprimer");
+            private final Button btnModifier = new Button("Modifier");
+            private final Button btnDetails = new Button("Détails");
+            private final HBox pane = new HBox(5, btnDetails, btnModifier, btnSupprimer);
+
+            {
+                // Style des boutons
+                btnSupprimer.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white;");
+                btnModifier.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white;");
+                btnDetails.setStyle("-fx-background-color: #2ECC71; -fx-text-fill: white;");
+
+                pane.setAlignment(Pos.CENTER);
+
+                // Actions des boutons
+                btnSupprimer.setOnAction(event -> {
+                    Vente vente = getTableView().getItems().get(getIndex());
+                    handleSupprimerVente(vente);
+                });
+
+                btnModifier.setOnAction(event -> {
+                    Vente vente = getTableView().getItems().get(getIndex());
+                    handleModifierVente(vente);
+                });
+
+                btnDetails.setOnAction(event -> {
+                    Vente vente = getTableView().getItems().get(getIndex());
+                    handleDetailsVente(vente);
+                });
+            }
+
             @Override
-            public TableCell<Vente, Void> call(final TableColumn<Vente, Void> param) {
-                return new TableCell<Vente, Void>() {
-                    private final Button btnSupprimer = new Button("Supprimer");
-                    private final Button btnModifier = new Button("Modifier");
-                    private final Button btnDetails = new Button("Détails");
-                    private final HBox pane = new HBox(5, btnDetails, btnModifier, btnSupprimer);
-
-                    {
-                        // Style des boutons
-                        btnSupprimer.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white;");
-                        btnModifier.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white;");
-                        btnDetails.setStyle("-fx-background-color: #2ECC71; -fx-text-fill: white;");
-                        
-                        pane.setAlignment(Pos.CENTER);
-                        
-                        // Actions des boutons
-                        btnSupprimer.setOnAction(event -> {
-                            Vente vente = getTableView().getItems().get(getIndex());
-                            handleSupprimerVente(vente);
-                        });
-                        
-                        btnModifier.setOnAction(event -> {
-                            Vente vente = getTableView().getItems().get(getIndex());
-                            handleModifierVente(vente);
-                        });
-                        
-                        btnDetails.setOnAction(event -> {
-                            Vente vente = getTableView().getItems().get(getIndex());
-                            handleDetailsVente(vente);
-                        });
-                    }
-
-                    @Override
-                    protected void updateItem(Void item, boolean empty) {
-                        super.updateItem(item, empty);
-                        setGraphic(empty ? null : pane);
-                    }
-                };
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : pane);
             }
         };
     }
 
     private void loadVentes() {
         try {
+            // Charger la liste des ventes via l'API REST
             List<Vente> ventes = ApiRest.getVentes();
             ventesData.clear();
             ventesData.addAll(ventes);
             ventesTable.setItems(ventesData);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Erreur lors du chargement des ventes", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du chargement des ventes", 
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du chargement des ventes",
                     "Impossible de charger les ventes: " + e.getMessage());
         }
     }
@@ -147,36 +151,50 @@ public class VentesController {
     @FXML
     private void handleEffectuerVente(ActionEvent event) {
         try {
-            // Ouvrir directement le formulaire client pour une vente sans ordonnance
-            // sans passer par un popup de sélection
-            ouvrirFormulaireClient();
-            
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de l'ouverture du formulaire de vente", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de l'ouverture du formulaire de vente", 
-                    "Impossible d'ouvrir le formulaire: " + e.getMessage());
-        }
-    }
-
-    private void ouvrirFormulaireClient() {
-        try {
+            // 1) Ouvrir le formulaire client en modal
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/formulaire-client.fxml"));
             Parent root = loader.load();
-            
             FormulaireClientController controller = loader.getController();
-            
+
             Stage stage = new Stage();
             stage.setTitle("Formulaire Client");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-            
-            // Rafraîchir la liste des ventes après la création d'une nouvelle vente
+
+            // 2) Récupérer l'ID client depuis le contrôleur
+            UUID clientId = controller.getClientId();
+            if (clientId == null) {
+                System.out.println("pas de id");
+                return;
+            }
+
+            // 3) Ouvrir la page de vente (panier)
+            FXMLLoader loader2 = new FXMLLoader(getClass().getResource("/com/pharmacie/view/vente.fxml"));
+            Parent root2 = loader2.load();
+            System.out.println("vente.fxml chargé avec succès");
+
+            VenteController venteCtrl = loader2.getController();
+            venteCtrl.setClientId(clientId);
+
+            // ✅ Transmettre aussi l'ID du pharmacien connecté
+            if (SessionUtilisateur.getUtilisateurConnecte() != null) {
+                venteCtrl.setPharmacienAdjointId(SessionUtilisateur.getUtilisateurConnecte().getIdPersonne());
+
+            }
+
+            Stage stage2 = new Stage();
+            stage2.setTitle("Nouvelle Vente - Panier");
+            stage2.setScene(new Scene(root2));
+            stage2.initModality(Modality.APPLICATION_MODAL);
+            stage2.showAndWait();
+
+            // 4) Rafraîchir les ventes
             loadVentes();
-            
+
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de l'ouverture du formulaire client", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de l'ouverture du formulaire client", 
+            LOGGER.log(Level.SEVERE, "Erreur lors de l'ouverture du formulaire de vente", e);
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de l'ouverture du formulaire client",
                     "Impossible d'ouvrir le formulaire: " + e.getMessage());
         }
     }
@@ -186,80 +204,35 @@ public class VentesController {
         confirmDialog.setTitle("Confirmation de suppression");
         confirmDialog.setHeaderText("Supprimer la vente");
         confirmDialog.setContentText("Êtes-vous sûr de vouloir supprimer cette vente ?");
-        
+
         Optional<ButtonType> result = confirmDialog.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
                 ApiRest.deleteVente(vente.getIdVente());
                 ventesData.remove(vente);
-                showAlert(Alert.AlertType.INFORMATION, "Succès", "Vente supprimée", 
+                showAlert(Alert.AlertType.INFORMATION, "Succès", "Vente supprimée",
                         "La vente a été supprimée avec succès.");
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Erreur lors de la suppression de la vente", e);
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la suppression", 
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la suppression",
                         "Impossible de supprimer la vente: " + e.getMessage());
             }
         }
     }
 
     private void handleModifierVente(Vente vente) {
-        // Cette fonctionnalité sera implémentée ultérieurement
-        showAlert(Alert.AlertType.INFORMATION, "Information", 
-                "Fonctionnalité non disponible", 
+        // Exemple : fonctionnalité non encore implémentée
+        showAlert(Alert.AlertType.INFORMATION, "Information",
+                "Fonctionnalité non disponible",
                 "La modification de vente n'est pas encore implémentée.");
     }
 
     private void handleDetailsVente(Vente vente) {
-        try {
-            // Création d'une boîte de dialogue pour afficher les détails
-            Dialog<Void> dialog = new Dialog<>();
-            dialog.setTitle("Détails de la vente");
-            dialog.setHeaderText("Détails de la vente #" + vente.getIdVente().toString().substring(0, 8) + "...");
-            
-            // Création du contenu
-            VBox content = new VBox(10);
-            content.getChildren().add(new Label("ID: " + vente.getIdVente()));
-            content.getChildren().add(new Label("Date: " + DATE_FORMAT.format(vente.getDateVente())));
-            content.getChildren().add(new Label("Client ID: " + vente.getClientId()));
-            content.getChildren().add(new Label("Pharmacien ID: " + vente.getPharmacienAdjointId()));
-            content.getChildren().add(new Label("Mode de paiement: " + vente.getModePaiement()));
-            content.getChildren().add(new Label("Montant total: " + String.format("%.2f €", vente.getMontantTotal())));
-            content.getChildren().add(new Label("Montant remboursé: " + String.format("%.2f €", vente.getMontantRembourse())));
-            
-            // Ajout de la liste des médicaments
-            content.getChildren().add(new Label("Médicaments:"));
-            
-            TableView<Medicament> medicamentsTable = new TableView<>();
-            TableColumn<Medicament, String> libelleCol = new TableColumn<>("Libellé");
-            libelleCol.setCellValueFactory(new PropertyValueFactory<>("libelle"));
-            
-            TableColumn<Medicament, String> quantiteCol = new TableColumn<>("Quantité");
-            quantiteCol.setCellValueFactory(new PropertyValueFactory<>("quantite"));
-            
-            TableColumn<Medicament, String> prixCol = new TableColumn<>("Prix");
-            prixCol.setCellValueFactory(cellData -> 
-                new SimpleStringProperty(String.format("%.2f €", cellData.getValue().getPrix())));
-            
-            medicamentsTable.getColumns().addAll(libelleCol, quantiteCol, prixCol);
-            medicamentsTable.setItems(FXCollections.observableArrayList(vente.getMedicaments()));
-            medicamentsTable.setPrefHeight(200);
-            
-            content.getChildren().add(medicamentsTable);
-            
-            dialog.getDialogPane().setContent(content);
-            dialog.getDialogPane().setPrefWidth(500);
-            dialog.getDialogPane().setPrefHeight(500);
-            
-            ButtonType fermerType = new ButtonType("Fermer", ButtonBar.ButtonData.CANCEL_CLOSE);
-            dialog.getDialogPane().getButtonTypes().add(fermerType);
-            
-            dialog.showAndWait();
-            
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de l'affichage des détails de la vente", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de l'affichage des détails", 
-                    "Impossible d'afficher les détails: " + e.getMessage());
-        }
+        // Exemple: tu peux reprendre le code existant pour afficher
+        // la fenêtre de détails (table de médicaments, etc.)
+        showAlert(Alert.AlertType.INFORMATION, "Détails Vente",
+                "Détails de la vente",
+                "Ici, tu peux montrer une popup de détails ou un nouvel écran.");
     }
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
@@ -268,5 +241,9 @@ public class VentesController {
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    public void setUtilisateurConnecte(UUID utilisateurConnecte) {
+        this.utilisateurConnecte = utilisateurConnecte;
     }
 }

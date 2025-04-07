@@ -1,71 +1,70 @@
 package com.pharmacie.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Extension de la classe MedicamentPanier pour ajouter le nom du médicament
- * afin de l'afficher dans la liste du panier.
+ * afin de l'afficher dans la liste du panier. (côté front)
  */
 public class MedicamentPanier {
-    private Long medicamentId;
+    @JsonProperty("codeCip13")
+    private String codeCIS;
     private int quantite;
     private double prixUnitaire;
     private String nomMedicament;
-    private String stockId;
-    // Constructeur par défaut
-    public MedicamentPanier() {
-    }
-    
-    // Constructeur avec tous les paramètres
-    public MedicamentPanier(Long medicamentId, int quantite, double prixUnitaire) {
-        this.medicamentId = medicamentId;
+
+    public MedicamentPanier() {}
+
+    public MedicamentPanier(String codeCIS, int quantite, double prixUnitaire) {
+        this.codeCIS = codeCIS;
         this.quantite = quantite;
         this.prixUnitaire = prixUnitaire;
     }
-    
-    // Getters et Setters
-    public Long getMedicamentId() {
-        return medicamentId;
+
+    public String getCodeCIS() {
+        return codeCIS;
     }
-    
-    public void setMedicamentId(Long medicamentId) {
-        this.medicamentId = medicamentId;
+
+    public void setCodeCIS(String codeCIS) {
+        this.codeCIS = codeCIS;
     }
-    
+
     public int getQuantite() {
         return quantite;
     }
-    
+
     public void setQuantite(int quantite) {
         this.quantite = quantite;
     }
-    
+
     public double getPrixUnitaire() {
         return prixUnitaire;
     }
-    
+
     public void setPrixUnitaire(double prixUnitaire) {
         this.prixUnitaire = prixUnitaire;
     }
-    
+
     public String getNomMedicament() {
         return nomMedicament;
     }
-    
+
     public void setNomMedicament(String nomMedicament) {
         this.nomMedicament = nomMedicament;
     }
-    
-    // Méthode pour calculer le prix total
+
     public double getPrixTotal() {
         return quantite * prixUnitaire;
     }
-    
+
     @Override
     public String toString() {
         return "MedicamentPanier{" +
-                "medicamentId=" + medicamentId +
+                "codeCIS='" + codeCIS + '\'' +
                 ", quantite=" + quantite +
                 ", prixUnitaire=" + prixUnitaire +
                 ", nomMedicament='" + nomMedicament + '\'' +
                 '}';
     }
+
 }

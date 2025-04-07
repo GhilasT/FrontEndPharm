@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<VBox xmlns="http://javafx.com/javafx/8" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.pharmacie.controller.MedicamentsController"
+      spacing="15" 
+      style="-fx-padding: 20; -fx-background-color: #f5f5f5;"
+      stylesheets="@../css/styles.css, @../css/responsive.css"
+      styleClass="dynamic-height">
+    
+    <!-- En-tête avec titre et recherche -->
+    <HBox spacing="20" alignment="CENTER" styleClass="header-container">
+        <VBox.margin>
+            <Insets bottom="10"/>
+        </VBox.margin>
+        
+        <Label text="Gestion des Médicaments" styleClass="header-label, priority"/>
+        
+        <Region HBox.hgrow="ALWAYS" styleClass="grow" />
+        
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="flex-container">
+            <TextField fx:id="searchField" promptText="Rechercher un médicament..." prefWidth="300" styleClass="search-field, dynamic-width"/>
+            <Button fx:id="btnSearch" text="Rechercher" styleClass="button-edit, priority"/>
+        </HBox>
+    </HBox>
+    
+    <!-- Filtres avancés (initialement cachés) -->
+    <TitledPane text="Filtres avancés" expanded="false" styleClass="dynamic-width">
+        <VBox spacing="10" styleClass="dynamic-width">
+            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="flex-container">
+                <ComboBox fx:id="filterOrdonnance" promptText="Sur ordonnance" prefWidth="150" styleClass="priority">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Tous" />
+                            <String fx:value="Avec" />
+                            <String fx:value="Sans" />
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                
+                <ComboBox fx:id="filterStock" promptText="Stock" prefWidth="150" styleClass="priority">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Tous" />
+                            <String fx:value="En stock" />
+                            <String fx:value="Rupture" />
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                
+                <Button fx:id="btnApplyFilters" text="Appliquer les filtres" styleClass="button-edit, priority"/>
+                <Button fx:id="btnResetFilters" text="Réinitialiser" styleClass="button, optional"/>
+            </HBox>
+        </VBox>
+    </TitledPane>
+
+    <!-- Tableau des médicaments avec style amélioré -->
+    <TableView fx:id="medicamentsTable" prefHeight="400" styleClass="dynamic-width, dynamic-height, grow">
+        <columns>
+            <TableColumn fx:id="colCodeCIS" text="Code CIS" reorderable="false" prefWidth="100" styleClass="priority"/>
+            <TableColumn fx:id="colLibelle" text="Libellé" reorderable="false" prefWidth="200" styleClass="priority"/>
+            <TableColumn fx:id="colDenomination" text="Dénomination" reorderable="false" prefWidth="200" styleClass="priority"/>
+            <TableColumn fx:id="colDosage" text="Dosage" reorderable="false" prefWidth="100" styleClass="optional"/>
+            <TableColumn fx:id="colReference" text="Référence" reorderable="false" prefWidth="100" styleClass="optional, hide-on-small"/>
+            <TableColumn fx:id="colOrdonnance" text="Sur Ordonnance" reorderable="false" prefWidth="100" styleClass="optional"/>
+            <TableColumn fx:id="colStock" text="Stock" reorderable="false" prefWidth="80" styleClass="priority"/>
+            <TableColumn fx:id="colPrixHT" text="Prix HT" reorderable="false" prefWidth="80" styleClass="priority"/>
+            <TableColumn fx:id="colPrixTTC" text="Prix TTC" reorderable="false" prefWidth="80" styleClass="priority"/>
+        </columns>
+        <placeholder>
+            <Label text="Aucun médicament trouvé" style="-fx-font-style: italic; -fx-text-fill: #7f8c8d;"/>
+        </placeholder>
+    </TableView>
+
+    <!-- Pagination pour les grands ensembles de données -->
+    <Pagination fx:id="pagination" pageCount="10" prefHeight="40" styleClass="dynamic-width" />
+
+    <!-- Barre d'actions avec boutons stylisés -->
+    <HBox spacing="15" alignment="CENTER_RIGHT" styleClass="button-container, flex-container">
+        <Button fx:id="btnModifierStock" text="Modifier stock" disable="true" styleClass="button-edit, priority">
+            <graphic>
+                <Region style="-fx-shape: 'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'; -fx-background-color: white; -fx-min-width: 16; -fx-min-height: 16; -fx-max-width: 16; -fx-max-height: 16;"/>
+            </graphic>
+        </Button>
+        <Button fx:id="btnDetails" text="Consulter détails" disable="true" styleClass="button-details, optional">
+            <graphic>
+                <Region style="-fx-shape: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z'; -fx-background-color: white; -fx-min-width: 16; -fx-min-height: 16; -fx-max-width: 16; -fx-max-height: 16;"/>
+            </graphic>
+        </Button>
+    </HBox>
+    
+    <!-- Barre de statut -->
+    <HBox styleClass="status-bar, dynamic-width">
+        <Label fx:id="statusLabel" text="Prêt" style="-fx-text-fill: #7f8c8d;" styleClass="priority"/>
+        <Region HBox.hgrow="ALWAYS" styleClass="grow" />
+        <Label fx:id="totalItemsLabel" text="Total: 0 médicaments" style="-fx-text-fill: #7f8c8d;" styleClass="optional"/>
+    </HBox>
+</VBox>

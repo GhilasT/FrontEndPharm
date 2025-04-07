@@ -1,5 +1,7 @@
 package com.pharmacie.controller;
 
+import com.pharmacie.model.Client;
+import com.pharmacie.util.HttpClientUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -45,76 +47,72 @@ public class FormulaireClientController {
     @FXML
     private Label errorLabel;
 
+    // clientId sera récupéré dynamiquement depuis l'API
     private UUID clientId;
 
     @FXML
     void initialize() {
-        // Générer un UUID temporaire pour le client
-        clientId = UUID.randomUUID();
         errorLabel.setText("");
     }
 
     @FXML
     void handleAnnuler(ActionEvent event) {
-        // Fermer la fenêtre
         Stage stage = (Stage) btnAnnuler.getScene().getWindow();
         stage.close();
     }
 
     @FXML
-    void handleSuivant(ActionEvent event) throws IOException {
+    void handleSuivant(ActionEvent event) {
         if (validateForm()) {
-            // Créer un objet client avec les informations saisies
-            String nom = nomField.getText().trim();
-            String prenom = prenomField.getText().trim();
-            String telephone = telephoneField.getText().trim();
-            String email = emailField.getText().trim();
-            String adresse = adresseField.getText().trim();
-
-            // Charger la page de recherche de médicaments dans la même fenêtre
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/recherche-medicaments.fxml"));
-                Parent root = loader.load();
-                
-                // Obtenir le contrôleur et définir les informations du client
-                RechercheMedicamentsController controller = loader.getController();
-                controller.setClientInfo(clientId, nom, prenom, telephone, email, adresse);
-                
-                // Remplacer le contenu de la scène actuelle
-                Scene scene = btnSuivant.getScene();
-                scene.setRoot(root);
-                
-                // Mettre à jour le titre de la fenêtre
-                Stage stage = (Stage) scene.getWindow();
-                stage.setTitle("Recherche de médicaments");
-                
-                LOGGER.log(Level.INFO, "Page de recherche de médicaments chargée avec succès");
+                // Récupérer les infos saisies
+                String nom = nomField.getText().trim();
+                String prenom = prenomField.getText().trim();
+                String telephone = telephoneField.getText().trim();
+                String email = emailField.getText().trim();
+                String adresse = adresseField.getText().trim();
+
+                // Si l'email est vide, on le considère comme non fourni
+                if(email.isEmpty()){
+                    email = null;
+                }
+
+                // Créer un objet Client avec email pouvant être null
+                Client clientPayload = new Client(null, nom, prenom, telephone, email, adresse);
+
+                // Appel à l’API : findOrCreateClient
+                Client clientResponse = HttpClientUtil.findOrCreateClient(clientPayload);
+                clientId = clientResponse.getIdPersonne();                // Fermer la fenêtre du formulaire
+                Stage currentStage = (Stage) btnSuivant.getScene().getWindow();
+                currentStage.close();
+
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Erreur lors de l'ouverture de la page de recherche de médicaments", e);
+                showAlert(Alert.AlertType.ERROR, "Erreur",
+                        "Erreur lors de l'ouverture de la page de recherche",
+                        "Impossible d'ouvrir la page: " + e.getMessage());
             } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Erreur lors du chargement de la page de recherche de médicaments", e);
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du chargement", 
-                        "Impossible de charger la page de recherche: " + e.getMessage());
+                LOGGER.log(Level.SEVERE, "Erreur lors de l'appel API client", e);
+                showAlert(Alert.AlertType.ERROR, "Erreur",
+                        "Erreur lors de la création du client",
+                        "Impossible de créer/récupérer le client: " + e.getMessage());
             }
         }
     }
 
     private boolean validateForm() {
-        // Vérifier que les champs obligatoires sont remplis
         if (nomField.getText().trim().isEmpty()) {
             errorLabel.setText("Le nom est obligatoire");
             return false;
         }
-
         if (prenomField.getText().trim().isEmpty()) {
             errorLabel.setText("Le prénom est obligatoire");
             return false;
         }
-
         if (telephoneField.getText().trim().isEmpty()) {
             errorLabel.setText("Le téléphone est obligatoire");
             return false;
         }
-
-        // Validation réussie
         errorLabel.setText("");
         return true;
     }
@@ -125,5 +123,10 @@ public class FormulaireClientController {
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    public UUID getClientId() {
+        System.out.println(" le id client test dans formulaire client "+ clientId);
+        return clientId;
     }
 }

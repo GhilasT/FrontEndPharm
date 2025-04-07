@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pharmacie.controller.VenteController">
+    <top>
+        <FlowPane prefHeight="66.0" prefWidth="1280.0" style="-fx-background-color: #007B3D;" BorderPane.alignment="CENTER">
+            <children>
+                <ImageView id="bouton-menu-parametre" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                    <FlowPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </FlowPane.margin>
+                    <image>
+                        <Image url="@/com/pharmacie/images/Icones/icons8-menu-50.png" />
+                    </image>
+                </ImageView>
+                <ImageView fitHeight="59.0" fitWidth="183.0" pickOnBounds="true" preserveRatio="true">
+                    <FlowPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </FlowPane.margin>
+                    <image>
+                        <Image url="@/com/pharmacie/images/Icones/logoPharmacie.png" />
+                    </image>
+                </ImageView>
+                <Label id="labelVentes" style="-fx-text-fill: white; -fx-font-size: 48;" text="Ventes">
+                    <FlowPane.margin>
+                        <Insets top="10.0" bottom="10.0" left="10.0" right="10.0" />
+                    </FlowPane.margin>
+                </Label>
+                <ImageView id="imageBELL" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                    <FlowPane.margin>
+                        <Insets bottom="10.0" left="800.0" top="10.0" />
+                    </FlowPane.margin>
+                    <image>
+                        <Image url="@/com/pharmacie/images/Icones/icons8-rappels-de-rendez-vous-40.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </FlowPane>
+    </top>
+    <right>
+        <Pane prefHeight="645.0" prefWidth="313.0" style="-fx-background-color: rgba(0, 122, 255, 1);" BorderPane.alignment="CENTER">
+            <children>
+                <HBox layoutX="10.0" layoutY="10.0" alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <ImageView id="ImgPanier" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@/com/pharmacie/images/Icones/Full Shopping Basket.png" />
+                            </image>
+                        </ImageView>
+                        <Label text="Panier" textFill="WHITE">
+                            <font>
+                                <Font name="Arial Bold" size="36.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+                <Button fx:id="btnPayer" layoutX="17.0" layoutY="588.0" mnemonicParsing="false"
+                        prefHeight="30.0" prefWidth="102.0"
+                        style="-fx-background-color: black; -fx-background-radius: 15; -fx-text-fill: white;"
+                        text="Payer" onAction="#handlePayer" />
+                <ScrollPane layoutX="1.0" layoutY="101.0" prefHeight="383.0" prefWidth="313.0">
+                    <content>
+                        <AnchorPane style="-fx-background-color: rgba(0, 122, 255, 1);">
+                            <children>
+                                <GridPane fx:id="gridPanePanier" alignment="CENTER" prefWidth="306.0" style="-fx-hgap: 5; -fx-vgap: 5;">
+                                    <columnConstraints>
+                                        <ColumnConstraints prefWidth="174.0" />
+                                        <ColumnConstraints prefWidth="58.0" />
+                                        <ColumnConstraints prefWidth="63.0" />
+                                    </columnConstraints>
+                                    <children>
+                                        <Label text="Medicament" textFill="WHITE" GridPane.columnIndex="0">
+                                            <font><Font name="Arial Bold" size="16.0" /></font>
+                                        </Label>
+                                        <Label text="Qte" textFill="WHITE" GridPane.columnIndex="1">
+                                            <font><Font name="Arial Bold" size="16.0" /></font>
+                                        </Label>
+                                        <Label text="Prix" textFill="WHITE" GridPane.columnIndex="2">
+                                            <font><Font name="Arial Bold" size="16.0" /></font>
+                                        </Label>
+                                    </children>
+                                </GridPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </ScrollPane>
+                <ImageView id="boutonTrash" fitHeight="40.0" fitWidth="40.0" layoutX="241.0" layoutY="583.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@/com/pharmacie/images/Icones/Trash Can.png" />
+                    </image>
+                </ImageView>
+                <VBox layoutX="5.0" layoutY="490.0" spacing="10.0" prefWidth="303.0">
+                    <children>
+                        <ImageView fitHeight="10.0" fitWidth="290.0" preserveRatio="false">
+                            <image>
+                                <Image url="@/com/pharmacie/images/Icones/linear-indeterminate progress indicator.png" />
+                            </image>
+                        </ImageView>
+                        <HBox alignment="CENTER_LEFT" spacing="140.0">
+                            <children>
+                                <Label id="LabelQuantier" text="Quantité" textFill="WHITE">
+                                    <font><Font name="System Bold" size="14.0" /></font>
+                                </Label>
+                                <Label fx:id="LabelQuantierValue" text="0" textFill="WHITE">
+                                    <font><Font name="System Bold" size="14.0" /></font>
+                                </Label>
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="140.0">
+                            <children>
+                                <Label id="LabelTotal" text="Total" textFill="WHITE">
+                                    <font><Font name="System Bold" size="16.0" /></font>
+                                </Label>
+                                <Label fx:id="LabelPrixValue" text="0" textFill="WHITE">
+                                    <font><Font name="System Bold" size="16.0" /></font>
+                                </Label>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </Pane>
+    </right>
+    <center>
+        <Pane prefHeight="0.0" prefWidth="1062.0">
+            <children>
+                <TextField fx:id="barDeRecherche" layoutX="158.0" layoutY="192.0" prefHeight="42.0" prefWidth="649.0" style="-fx-padding: 6; -fx-background-radius: 30 30 0 0; -fx-background-color: white; -fx-border-radius: 30 30 0 0; -fx-border-color: A6A6A6;" text="  Saisir médicament..." />
+                <Button fx:id="btnAjouterOrdonnance" layoutX="774.0" layoutY="18.0"
+                        mnemonicParsing="false" prefHeight="40.0" prefWidth="174.0"
+                        style="-fx-background-color: rgba(0, 122, 255, 1); -fx-text-fill: white;"
+                        text="Ajouter Ordonnance" onAction="#handleAjouterOrdonnance" />
+                <ListView fx:id="listView" layoutX="160.0" layoutY="234.0" prefHeight="153.0" prefWidth="646.0" />
+                <Button fx:id="btnbarRecherche" layoutX="754.0" layoutY="193.0" prefHeight="39.0" prefWidth="52.0" style="-fx-background-color: WHITE; -fx-font-size: 19; -fx-border-color: WHITE; -fx-background-radius: 0 30 0 0; -fx-border-radius: 0 30 0 0; -fx-text-fill: BLACK;" text="↵ " />
+            </children>
+        </Pane>
+    </center>
+</BorderPane>
