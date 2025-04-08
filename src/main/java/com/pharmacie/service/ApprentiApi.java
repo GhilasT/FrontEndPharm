@@ -3,6 +3,7 @@ package com.pharmacie.service;
 import com.pharmacie.model.Apprenti;
 import com.pharmacie.model.dto.ApprentiCreateRequest;
 import com.pharmacie.model.dto.ApprentiUpdateRequest;
+import com.pharmacie.util.Global;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -22,7 +23,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 
 public class ApprentiApi {
-    private static final String BASE_URL = "http://localhost:8080/api";
+    private static final String BASE_URL = Global.getBaseUrl();
     private static final String APPRENTI_ENDPOINT = "/apprentis";
     private static final String APPRENTI_URL = BASE_URL + APPRENTI_ENDPOINT;
     private final HttpClient httpClient;

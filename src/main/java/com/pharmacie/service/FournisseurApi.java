@@ -3,6 +3,7 @@ package com.pharmacie.service;
 import com.pharmacie.model.Fournisseur;
 import com.pharmacie.model.dto.FournisseurCreateRequest;
 import com.pharmacie.model.dto.FournisseurUpdateRequest;
+import com.pharmacie.util.Global;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -17,7 +18,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class FournisseurApi {
-    private static final String BASE_URL = "http://localhost:8080/api";
+    private static final String BASE_URL = Global.getBaseUrl();
     private static final String FOURNISSEUR_ENDPOINT = "/fournisseurs";
     private static final String FOURNISSEUR_URL = BASE_URL + FOURNISSEUR_ENDPOINT;
     private final HttpClient httpClient;

@@ -3,6 +3,7 @@ package com.pharmacie.service;
 import com.pharmacie.model.Preparateur;
 import com.pharmacie.model.dto.PreparateurCreateRequest;
 import com.pharmacie.model.dto.PreparateurUpdateRequest;
+import com.pharmacie.util.Global;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -22,7 +23,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 
 public class PreparateurApi {
-    private static final String BASE_URL = "http://localhost:8080/api";
+    private static final String BASE_URL = Global.getBaseUrl();
     private static final String PREPARATEUR_ENDPOINT = "/preparateurs";
     private static final String PREPARATEUR_URL = BASE_URL + PREPARATEUR_ENDPOINT;
     private final HttpClient httpClient;

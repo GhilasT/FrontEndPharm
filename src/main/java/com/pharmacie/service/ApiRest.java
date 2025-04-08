@@ -1,6 +1,8 @@
 package com.pharmacie.service;
 
 import com.pharmacie.model.*;
+import com.pharmacie.util.Global;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -23,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class ApiRest {
     
-    private static final String API_BASE_URL = "http://localhost:8080/api";
+    private static final String API_BASE_URL = Global.getBaseUrl();
     private static final HttpClient client = HttpClient.newBuilder()
     .connectTimeout(Duration.ofSeconds(10))
     .followRedirects(HttpClient.Redirect.NORMAL)

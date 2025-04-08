@@ -1,0 +1,20 @@
+# Ignorer les fichiers compilés
+*.class
+
+# Ignorer les dossiers target (Maven / autres builds)
+**/target/
+
+# Ignorer les fichiers log
+*.log
+
+# Ignorer les fichiers temporaires système
+.DS_Store
+Thumbs.db
+
+# Ignorer les fichiers générés par les IDEs
+*.iml
+.idea/
+*.ipr
+*.iws
+.vscode/
+*.swp
