@@ -24,9 +24,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.json.JSONObject;
 
@@ -108,27 +110,28 @@ public class VenteController {
     }
 
     @FXML
-    private void rechercherMedicaments(String searchTerm) {
-        System.out.println("🔎 Terme de recherche envoyé au backend : [" + searchTerm + "]");
-        try {
-            PageResponse<Medicament> pageResponse = ApiRest.getMedicamentsPagines(0, searchTerm);
-            List<String> results = new ArrayList<>();
-            for (Medicament m : pageResponse.getContent()) {
-                String nom = (m.getDenomination() != null) ? m.getDenomination() : m.getLibelle();
-                if (nom.toLowerCase().startsWith(searchTerm.toLowerCase())) {
-                    String prix = (m.getPrixTTC() != null) ? String.format("%.2f", m.getPrixTTC()).replace(",", ".")
-                            : "0.00";
-                    results.add(nom + " - " + prix + "€ ");
-                }
-
-            }
-            listView.getItems().clear(); // on vide bien la liste à chaque fois
-            listView.getItems().setAll(results.subList(0, Math.min(5, results.size())));
-            suggestions.setAll(pageResponse.getContent());
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche", e);
+private void rechercherMedicaments(String searchTerm) {
+    try {
+        List<Medicament> medicaments = ApiRest.searchForVente(searchTerm);
+        ObservableList<String> results = FXCollections.observableArrayList();
+        
+        for (Medicament m : medicaments) {
+            String display = String.format("%s - %.2f€", 
+                !m.getDenomination().isEmpty() ? m.getDenomination() : m.getLibelle(),
+                m.getPrixTTC());
+            results.add(display);
         }
+        
+        listView.setItems(results);
+        suggestions.setAll(medicaments);
+        
+    } catch (Exception e) {
+        showAlert(Alert.AlertType.ERROR, 
+            "Erreur", 
+            "Recherche impossible", 
+            "Erreur serveur : " + e.getMessage());
     }
+}
 
     @FXML
     public void ajouterMedicament(String selected) {
@@ -215,60 +218,82 @@ public class VenteController {
     }
 
     @FXML
-    private void handlePayer(ActionEvent event) {
-        List<MedicamentPanier> panier = new ArrayList<>();
+private void handlePayer(ActionEvent event) {
+    List<MedicamentPanier> panier = new ArrayList<>();
 
-        for (int i = 1; i < rowCount; i++) {
-            Label labelNom = (Label) gridPanePanier.getChildren().get(i * 3);
-            TextField qteField = (TextField) gridPanePanier.getChildren().get(i * 3 + 1);
-            Label prixLabel = (Label) gridPanePanier.getChildren().get(i * 3 + 2);
+    for (int i = 1; i < rowCount; i++) {
+        Label labelNom = (Label) gridPanePanier.getChildren().get(i * 3);
+        TextField qteField = (TextField) gridPanePanier.getChildren().get(i * 3 + 1);
+        Label prixLabel = (Label) gridPanePanier.getChildren().get(i * 3 + 2);
 
-            Object userData = labelNom.getUserData();
-            if (userData == null) {
-                LOGGER.warning("Code CIS manquant pour la ligne : " + labelNom.getText());
-                continue;
-            }
-
-            String codeCIS = userData.toString();
-            int qte = Integer.parseInt(qteField.getText());
-            double prixUnit = Double.parseDouble(prixLabel.getText().replace("€", "").replace(",", ".").trim());
-
-            MedicamentPanier mp = new MedicamentPanier(codeCIS, qte, prixUnit);
-            mp.setNomMedicament(labelNom.getText());
-            panier.add(mp);
+        Object userData = labelNom.getUserData();
+        if (userData == null) {
+            LOGGER.warning("Code CIS manquant pour la ligne : " + labelNom.getText());
+            continue;
         }
 
-        if (clientId == null || pharmacienAdjointId == null || panier.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Champs manquants", "Informations incomplètes",
-                    "Vérifiez que le client, le pharmacien et les médicaments sont bien sélectionnés.");
-            return;
-        }
+        String codeCIS = userData.toString();
+        int qte = Integer.parseInt(qteField.getText());
+        double prixUnit = Double.parseDouble(prixLabel.getText().replace("€", "").replace(",", ".").trim());
 
-        VenteCreateRequest request = new VenteCreateRequest();
-        request.setPharmacienAdjointId(LoggedSeller.getInstance().getId());
-        request.setClientId(clientId);
-        request.setDateVente(new Date());
-        request.setModePaiement("Carte bancaire");
-        request.setMontantTotal(calculerMontantTotal(panier));
-        request.setMontantRembourse(0.0);
-        request.setMedicaments(panier);
-
-        try {
-            ApiRest.createVente(request);
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Vente créée", "La vente a bien été enregistrée.");
-            ((Stage) btnPayer.getScene().getWindow()).close();
-        } catch (Exception e) {
-            String message = e.getMessage();
-            try {
-                JSONObject json = new JSONObject(message.substring(message.indexOf("{")));
-                message = json.getString("message"); // <- nécessite que le backend renvoie {"message": "..."}
-            } catch (Exception ex) {
-                // fallback si parsing JSON échoue
-            }
-
-            showAlert(Alert.AlertType.ERROR, "Création échouée", "Vente bloquée", message);
-        }
+        MedicamentPanier mp = new MedicamentPanier(codeCIS, qte, prixUnit);
+        mp.setNomMedicament(labelNom.getText());
+        panier.add(mp);
     }
+
+    if (clientId == null || pharmacienAdjointId == null || panier.isEmpty()) {
+        showAlert(Alert.AlertType.WARNING, "Champs manquants", "Informations incomplètes",
+                "Vérifiez que le client, le pharmacien et les médicaments sont bien sélectionnés.");
+                LOGGER.log(Level.SEVERE, "Échec de la création de vente - Détails :\n"
+                + "Client ID: " + clientId + "\n"
+                + "Pharmacien ID: " + pharmacienAdjointId + "\n"
+                + "Médicaments: " + panier.stream()
+                    .map(m -> m.getCodeCIS() + " (x" + m.getQuantite() + ")")
+                    .collect(Collectors.joining(", ")));
+        return;
+    }
+
+    VenteCreateRequest request = new VenteCreateRequest();
+    request.setPharmacienAdjointId(LoggedSeller.getInstance().getId());
+    request.setClientId(clientId);
+    request.setDateVente(new Date());
+    request.setModePaiement("Carte bancaire");
+    request.setMontantTotal(calculerMontantTotal(panier));
+    request.setMontantRembourse(0.0);
+    request.setMedicaments(panier);
+
+    try {
+        // Logging détaillé de la requête
+        ObjectMapper mapper = new ObjectMapper();
+        String requestJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
+        LOGGER.info("🔄 Payload de la vente :\n" + requestJson);
+
+        ApiRest.createVente(request);
+        showAlert(Alert.AlertType.INFORMATION, "Succès", "Vente créée", "La vente a bien été enregistrée.");
+        ((Stage) btnPayer.getScene().getWindow()).close();
+    } catch (JsonProcessingException e) {
+        LOGGER.log(Level.SEVERE, "Erreur de sérialisation JSON : " + e.getMessage());
+        showAlert(Alert.AlertType.ERROR, "Erreur technique", "Problème de format de données", 
+            "Impossible de formater les données de la vente : " + e.getMessage());
+    } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Échec de la création de vente - Détails :\n"
+                + "Client ID: " + clientId + "\n"
+                + "Pharmacien ID: " + pharmacienAdjointId + "\n"
+                + "Médicaments: " + panier.stream()
+                    .map(m -> m.getCodeCIS() + " (x" + m.getQuantite() + ")")
+                    .collect(Collectors.joining(", ")), e);
+        
+        String message = e.getMessage();
+        try {
+            JSONObject json = new JSONObject(message.substring(message.indexOf("{")));
+            message = json.getString("message");
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Impossible de parser le message d'erreur", ex);
+        }
+
+        showAlert(Alert.AlertType.ERROR, "Création échouée", "Vente bloquée", message);
+    }
+}
 
     private double calculerMontantTotal(List<MedicamentPanier> panier) {
         return panier.stream().mapToDouble(mp -> mp.getPrixUnitaire() * mp.getQuantite()).sum();

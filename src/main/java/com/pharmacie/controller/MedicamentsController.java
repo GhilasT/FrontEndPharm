@@ -311,7 +311,7 @@ public class MedicamentsController {
             showError("Erreur de connexion au backend", 
                 "Impossible de récupérer les données depuis le serveur.\n\n" +
                 "Détails de l'erreur: " + errorMessage + "\n\n" +
-                "Veuillez vérifier que le serveur backend est en cours d'exécution à l'adresse: http://localhost:8080");
+                "Veuillez vérifier que le serveur backend est en cours d'exécution");
             statusLabel.setText("Erreur de connexion au backend");
             
             // Ne pas afficher de données par défaut, mais vider la liste pour montrer clairement qu'il y a un problème

@@ -9,7 +9,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class HttpClientUtil {
-    private static final String BASE_URL = "http://localhost:8080";
+    private static final String BASE_URL = Global.getBaseUrl();
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     static {
@@ -33,7 +33,7 @@ public class HttpClientUtil {
 
     public static Client getClientByTelephone(String telephone) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/api/client/telephone/" + telephone))
+                .uri(URI.create(BASE_URL + "/client/telephone/" + telephone))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
@@ -56,7 +56,7 @@ public class HttpClientUtil {
         String jsonBody = objectMapper.writeValueAsString(client);
         System.out.println("JSON envoyé pour création: " + jsonBody);
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/api/client"))
+                .uri(URI.create(BASE_URL + "/client"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();

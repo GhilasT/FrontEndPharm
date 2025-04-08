@@ -1,5 +1,7 @@
 package com.pharmacie.util;
 
+import java.util.UUID;
+
 import com.pharmacie.model.Client;
 
 public class Global {
@@ -9,4 +11,9 @@ public class Global {
     public static String getBaseUrl() {
         return BASE_URL;
     }
+    public static UUID getClientId() {
+        return GlobalClient.getIdPersonne();
+    }
+    
+
 }

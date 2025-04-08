@@ -1,6 +1,7 @@
 package com.pharmacie.controller;
 
 import com.pharmacie.model.Client;
+import com.pharmacie.util.Global;
 import com.pharmacie.util.HttpClientUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -62,43 +63,49 @@ public class FormulaireClientController {
     }
 
     @FXML
-    void handleSuivant(ActionEvent event) {
-        if (validateForm()) {
+void handleSuivant(ActionEvent event) {
+    if (validateForm()) {
+        try {
+            // Récupérer les infos saisies
+            String nom = nomField.getText().trim();
+            String prenom = prenomField.getText().trim();
+            String telephone = telephoneField.getText().trim();
+            String email = emailField.getText().trim();
+            String adresse = adresseField.getText().trim();
+
+            // Si l'email est vide, on le considère comme non fourni
+            if(email.isEmpty()){
+                email = null;
+            }
+
+            // Créer un objet Client avec email pouvant être null
+            Client clientPayload = new Client(null, nom, prenom, telephone, email, adresse);
+
             try {
-                // Récupérer les infos saisies
-                String nom = nomField.getText().trim();
-                String prenom = prenomField.getText().trim();
-                String telephone = telephoneField.getText().trim();
-                String email = emailField.getText().trim();
-                String adresse = adresseField.getText().trim();
-
-                // Si l'email est vide, on le considère comme non fourni
-                if(email.isEmpty()){
-                    email = null;
-                }
-
-                // Créer un objet Client avec email pouvant être null
-                Client clientPayload = new Client(null, nom, prenom, telephone, email, adresse);
-
-                // Appel à l’API : findOrCreateClient
+                // Appel à l'API : findOrCreateClient
                 Client clientResponse = HttpClientUtil.findOrCreateClient(clientPayload);
-                clientId = clientResponse.getIdPersonne();                // Fermer la fenêtre du formulaire
+                clientId = clientResponse.getIdPersonne();
+                // Mettre à jour le client global
+                Global.GlobalClient = clientResponse;
+                Global.GlobalClient.setId(clientId);
+                
+                // Fermer la fenêtre du formulaire
                 Stage currentStage = (Stage) btnSuivant.getScene().getWindow();
                 currentStage.close();
-
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Erreur lors de l'ouverture de la page de recherche de médicaments", e);
-                showAlert(Alert.AlertType.ERROR, "Erreur",
-                        "Erreur lors de l'ouverture de la page de recherche",
-                        "Impossible d'ouvrir la page: " + e.getMessage());
-            } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Erreur lors de l'appel API client", e);
-                showAlert(Alert.AlertType.ERROR, "Erreur",
-                        "Erreur lors de la création du client",
-                        "Impossible de créer/récupérer le client: " + e.getMessage());
+            } catch (java.net.ConnectException e) {
+                LOGGER.log(Level.SEVERE, "Erreur de connexion au serveur", e);
+                showAlert(Alert.AlertType.ERROR, "Erreur de connexion",
+                    "Impossible de se connecter au serveur",
+                    "Vérifiez que le serveur est en fonctionnement et que votre réseau est connecté.");
             }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de l'appel API client", e);
+            showAlert(Alert.AlertType.ERROR, "Erreur",
+                    "Erreur lors de la création du client",
+                    "Impossible de créer/récupérer le client: " + e.getMessage());
         }
     }
+}
 
     private boolean validateForm() {
         if (nomField.getText().trim().isEmpty()) {
