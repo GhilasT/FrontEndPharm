@@ -9,11 +9,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.time.Instant;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -137,6 +136,7 @@ public class ApiRest {
             LOGGER.log(Level.INFO, "Réponse paginée reçue avec le code {0}", response.statusCode());
             
             if (response.statusCode() == 200) {
+                System.out.println("🧾 JSON brut reçu :\n" + response.body());
                 PageResponse<Medicament> pageResponse = parsePageResponse(response.body());
                 LOGGER.log(Level.INFO, "Récupération réussie de la page {0}/{1} avec {2} médicaments", 
                         new Object[]{pageResponse.getCurrentPage(), pageResponse.getTotalPages(), pageResponse.getContent().size()});
@@ -356,39 +356,46 @@ public class ApiRest {
     public static Vente createVente(VenteCreateRequest request) throws Exception {
         String url = API_BASE_URL + "/ventes";
         LOGGER.log(Level.INFO, "Envoi d'une requête POST pour créer une vente");
-        
+
         try {
-            // On fixe directement le JSON à envoyer
             JSONObject jsonRequest = new JSONObject();
-            jsonRequest.put("pharmacienAdjointId", "178ee63d-fcf4-4db1-a63c-bfdfa84bdd6e");
-            jsonRequest.put("clientId", "567b0d52-108e-4ecf-a19a-4e60c50a85d5");
-            jsonRequest.put("modePaiement", "Carte");
-            jsonRequest.put("montantTotal", 50.0);
-            jsonRequest.put("montantRembourse", 10.0);
-    
-            // Tableau de médicaments
+            jsonRequest.put("pharmacienAdjointId", request.getPharmacienAdjointId());
+            jsonRequest.put("clientId", request.getClientId());
+
+            SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+            isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            String formattedDate = isoFormat.format(request.getDateVente());
+            jsonRequest.put("dateVente", formattedDate);
+            jsonRequest.put("modePaiement", request.getModePaiement());
+            jsonRequest.put("montantTotal", request.getMontantTotal());
+            jsonRequest.put("montantRembourse", request.getMontantRembourse());
+            jsonRequest.put("ordonnanceAjoutee", request.isOrdonnanceAjoutee());
+
             JSONArray medicamentsArray = new JSONArray();
-    
-            JSONObject medicamentJson = new JSONObject();
-            JSONObject stockMedicamentJson = new JSONObject();
-            stockMedicamentJson.put("id", "98042");
-            medicamentJson.put("stockMedicament", stockMedicamentJson);
-            medicamentJson.put("quantite", 2);
-    
-            medicamentsArray.put(medicamentJson);
+            for (MedicamentPanier mp : request.getMedicaments()) {
+                JSONObject medicamentJson = new JSONObject();
+                medicamentJson.put("codeCip13", mp.getCodeCIS()); // ✅ on envoie le codeCIS, pas un ID
+                medicamentJson.put("quantite", mp.getQuantite());
+                medicamentsArray.put(medicamentJson);
+            }
             jsonRequest.put("medicaments", medicamentsArray);
-    
+
+            System.out.println("📤 JSON envoyé à l'API :\n" + jsonRequest.toString(2));
+
             HttpRequest httpRequest = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .timeout(Duration.ofSeconds(15))
+                    .timeout(Duration.ofSeconds(70))
                     .POST(HttpRequest.BodyPublishers.ofString(jsonRequest.toString()))
                     .build();
-    
+
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            
+            // 🔍 TEST ICI : Vérifier le statut et le contenu de la réponse
+            System.out.println("📨 Code HTTP : " + response.statusCode());
+            System.out.println("📨 Réponse brute : \n" + response.body());
+
             LOGGER.log(Level.INFO, "Réponse reçue avec le code {0}", response.statusCode());
-            
+
             if (response.statusCode() == 201) {
                 Vente vente = parseVenteResponse(response.body());
                 LOGGER.log(Level.INFO, "Création réussie de la vente {0}", vente.getIdVente());
@@ -526,6 +533,13 @@ private static PageResponse<Medicament> parsePageResponse(String jsonResponse) {
         for (int i = 0; i < contentArray.length(); i++) {
             JSONObject medicamentJson = contentArray.getJSONObject(i);
             Medicament medicament = new Medicament();
+
+            if (medicamentJson.has("id")) {
+                medicament.setId(medicamentJson.getLong("id"));
+                LOGGER.log(Level.INFO, "Parsed id: {0}", medicament.getId());
+            } else {
+                LOGGER.log(Level.WARNING, "Champ 'id' manquant pour un médicament !");
+            }
 
             // Parse and log each field
             if (medicamentJson.has("codeCIS")) {
@@ -674,41 +688,45 @@ private static PageResponse<Medicament> parsePageResponse(String jsonResponse) {
      */
     private static Vente parseVenteJson(JSONObject venteJson) {
         Vente vente = new Vente();
-        
+
         try {
             vente.setIdVente(UUID.fromString(venteJson.getString("idVente")));
-            vente.setDateVente(new Date(venteJson.getLong("dateVente")));
+
+            // Conversion de la date à partir d'une chaîne ISO
+            String dateStr = venteJson.getString("dateVente");
+            vente.setDateVente(Date.from(Instant.parse(dateStr)));
+
             vente.setModePaiement(venteJson.getString("modePaiement"));
             vente.setMontantTotal(venteJson.getDouble("montantTotal"));
             vente.setMontantRembourse(venteJson.getDouble("montantRembourse"));
             vente.setPharmacienAdjointId(UUID.fromString(venteJson.getString("pharmacienAdjointId")));
             vente.setClientId(UUID.fromString(venteJson.getString("clientId")));
-            
+
             if (venteJson.has("notification")) {
                 vente.setNotification(venteJson.getString("notification"));
             }
-            
+
             List<Medicament> medicaments = new ArrayList<>();
             JSONArray medicamentsArray = venteJson.getJSONArray("medicamentIds");
-            
+
             for (int j = 0; j < medicamentsArray.length(); j++) {
                 JSONObject medicamentJson = medicamentsArray.getJSONObject(j);
                 Medicament medicament = new Medicament();
-                
+
                 medicament.setId(medicamentJson.getLong("id"));
                 medicament.setCodeCip13(medicamentJson.getString("codeCip13"));
                 medicament.setLibelle(medicamentJson.getString("libelle"));
                 medicament.setPrix(medicamentJson.getDouble("prix"));
                 medicament.setQuantite(medicamentJson.getInt("quantite"));
-                
+
                 medicaments.add(medicament);
             }
-            
+
             vente.setMedicaments(medicaments);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Erreur lors du parsing d'un objet JSON vente", e);
         }
-        
+
         return vente;
     }
     public static JSONObject getMedicamentInfosAdmin(String codeCip13) {

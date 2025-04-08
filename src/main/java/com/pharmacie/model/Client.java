@@ -6,7 +6,7 @@ import java.util.UUID;
  * Modèle représentant un client dans le frontend.
  */
 public class Client {
-    private UUID id;
+    private UUID idPersonne;
     private String nom;
     private String prenom;
     private String telephone;
@@ -19,7 +19,7 @@ public class Client {
     
     // Constructeur avec tous les paramètres
     public Client(UUID id, String nom, String prenom, String telephone, String email, String adresse) {
-        this.id = id;
+        this.idPersonne = id;
         this.nom = nom;
         this.prenom = prenom;
         this.telephone = telephone;
@@ -28,12 +28,12 @@ public class Client {
     }
     
     // Getters et Setters
-    public UUID getId() {
-        return id;
+    public UUID getIdPersonne() {
+        return idPersonne;
     }
     
     public void setId(UUID id) {
-        this.id = id;
+        this.idPersonne = id;
     }
     
     public String getNom() {
