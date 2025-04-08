@@ -147,7 +147,10 @@ public class Login extends FlowPane {
 
         return grid;
     }
-
+    public void clearFields() {
+        username.clear();
+        password.clear();
+    }
     private GridPane createButtonsGrid() {
         GridPane grid = new GridPane();
         grid.setHgap(20);

@@ -6,7 +6,12 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
 import java.io.IOException;
+
+import com.pharmacie.App;
+import com.pharmacie.util.LoggedSeller;
 
 public class DashboardAdminController {
 
@@ -20,11 +25,20 @@ public class DashboardAdminController {
     @FXML private Button GestAutorisations;
     @FXML private Button GestStocks;
     @FXML private Button GestMedicaments;
+    @FXML private Button btnLogoutAdmin;
 
     @FXML
     private void initialize() {
+        btnLogoutAdmin.setOnAction(e -> handleLogout());
         setupButtonHandlers();
     }
+
+    private void handleLogout() {
+    LoggedSeller.getInstance().clearUser();
+    Stage stage = (Stage) contentArea.getScene().getWindow();
+    stage.setScene(App.getLoginScene());
+    ((Login) App.getLoginScene().getRoot()).clearFields();
+}
 
     private void setupButtonHandlers() {
         GestPerso.setOnAction(e -> loadGestionPersonnel());
