@@ -18,112 +18,152 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<fx:root type="StackPane" xmlns="http://javafx.com/javafx" 
-         xmlns:fx="http://javafx.com/fxml">
+<fx:root type="StackPane" xmlns="http://javafx.com/javafx"
+   xmlns:fx="http://javafx.com/fxml">
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="830.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8">
-   <children>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="830.0" prefWidth="1280.0">
-         <top>
-            <HBox alignment="CENTER_LEFT" maxHeight="100.0" maxWidth="1280.0" prefHeight="100.0" prefWidth="1280.0" style="-fx-background-color: #007B3D;" BorderPane.alignment="CENTER_LEFT">
-               <children>
-                  <Button fx:id="menuButton" maxWidth="85.0" minWidth="85.0" mnemonicParsing="false" prefWidth="85.0" style="-fx-background-color: transparent;" text="M" textFill="WHITE">
-                     <font>
-                        <Font size="36.0"/>
-                     </font>
-                  </Button>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                                                <Image url="@../Images/Icones/icons8-medicament-50.png" />
-                     </image>
-                  </ImageView>
-                  <Label maxWidth="180.0" minWidth="180.0" prefWidth="180.0" text="Pharmacie" textFill="WHITE">
-                     <font>
-                        <Font name="Open Sans Semibold" size="34.0" />
-                     </font>
-                  </Label>
-                  <Label text="l" textFill="WHITE">
-                     <font>
-                        <Font name="Open Sans" size="52.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="headerTitle" maxWidth="900.0" minWidth="900.0" prefWidth="900.0" text="Tableau de bord" textFill="WHITE">
-                     <font>
-                        <Font name="Open Sans" size="24.0" />
-                     </font>
-                  </Label>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Images/Icones/icons8-rappels-de-rendez-vous-40.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </HBox>
-         </top>
-         <center>
-            <StackPane fx:id="contentPane" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER" />
-         </center>
-      </BorderPane>
-      <VBox fx:id="sideMenu" alignment="TOP_CENTER" maxHeight="732.0" maxWidth="300.0" prefHeight="732.0" prefWidth="300.0" style="-fx-background-color: #007B3D;" translateX="-300.0" StackPane.alignment="BOTTOM_LEFT">
-         <children>
-            <ImageView fitHeight="90.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../Images/Icones/user.png" />
-               </image>
-            </ImageView>
-            <Label fx:id="userLabel" styleClass="user-name" layoutX="20" layoutY="20" textFill="WHITE">
-               <font>
-                  <Font name="Open Sans" size="22.0" />
-               </font>
-            </Label>
-            <Pane maxHeight="60.0" maxWidth="300.0" prefHeight="60.0" prefWidth="300.0" />
-            <GridPane>
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Button fx:id="btnDashboard" maxHeight="60.0" maxWidth="300.0" minHeight="60.0" minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0" style="-fx-background-color: transparent;" text="Tableau de Bord" textFill="WHITE">
-                     <font>
-                        <Font name="Open Sans Semibold" size="20.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="btnSales" maxHeight="60.0" maxWidth="300.0" minHeight="60.0" minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0" style="-fx-background-color: transparent;" text="Ventes" textFill="WHITE" GridPane.rowIndex="1">
-                     <font>
-                        <Font name="Open Sans Semibold" size="20.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="btnMedics" maxHeight="60.0" maxWidth="300.0" minHeight="60.0" minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0" style="-fx-background-color: transparent;" text="Médicaments" textFill="WHITE" GridPane.rowIndex="2">
-                     <font>
-                        <Font name="Open Sans Semibold" size="20.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="btnSuppliers" maxHeight="60.0" maxWidth="300.0" minHeight="60.0" minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0" style="-fx-background-color: transparent;" text="Fournisseurs" textFill="WHITE" GridPane.rowIndex="3">
-                     <font>
-                        <Font name="Open Sans Semibold" size="20.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="btnAnalytics" maxHeight="60.0" maxWidth="300.0" minHeight="60.0" minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0" style="-fx-background-color: transparent;" text="Analyse des ventes" textFill="WHITE" GridPane.rowIndex="4">
-                     <font>
-                        <Font name="Open Sans Semibold" size="20.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="btnSettings" maxHeight="60.0" maxWidth="300.0" minHeight="60.0" minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0" style="-fx-background-color: transparent;" text="Paramètres" textFill="WHITE" GridPane.rowIndex="5">
-                     <font>
-                        <Font name="Open Sans Semibold" size="20.0" />
-                     </font>
-                  </Button>
-               </children>
-            </GridPane>
-         </children>
-      </VBox>
-   </children>
-</StackPane>
+   <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="830.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8">
+      <children>
+         <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="830.0" prefWidth="1280.0">
+            <top>
+               <HBox alignment="CENTER_LEFT" maxHeight="100.0" maxWidth="1280.0" prefHeight="100.0"
+                  prefWidth="1280.0" style="-fx-background-color: #007B3D;"
+                  BorderPane.alignment="CENTER_LEFT">
+                  <children>
+                     <Button fx:id="menuButton" maxWidth="85.0" minWidth="85.0"
+                        mnemonicParsing="false" prefWidth="85.0"
+                        style="-fx-background-color: transparent;" text="M" textFill="WHITE">
+                        <font>
+                           <Font size="36.0" />
+                        </font>
+                     </Button>
+                     <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true"
+                        preserveRatio="true">
+                        <image>
+                           <Image url="@../Images/Icones/icons8-medicament-50.png" />
+                        </image>
+                     </ImageView>
+                     <Label maxWidth="180.0" minWidth="180.0" prefWidth="180.0" text="Pharmacie"
+                        textFill="WHITE">
+                        <font>
+                           <Font name="Open Sans Semibold" size="34.0" />
+                        </font>
+                     </Label>
+                     <Label text="l" textFill="WHITE">
+                        <font>
+                           <Font name="Open Sans" size="52.0" />
+                        </font>
+                     </Label>
+                     <Label fx:id="headerTitle" maxWidth="900.0" minWidth="900.0" prefWidth="900.0"
+                        text="Tableau de bord" textFill="WHITE">
+                        <font>
+                           <Font name="Open Sans" size="24.0" />
+                        </font>
+                     </Label>
+                     <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true"
+                        preserveRatio="true">
+                        <image>
+                           <Image url="@../Images/Icones/icons8-rappels-de-rendez-vous-40.png" />
+                        </image>
+                     </ImageView>
+                  </children>
+               </HBox>
+            </top>
+            <center>
+               <StackPane fx:id="contentPane" prefHeight="150.0" prefWidth="200.0"
+                  style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER" />
+            </center>
+         </BorderPane>
+         <VBox fx:id="sideMenu" alignment="TOP_CENTER" maxHeight="732.0" maxWidth="300.0"
+            prefHeight="732.0" prefWidth="300.0" style="-fx-background-color: #007B3D;"
+            translateX="-300.0" StackPane.alignment="BOTTOM_LEFT">
+            <children>
+               <ImageView fitHeight="90.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../Images/Icones/user.png" />
+                  </image>
+               </ImageView>
+               <Label fx:id="userLabel" styleClass="user-name" layoutX="20" layoutY="20"
+                  textFill="WHITE">
+                  <font>
+                     <Font name="Open Sans" size="22.0" />
+                  </font>
+               </Label>
+               <Pane maxHeight="60.0" maxWidth="300.0" prefHeight="60.0" prefWidth="300.0" />
+               <GridPane>
+                  <columnConstraints>
+                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  </columnConstraints>
+                  <rowConstraints>
+                     <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
+                     <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
+                     <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
+                     <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
+                     <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
+                     <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
+                  </rowConstraints>
+                  <children>
+                     <Button fx:id="btnDashboard" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
+                        minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
+                        style="-fx-background-color: transparent;" text="Tableau de Bord"
+                        textFill="WHITE">
+                        <font>
+                           <Font name="Open Sans Semibold" size="20.0" />
+                        </font>
+                     </Button>
+                     <Button fx:id="btnSales" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
+                        minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
+                        style="-fx-background-color: transparent;" text="Ventes" textFill="WHITE"
+                        GridPane.rowIndex="1">
+                        <font>
+                           <Font name="Open Sans Semibold" size="20.0" />
+                        </font>
+                     </Button>
+                     <Button fx:id="btnMedics" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
+                        minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
+                        style="-fx-background-color: transparent;" text="Médicaments"
+                        textFill="WHITE" GridPane.rowIndex="2">
+                        <font>
+                           <Font name="Open Sans Semibold" size="20.0" />
+                        </font>
+                     </Button>
+                     <Button fx:id="btnSuppliers" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
+                        minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
+                        style="-fx-background-color: transparent;" text="Fournisseurs"
+                        textFill="WHITE" GridPane.rowIndex="3">
+                        <font>
+                           <Font name="Open Sans Semibold" size="20.0" />
+                        </font>
+                     </Button>
+                     <Button fx:id="btnAnalytics" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
+                        minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
+                        style="-fx-background-color: transparent;" text="Analyse des ventes"
+                        textFill="WHITE" GridPane.rowIndex="4">
+                        <font>
+                           <Font name="Open Sans Semibold" size="20.0" />
+                        </font>
+                     </Button>
+                     <Button fx:id="btnSettings" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
+                        minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
+                        style="-fx-background-color: transparent;" text="Paramètres"
+                        textFill="WHITE" GridPane.rowIndex="5">
+                        <font>
+                           <Font name="Open Sans Semibold" size="20.0" />
+                        </font>
+                     </Button>
+                     <Button fx:id="btnLogout" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
+                        minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
+                        style="-fx-background-color: transparent;" text="Déconnexion"
+                        textFill="WHITE" GridPane.rowIndex="6">
+                        <font>
+                           <Font name="Open Sans Semibold" size="20.0" />
+                        </font>
+                     </Button>
+                  </children>
+               </GridPane>
+            </children>
+         </VBox>
+      </children>
+   </StackPane>
 </fx:root>

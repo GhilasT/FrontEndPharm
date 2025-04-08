@@ -6,84 +6,96 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Region?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="1300.0" 
-      prefHeight="800.0" prefWidth="1300.0" style="-fx-background-color: #FFFFFF;" 
-      xmlns="http://javafx.com/javafx/20.0.1" 
-      xmlns:fx="http://javafx.com/fxml/1" 
-      fx:controller="com.pharmacie.controller.DashboardAdminController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="1300.0"
+   prefHeight="800.0" prefWidth="1300.0" style="-fx-background-color: #FFFFFF;"
+   xmlns="http://javafx.com/javafx/20.0.1"
+   xmlns:fx="http://javafx.com/fxml/1"
+   fx:controller="com.pharmacie.controller.DashboardAdminController">
 
    <children>
       <!-- En-tête fixe -->
-      <HBox prefHeight="90.0" prefWidth="1300.0" style="-fx-background-color: #007B3D;" alignment="CENTER_LEFT">
+      <HBox prefHeight="90.0" prefWidth="1300.0" style="-fx-background-color: #007B3D;"
+         alignment="CENTER_LEFT">
          <children>
-            <Label text="Tableau de bord Admin" style="-fx-text-fill: white; -fx-font-size: 24; -fx-padding: 0 0 0 20;"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnLogoutAdmin" mnemonicParsing="false" text="Déconnexion"
+               textFill="WHITE">
+               <font>
+                  <Font name="Open Sans Semibold" size="18.0" />
+               </font>
+            </Button>
+            <Label text="Tableau de bord Admin"
+               style="-fx-text-fill: white; -fx-font-size: 24; -fx-padding: 0 0 0 20;" />
          </children>
       </HBox>
 
-      <!-- Zone de contenu dynamique qui contiendra soit le dashboard, soit la vue de gestion du personnel -->
+      <!-- Zone de contenu dynamique qui contiendra soit le dashboard, soit la vue de gestion du
+      personnel -->
       <StackPane fx:id="contentArea" layoutY="90.0" prefWidth="1300.0" prefHeight="710.0">
          <!-- Pane contenant les boutons du dashboard -->
          <Pane fx:id="dashboardPane">
-            <Button fx:id="GestPerso" layoutX="42.0" layoutY="52.0" mnemonicParsing="false" 
-                  prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;" 
-                  text="Gestion du personnel" textFill="WHITE">
+            <Button fx:id="GestPerso" layoutX="42.0" layoutY="52.0" mnemonicParsing="false"
+               prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;"
+               text="Gestion du personnel" textFill="WHITE">
                <font>
                   <Font name="Open Sans Semibold" size="18.0" />
                </font>
             </Button>
-            
-            <Button fx:id="GestMedicaments" layoutX="998.0" layoutY="228.0" mnemonicParsing="false" 
-                  prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;" 
-                  text="Gestion des Médicaments" textFill="WHITE">
+
+            <Button fx:id="GestMedicaments" layoutX="998.0" layoutY="228.0" mnemonicParsing="false"
+               prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;"
+               text="Gestion des Médicaments" textFill="WHITE">
                <font>
                   <Font name="Open Sans Semibold" size="18.0" />
                </font>
             </Button>
-            
-            <Button fx:id="GestCommandes" layoutX="998.0" layoutY="52.0" mnemonicParsing="false" 
-                  prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;" 
-                  text="Gestion des commandes" textFill="WHITE">
+
+            <Button fx:id="GestCommandes" layoutX="998.0" layoutY="52.0" mnemonicParsing="false"
+               prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;"
+               text="Gestion des commandes" textFill="WHITE">
                <font>
                   <Font name="Open Sans Semibold" size="18.0" />
                </font>
             </Button>
-            
-            <Button fx:id="GestVentes" layoutX="42.0" layoutY="228.0" mnemonicParsing="false" 
-                  prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;" 
-                  text="Gestion des ventes" textFill="WHITE">
+
+            <Button fx:id="GestVentes" layoutX="42.0" layoutY="228.0" mnemonicParsing="false"
+               prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;"
+               text="Gestion des ventes" textFill="WHITE">
                <font>
                   <Font name="Open Sans Semibold" size="18.0" />
                </font>
             </Button>
-            
-            <Button fx:id="GestFournisseurs" layoutX="358.0" layoutY="52.0" mnemonicParsing="false" 
-                  prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;" 
-                  text="Gestion des fournisseurs" textFill="WHITE">
+
+            <Button fx:id="GestFournisseurs" layoutX="358.0" layoutY="52.0" mnemonicParsing="false"
+               prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;"
+               text="Gestion des fournisseurs" textFill="WHITE">
                <font>
                   <Font name="Open Sans Semibold" size="18.0" />
                </font>
             </Button>
-            
-            <Button fx:id="GestAutorisations" layoutX="358.0" layoutY="228.0" mnemonicParsing="false" 
-                  prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;" 
-                  text="Gestion des autorisations" textFill="WHITE">
+
+            <Button fx:id="GestAutorisations" layoutX="358.0" layoutY="228.0"
+               mnemonicParsing="false"
+               prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;"
+               text="Gestion des autorisations" textFill="WHITE">
                <font>
                   <Font name="Open Sans Semibold" size="18.0" />
                </font>
             </Button>
-            
-            <Button fx:id="GestStocks" layoutX="680.0" layoutY="228.0" mnemonicParsing="false" 
-                  prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;" 
-                  text="Gestion des stocks" textFill="WHITE">
+
+            <Button fx:id="GestStocks" layoutX="680.0" layoutY="228.0" mnemonicParsing="false"
+               prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;"
+               text="Gestion des stocks" textFill="WHITE">
                <font>
                   <Font name="Open Sans Semibold" size="18.0" />
                </font>
             </Button>
-            
-            <Button fx:id="GestMedecins" layoutX="680.0" layoutY="52.0" mnemonicParsing="false" 
-                  prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;" 
-                  text="Gestion des médecins" textFill="WHITE">
+
+            <Button fx:id="GestMedecins" layoutX="680.0" layoutY="52.0" mnemonicParsing="false"
+               prefHeight="116.0" prefWidth="262.0" style="-fx-background-color: #1F82F2;"
+               text="Gestion des médecins" textFill="WHITE">
                <font>
                   <Font name="Open Sans Semibold" size="18.0" />
                </font>

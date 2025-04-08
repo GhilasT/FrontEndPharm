@@ -19,11 +19,21 @@ import com.pharmacie.controller.Login;
 import com.pharmacie.controller.PharmacyDashboard;
 import com.pharmacie.controller.PharmacyDashboardModifier;
 import com.pharmacie.model.dto.LoginResponse;
+import com.pharmacie.util.Global;
 import com.pharmacie.util.LoggedSeller;
 
 public class App extends Application {
+    private static Stage primaryStage;
+    private static Scene loginScene;
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
 
-    private static final String API_URL = "http://localhost:8080/api/auth/login";
+    public static Scene getLoginScene() {
+        return loginScene;
+    }
+
+    private static final String API_URL = Global.getBaseUrl() + "/auth/login";
     PharmacyDashboard dashboard = new PharmacyDashboard();
     private Parent dashboardAdmin;
     Scene adminScene;
@@ -33,8 +43,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        App.primaryStage = primaryStage;
         Login login = new Login();
-        Scene loginScene = new Scene(login);
+        loginScene = new Scene(login);
         Scene dashBoardScene = new Scene(dashboard);
         try {
             dashboardAdmin = FXMLLoader.load(getClass().getResource("/com/pharmacie/view/DashboardAdmin.fxml"));

@@ -308,7 +308,25 @@ public class ApiRest {
             throw new Exception("Erreur de communication avec le serveur: " + e.getMessage(), e);
         }
     }
-    
+    private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
+        List<Medicament> medicaments = new ArrayList<>();
+        try {
+            JSONArray medicamentsArray = new JSONArray(jsonResponse);
+            for (int i = 0; i < medicamentsArray.length(); i++) {
+                JSONObject medJson = medicamentsArray.getJSONObject(i);
+                Medicament m = new Medicament();
+                m.setCodeCip13(medJson.getString("codeCip13")); // Récupérer codeCip13
+                m.setLibelle(medJson.optString("libelle", ""));
+                m.setDenomination(medJson.optString("denomination", ""));
+                String prixTTC = medJson.optString("prixTTC", "0.0");
+                m.setPrixTTC(new BigDecimal(prixTTC));
+                medicaments.add(m);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur parsing réponse vente", e);
+        }
+        return medicaments;
+    }
     /**
      * Récupère une vente par son ID depuis l'API.
      * 

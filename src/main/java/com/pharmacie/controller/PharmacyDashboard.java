@@ -3,6 +3,7 @@ package com.pharmacie.controller;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.pharmacie.App;
 import com.pharmacie.util.LoggedSeller;
 
 import javafx.animation.TranslateTransition;
@@ -19,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class PharmacyDashboard extends StackPane {
@@ -36,6 +38,7 @@ public class PharmacyDashboard extends StackPane {
     @FXML private Button btnSettings;
     @FXML private Label headerTitle;
     @FXML private Label userLabel;
+    @FXML private Button btnLogout;
 
     private BooleanProperty menuVisible = new SimpleBooleanProperty(false);
     private TilePane dashboardTilePane;
@@ -63,6 +66,8 @@ public class PharmacyDashboard extends StackPane {
         configureMenuButtons();
         menuButton.setOnAction(event -> toggleMenu());
         setupMenuActions();
+        btnLogout.setOnAction(event -> handleLogout());
+        configureMenuButton(btnLogout, "logout.png", "Déconnexion");
         loadDashboard();
         userLabel.setText(LoggedSeller.getInstance().getNomComplet());
 
@@ -136,6 +141,12 @@ private void showAccessDenied() {
         configureMenuButton(btnAnalytics, "analyseventes.png", "Analyse des ventes");
         configureMenuButton(btnSettings, "paramètres.png", "Paramètres");
     }
+    private void handleLogout() {
+    LoggedSeller.getInstance().clearUser();
+    Stage stage = (Stage) getScene().getWindow();
+    stage.setScene(App.getLoginScene());
+    ((Login) App.getLoginScene().getRoot()).clearFields();
+}
 
     private void setupMenuActions() {
         btnDashboard.setOnAction(event -> {

@@ -20,7 +20,6 @@ import javafx.stage.Stage;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Locale;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -107,6 +106,7 @@ public class VenteController {
     public void setPharmacienAdjointId(UUID pharmId) {
         this.pharmacienAdjointId = pharmId;
     }
+
     @FXML
     private void rechercherMedicaments(String searchTerm) {
         System.out.println("🔎 Terme de recherche envoyé au backend : [" + searchTerm + "]");
@@ -116,7 +116,8 @@ public class VenteController {
             for (Medicament m : pageResponse.getContent()) {
                 String nom = (m.getDenomination() != null) ? m.getDenomination() : m.getLibelle();
                 if (nom.toLowerCase().startsWith(searchTerm.toLowerCase())) {
-                    String prix = (m.getPrixTTC() != null) ? String.format("%.2f", m.getPrixTTC()).replace(",", ".") : "0.00";
+                    String prix = (m.getPrixTTC() != null) ? String.format("%.2f", m.getPrixTTC()).replace(",", ".")
+                            : "0.00";
                     results.add(nom + " - " + prix + "€ ");
                 }
 
@@ -154,15 +155,15 @@ public class VenteController {
             }
 
             Medicament med = match.get();
-            String codeCIS = med.getCodeCIS();
-            if (codeCIS == null || codeCIS.isBlank()) {
-                LOGGER.warning("Code CIS manquant pour le médicament : " + med.getLibelle());
+            String codeCip13 = med.getCodeCip13();
+            if (codeCip13 == null || codeCip13.isBlank()) {
+                LOGGER.warning("Code CIP13 manquant pour le médicament : " + med.getLibelle());
                 return;
             }
 
             Label labelNom = new Label(nom);
             labelNom.setTextFill(Color.WHITE);
-            labelNom.setUserData(codeCIS); // ✅ Associer le codeCIS au label
+            labelNom.setUserData(codeCip13); 
 
             TextField qteField = new TextField("1");
             qteField.setStyle("-fx-text-fill: white; -fx-control-inner-background: rgba(0,122,255,1);");
@@ -212,6 +213,7 @@ public class VenteController {
         LabelQuantierValue.setText(String.valueOf(sommeQte));
         LabelPrixValue.setText(String.format("%.2f €", total));
     }
+
     @FXML
     private void handlePayer(ActionEvent event) {
         List<MedicamentPanier> panier = new ArrayList<>();
@@ -272,7 +274,7 @@ public class VenteController {
         return panier.stream().mapToDouble(mp -> mp.getPrixUnitaire() * mp.getQuantite()).sum();
     }
 
-    private void showAlert(Alert.AlertType type, String title, String header, String content){
+    private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);
@@ -286,7 +288,6 @@ public class VenteController {
                 Alert.AlertType.INFORMATION,
                 "Fonctionnalité non disponible",
                 "Ajout d'ordonnance",
-                "Cette fonctionnalité n'est pas encore disponible."
-        );
+                "Cette fonctionnalité n'est pas encore disponible.");
     }
 }

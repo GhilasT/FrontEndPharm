@@ -31,4 +31,10 @@ public class LoggedSeller {
     public String getNomComplet() {
         return nom + " " + prenom;
     }
+    public void clearUser() {
+        this.id = null;
+        this.nom = null;
+        this.prenom = null;
+        this.role = null;
+    }
 }

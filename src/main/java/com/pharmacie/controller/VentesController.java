@@ -3,6 +3,7 @@ package com.pharmacie.controller;
 import com.pharmacie.model.Employe;
 import com.pharmacie.model.Vente;
 import com.pharmacie.service.ApiRest;
+import com.pharmacie.util.LoggedSeller;
 import com.pharmacie.util.SessionUtilisateur;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -68,29 +69,29 @@ public class VentesController {
 
     private void configureTableColumns() {
         // Configuration des colonnes
-        idColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(tronquerUUID(cellData.getValue().getIdVente())));
+        idColumn.setCellValueFactory(
+                cellData -> new SimpleStringProperty(tronquerUUID(cellData.getValue().getIdVente())));
 
         dateColumn.setCellValueFactory(cellData -> {
             Date date = cellData.getValue().getDateVente();
             String formattedDate = (date != null) ? DATE_FORMAT.format(date) : "";
             return new SimpleStringProperty(formattedDate);
         });
-        clientColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(tronquerUUID(cellData.getValue().getClientId())));
+        clientColumn.setCellValueFactory(
+                cellData -> new SimpleStringProperty(tronquerUUID(cellData.getValue().getClientId())));
 
-        montantColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(String.format("%.2f €", cellData.getValue().getMontantTotal())));
+        montantColumn.setCellValueFactory(
+                cellData -> new SimpleStringProperty(String.format("%.2f €", cellData.getValue().getMontantTotal())));
 
-        paiementColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getModePaiement()));
+        paiementColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getModePaiement()));
 
         // Configuration de la colonne d'actions
         actionsColumn.setCellFactory(createActionsColumnCellFactory());
     }
 
     private String tronquerUUID(UUID uuid) {
-        if (uuid == null) return "???";
+        if (uuid == null)
+            return "???";
         return uuid.toString().substring(0, 8) + "...";
     }
 
@@ -177,11 +178,8 @@ public class VentesController {
             VenteController venteCtrl = loader2.getController();
             venteCtrl.setClientId(clientId);
 
-            // ✅ Transmettre aussi l'ID du pharmacien connecté
-            if (SessionUtilisateur.getUtilisateurConnecte() != null) {
-                venteCtrl.setPharmacienAdjointId(SessionUtilisateur.getUtilisateurConnecte().getIdPersonne());
-
-            }
+            LoggedSeller loggedSeller = LoggedSeller.getInstance();
+            venteCtrl.setPharmacienAdjointId(loggedSeller.getId());
 
             Stage stage2 = new Stage();
             stage2.setTitle("Nouvelle Vente - Panier");
