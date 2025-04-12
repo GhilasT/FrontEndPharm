@@ -133,65 +133,65 @@ private void rechercherMedicaments(String searchTerm) {
     }
 }
 
-    @FXML
-    public void ajouterMedicament(String selected) {
-        try {
-            String[] parts = selected.split(" - ");
-            if (parts.length < 2) {
-                LOGGER.warning("Format invalide : " + selected);
-                return;
-            }
-
-            String nom = parts[0].trim();
-            double prix = Double.parseDouble(parts[1].replace("€", "").replace(",", ".").trim());
-
-            Optional<Medicament> match = suggestions.stream()
-                    .filter(m -> {
-                        String nomMedoc = (m.getDenomination() != null) ? m.getDenomination() : m.getLibelle();
-                        return selected.startsWith(nomMedoc);
-                    })
-                    .findFirst();
-
-            if (match.isEmpty()) {
-                LOGGER.warning("Aucun médicament correspondant trouvé pour : " + nom);
-                return;
-            }
-
-            Medicament med = match.get();
-            String codeCip13 = med.getCodeCip13();
-            if (codeCip13 == null || codeCip13.isBlank()) {
-                LOGGER.warning("Code CIP13 manquant pour le médicament : " + med.getLibelle());
-                return;
-            }
-
-            Label labelNom = new Label(nom);
-            labelNom.setTextFill(Color.WHITE);
-            labelNom.setUserData(codeCip13); 
-
-            TextField qteField = new TextField("1");
-            qteField.setStyle("-fx-text-fill: white; -fx-control-inner-background: rgba(0,122,255,1);");
-            qteField.textProperty().addListener((obs, oldVal, newVal) -> {
-                if (!newVal.matches("\\d*")) {
-                    qteField.setText(newVal.replaceAll("[^\\d]", ""));
-                }
-                majInfosPanier();
-            });
-
-            Label labelPrix = new Label(String.format("%.2f €", prix));
-            labelPrix.setTextFill(Color.WHITE);
-
-            gridPanePanier.add(labelNom, 0, rowCount);
-            gridPanePanier.add(qteField, 1, rowCount);
-            gridPanePanier.add(labelPrix, 2, rowCount);
-
-            rowCount++;
-            barDeRecherche.clear();
-            majInfosPanier();
-
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de l'ajout du médicament", e);
+@FXML
+public void ajouterMedicament(String selected) {
+    try {
+        String[] parts = selected.split(" - ");
+        if (parts.length < 2) {
+            LOGGER.warning("Format invalide : " + selected);
+            return;
         }
+
+        String nom = parts[0].trim();
+        double prix = Double.parseDouble(parts[1].replace("€", "").replace(",", ".").trim());
+
+        Optional<Medicament> match = suggestions.stream()
+                .filter(m -> {
+                    String nomMedoc = (m.getDenomination() != null) ? m.getDenomination() : m.getLibelle();
+                    return selected.startsWith(nomMedoc);
+                })
+                .findFirst();
+
+        if (match.isEmpty()) {
+            LOGGER.warning("Aucun médicament correspondant trouvé pour : " + nom);
+            return;
+        }
+
+        Medicament med = match.get();
+        String codeCip13 = med.getCodeCip13();
+        if (codeCip13 == null || codeCip13.isBlank()) {
+            LOGGER.warning("Code CIP13 manquant pour le médicament : " + med.getLibelle());
+            return;
+        }
+
+        Label labelNom = new Label(nom);
+        labelNom.setTextFill(Color.WHITE);
+        labelNom.setUserData(codeCip13); 
+
+        TextField qteField = new TextField("1");
+        qteField.setStyle("-fx-text-fill: white; -fx-control-inner-background: rgba(0,122,255,1);");
+        qteField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.matches("\\d*")) {
+                qteField.setText(newVal.replaceAll("[^\\d]", ""));
+            }
+            majInfosPanier();
+        });
+
+        Label labelPrix = new Label(String.format("%.2f €", prix));
+        labelPrix.setTextFill(Color.WHITE);
+
+        gridPanePanier.add(labelNom, 0, rowCount);
+        gridPanePanier.add(qteField, 1, rowCount);
+        gridPanePanier.add(labelPrix, 2, rowCount);
+
+        rowCount++;
+        barDeRecherche.clear();
+        majInfosPanier();
+
+    } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Erreur lors de l'ajout du médicament", e);
     }
+}
 
     private void majInfosPanier() {
         double total = 0.0;
@@ -248,7 +248,7 @@ private void handlePayer(ActionEvent event) {
                 + "Client ID: " + clientId + "\n"
                 + "Pharmacien ID: " + pharmacienAdjointId + "\n"
                 + "Médicaments: " + panier.stream()
-                    .map(m -> m.getCodeCIS() + " (x" + m.getQuantite() + ")")
+                    .map(m -> m.getCodeCip13() + " (x" + m.getQuantite() + ")")
                     .collect(Collectors.joining(", ")));
         return;
     }
@@ -280,7 +280,7 @@ private void handlePayer(ActionEvent event) {
                 + "Client ID: " + clientId + "\n"
                 + "Pharmacien ID: " + pharmacienAdjointId + "\n"
                 + "Médicaments: " + panier.stream()
-                    .map(m -> m.getCodeCIS() + " (x" + m.getQuantite() + ")")
+                    .map(m -> m.getCodeCip13() + " (x" + m.getQuantite() + ")")
                     .collect(Collectors.joining(", ")), e);
         
         String message = e.getMessage();

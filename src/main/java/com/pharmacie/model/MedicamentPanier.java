@@ -8,25 +8,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class MedicamentPanier {
     @JsonProperty("codeCip13")
-    private String codeCIS;
+    private String codeCip13;
     private int quantite;
     private double prixUnitaire;
     private String nomMedicament;
 
     public MedicamentPanier() {}
 
-    public MedicamentPanier(String codeCIS, int quantite, double prixUnitaire) {
-        this.codeCIS = codeCIS;
+    public MedicamentPanier(String codeCip13, int quantite, double prixUnitaire) {
+        this.codeCip13 = codeCip13;
         this.quantite = quantite;
         this.prixUnitaire = prixUnitaire;
     }
 
-    public String getCodeCIS() {
-        return codeCIS;
+    public String getCodeCip13() {
+        return this.codeCip13;
     }
 
-    public void setCodeCIS(String codeCIS) {
-        this.codeCIS = codeCIS;
+    public void setCodeCip13(String CodeCip13) {
+        this.codeCip13 = CodeCip13;
     }
 
     public int getQuantite() {
@@ -60,7 +60,7 @@ public class MedicamentPanier {
     @Override
     public String toString() {
         return "MedicamentPanier{" +
-                "codeCIS='" + codeCIS + '\'' +
+                "codeCIP13='" + codeCip13 + '\'' +
                 ", quantite=" + quantite +
                 ", prixUnitaire=" + prixUnitaire +
                 ", nomMedicament='" + nomMedicament + '\'' +

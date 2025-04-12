@@ -332,7 +332,7 @@ public class RechercheMedicamentsController {
             request.setMontantRembourse(0.0);
 
             List<MedicamentPanier> medicamentsValides = panierData.stream()
-                    .filter(item -> item.getCodeCIS() != null && !item.getCodeCIS().isBlank())
+                    .filter(item -> item.getCodeCip13() != null && !item.getCodeCip13().isBlank())
                     .collect(Collectors.toList());
 
             request.setMedicaments(medicamentsValides);

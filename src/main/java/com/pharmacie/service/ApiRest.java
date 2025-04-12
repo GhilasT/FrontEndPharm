@@ -368,7 +368,7 @@ private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
         for (int i = 0; i < medicamentsArray.length(); i++) {
             JSONObject medJson = medicamentsArray.getJSONObject(i);
             Medicament m = new Medicament();
-            m.setCodeCIS(medJson.getString("codeCIS"));
+            m.setCodeCip13(medJson.getString("codeCip13"));
             m.setLibelle(medJson.optString("libelle", ""));
             m.setDenomination(medJson.optString("denomination", ""));
             String prixTTC = medJson.optString("prixTTC", "0.0");
@@ -449,7 +449,7 @@ private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
             JSONArray medicamentsArray = new JSONArray();
             for (MedicamentPanier mp : request.getMedicaments()) {
                 JSONObject medicamentJson = new JSONObject();
-                medicamentJson.put("codeCip13", mp.getCodeCIS()); // ✅ on envoie le codeCIS, pas un ID
+                medicamentJson.put("codeCip13", mp.getCodeCip13()); // ✅ on envoie le codeCIS, pas un ID
                 medicamentJson.put("quantite", mp.getQuantite());
                 medicamentsArray.put(medicamentJson);
             }
