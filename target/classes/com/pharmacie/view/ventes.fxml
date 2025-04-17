@@ -10,9 +10,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="730.0" prefWidth="1280.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pharmacie.controller.VentesController">
+<AnchorPane prefHeight="730.0" prefWidth="1280.0" style="-fx-background-color: #FFFFFF;"
+   xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+   fx:controller="com.pharmacie.controller.VentesController">
    <children>
-      <VBox layoutX="14.0" layoutY="14.0" prefHeight="730.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox layoutX="14.0" layoutY="14.0" prefHeight="730.0" prefWidth="1280.0"
+         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+         AnchorPane.topAnchor="0.0">
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="1280.0" spacing="20.0">
                <children>
@@ -21,9 +25,21 @@
                         <Font name="Open Sans Semibold" size="24.0" />
                      </font>
                   </Label>
-                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0"
+                     HBox.hgrow="ALWAYS">
                      <children>
-                        <Button fx:id="btnEffectuerVente" mnemonicParsing="false" onAction="#handleEffectuerVente" prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: #007B3D; -fx-background-radius: 5;" text="Effectuer une Vente" textFill="WHITE">
+                        <Button fx:id="btnEffectuerVente" mnemonicParsing="false"
+                           onAction="#handleEffectuerVente" prefHeight="50.0" prefWidth="200.0"
+                           style="-fx-background-color: #007B3D; -fx-background-radius: 5;"
+                           text="Effectuer une Vente" textFill="WHITE">
+                           <font>
+                              <Font name="Open Sans Semibold" size="16.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="btnReset" mnemonicParsing="false" onAction="#handleReset"
+                           prefHeight="50.0" prefWidth="200.0"
+                           style="-fx-background-color: #95A5A6; -fx-background-radius: 5;"
+                           text="Réinitialiser" textFill="WHITE">
                            <font>
                               <Font name="Open Sans Semibold" size="16.0" />
                            </font>
@@ -36,14 +52,15 @@
                </VBox.margin>
             </HBox>
             <TableView fx:id="ventesTable" prefHeight="600.0" prefWidth="1240.0" VBox.vgrow="ALWAYS">
-              <columns>
-                <TableColumn fx:id="idColumn" prefWidth="150.0" text="ID Vente" />
-                <TableColumn fx:id="dateColumn" prefWidth="150.0" text="Date" />
-                <TableColumn fx:id="clientColumn" prefWidth="150.0" text="Client" />
-                <TableColumn fx:id="montantColumn" prefWidth="150.0" text="Montant Total" />
-                <TableColumn fx:id="paiementColumn" prefWidth="150.0" text="Mode Paiement" />
-                <TableColumn fx:id="actionsColumn" prefWidth="250.0" text="Actions" />
-              </columns>
+               <columns>
+                  <TableColumn fx:id="idColumn" prefWidth="150.0" text="ID Vente" />
+                  <TableColumn fx:id="dateColumn" prefWidth="150.0" text="Date" />
+                  <TableColumn fx:id="clientColumn" prefWidth="150.0" text="Client" />
+                  <TableColumn fx:id="montantColumn" prefWidth="150.0" text="Montant Total" />
+                  <TableColumn fx:id="paiementColumn" prefWidth="150.0" text="Mode Paiement" />
+                  <TableColumn fx:id="actionsColumn" prefWidth="400.0" text="Actions" />
+                  
+               </columns>
                <VBox.margin>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
                </VBox.margin>

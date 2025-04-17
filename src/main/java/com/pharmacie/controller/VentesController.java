@@ -100,14 +100,16 @@ public class VentesController {
             private final Button btnSupprimer = new Button("Supprimer");
             private final Button btnModifier = new Button("Modifier");
             private final Button btnDetails = new Button("Détails");
-            private final HBox pane = new HBox(5, btnDetails, btnModifier, btnSupprimer);
-
+            private final Button btnClient = new Button("Ventes Client");
+            private final Button btnPharmacien = new Button("Ventes Pharmacien");
+            private final HBox pane = new HBox(5, btnDetails, btnModifier, btnSupprimer, btnClient, btnPharmacien);
             {
                 // Style des boutons
                 btnSupprimer.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white;");
                 btnModifier.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white;");
                 btnDetails.setStyle("-fx-background-color: #2ECC71; -fx-text-fill: white;");
-
+                btnClient.setStyle("-fx-background-color: #9B59B6; -fx-text-fill: white;");
+                btnPharmacien.setStyle("-fx-background-color: #E67E22; -fx-text-fill: white;");
                 pane.setAlignment(Pos.CENTER);
 
                 // Actions des boutons
@@ -124,6 +126,15 @@ public class VentesController {
                 btnDetails.setOnAction(event -> {
                     Vente vente = getTableView().getItems().get(getIndex());
                     handleDetailsVente(vente);
+                });
+                btnClient.setOnAction(event -> {
+                    Vente vente = getTableView().getItems().get(getIndex());
+                    loadVentesClient(vente.getClientId());
+                });
+
+                btnPharmacien.setOnAction(event -> {
+                    Vente vente = getTableView().getItems().get(getIndex());
+                    loadVentesPharmacien(vente.getPharmacienAdjointId());
                 });
             }
 
@@ -243,5 +254,30 @@ public class VentesController {
 
     public void setUtilisateurConnecte(UUID utilisateurConnecte) {
         this.utilisateurConnecte = utilisateurConnecte;
+    }
+
+    private void loadVentesClient(UUID clientId) {
+        try {
+            List<Vente> ventes = ApiRest.getVentesByClientId(clientId);
+            ventesData.setAll(ventes);
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Chargement impossible",
+                    "Erreur lors du chargement des ventes client: " + e.getMessage());
+        }
+    }
+
+    private void loadVentesPharmacien(UUID pharmacienId) {
+        try {
+            List<Vente> ventes = ApiRest.getVentesByPharmacienId(pharmacienId);
+            ventesData.setAll(ventes);
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Chargement impossible",
+                    "Erreur lors du chargement des ventes pharmacien: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleReset(ActionEvent event) {
+        loadVentes();
     }
 }

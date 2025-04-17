@@ -1,44 +1,35 @@
 package com.pharmacie.model;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 public class Medicament {
     private long id;
     private String codeCip13;
-    private double prix;
-    private int quantite;
     private String codeCIS;
     private String libelle;
-    private String denomination; // Nouveau champ pour la dénomination
+    private String denomination;
     private String dosage;
     private String reference;
     private String surOrdonnance;
+    private int quantite;
     private int stock;
-    private BigDecimal prixHT; // Nouveau champ pour le prix hors taxe
-    private BigDecimal prixTTC; // Nouveau champ pour le prix TTC
-    private BigDecimal taxe; // Nouveau champ pour la taxe
-    private String agrementCollectivites; // Nouveau champ pour l'agrément aux collectivités
-    private String tauxRemboursement; // Nouveau champ pour le taux de remboursement
+    private BigDecimal prixHT;
+    private BigDecimal prixTTC;
+    private BigDecimal taxe;
+    private String agrementCollectivites;
+    private String tauxRemboursement;
     private String stockId;
+    private String numeroLot;
+    private String datePeremption;
 
-    // getters / setters
-    public String getStockId() {
-        return stockId;
-    }
-
-    public void setStockId(String stockId) {
-        this.stockId = stockId;
-    }
-    // Constructeur par défaut
     public Medicament() {
-        this.stock = 0; // Initialisation du stock à 0 comme demandé
+        this.stock = 0;
     }
-    
-    // Constructeur avec paramètres
-    public Medicament(String codeCIS, String libelle, String denomination, String dosage, String reference, 
-                     String surOrdonnance, int stock, BigDecimal prixHT, BigDecimal prixTTC, 
-                     BigDecimal taxe, String agrementCollectivites, String tauxRemboursement) {
+
+    public Medicament(String codeCIS, String libelle, String denomination, String dosage, 
+                     String reference, String surOrdonnance, int stock, BigDecimal prixHT, 
+                     BigDecimal prixTTC, BigDecimal taxe, String agrementCollectivites, 
+                     String tauxRemboursement) {
         this.codeCIS = codeCIS;
         this.libelle = libelle;
         this.denomination = denomination;
@@ -52,75 +43,48 @@ public class Medicament {
         this.agrementCollectivites = agrementCollectivites;
         this.tauxRemboursement = tauxRemboursement;
     }
-        // Getters
-        public long getId() {
-            return id;
-        }
-        
-        public String getCodeCip13() {
-            return codeCip13;
-        }
-        
-        public double getPrix() {
-            return prix;
-        }
-        
-        public int getQuantite() {
-            return quantite;
-        }
-        
-        // Setters
-        public void setId(long id) {
-            this.id = id;
-        }
-        
-        public void setCodeCip13(String codeCip13) {
-            this.codeCip13 = codeCip13;
-        }
-        
-        public void setPrix(double prix) {
-            this.prix = prix;
-        }
-        
-        public void setQuantite(int quantite) {
-            this.quantite = quantite;
-        }
-    
 
-    // Getters et setters
+    // Getters
+    public long getId() { return id; }
+    public String getCodeCip13() { return codeCip13; }
     public String getCodeCIS() { return codeCIS; }
-    public void setCodeCIS(String codeCIS) { this.codeCIS = codeCIS; }
-    
     public String getLibelle() { return libelle; }
-    public void setLibelle(String libelle) { this.libelle = libelle; }
-    
     public String getDenomination() { return denomination; }
-    public void setDenomination(String denomination) { this.denomination = denomination; }
-    
     public String getDosage() { return dosage; }
-    public void setDosage(String dosage) { this.dosage = dosage; }
-    
     public String getReference() { return reference; }
-    public void setReference(String reference) { this.reference = reference; }
-    
     public String getSurOrdonnance() { return surOrdonnance; }
-    public void setSurOrdonnance(String surOrdonnance) { this.surOrdonnance = surOrdonnance; }
-    
+    public int getQuantite() { return quantite; }
     public int getStock() { return stock; }
-    public void setStock(int stock) { this.stock = stock; }
-    
     public BigDecimal getPrixHT() { return prixHT; }
-    public void setPrixHT(BigDecimal prixHT) { this.prixHT = prixHT; }
-    
     public BigDecimal getPrixTTC() { return prixTTC; }
-    public void setPrixTTC(BigDecimal prixTTC) { this.prixTTC = prixTTC; }
-    
     public BigDecimal getTaxe() { return taxe; }
-    public void setTaxe(BigDecimal taxe) { this.taxe = taxe; }
-    
     public String getAgrementCollectivites() { return agrementCollectivites; }
-    public void setAgrementCollectivites(String agrementCollectivites) { this.agrementCollectivites = agrementCollectivites; }
-    
     public String getTauxRemboursement() { return tauxRemboursement; }
-    public void setTauxRemboursement(String tauxRemboursement) { this.tauxRemboursement = tauxRemboursement; }
+    public String getStockId() { return stockId; }
+    public String getNumeroLot() { return numeroLot; }
+    public String getDatePeremption() { return datePeremption; }
+
+    // Setters
+    public void setId(long id) { this.id = id; }
+    public void setCodeCip13(String codeCip13) { this.codeCip13 = codeCip13; }
+    public void setCodeCIS(String codeCIS) { this.codeCIS = codeCIS; }
+    public void setLibelle(String libelle) { this.libelle = libelle; }
+    public void setDenomination(String denomination) { this.denomination = denomination; }
+    public void setDosage(String dosage) { this.dosage = dosage; }
+    public void setReference(String reference) { this.reference = reference; }
+    public void setSurOrdonnance(String surOrdonnance) { this.surOrdonnance = surOrdonnance; }
+    public void setQuantite(int quantite) { this.quantite = quantite; }
+    public void setStock(int stock) { this.stock = stock; }
+    public void setPrixHT(BigDecimal prixHT) { this.prixHT = prixHT; }
+    public void setPrixTTC(BigDecimal prixTTC) { this.prixTTC = prixTTC; }
+    public void setTaxe(BigDecimal taxe) { this.taxe = taxe; }
+    public void setAgrementCollectivites(String agrementCollectivites) { 
+        this.agrementCollectivites = agrementCollectivites; 
+    }
+    public void setTauxRemboursement(String tauxRemboursement) { 
+        this.tauxRemboursement = tauxRemboursement; 
+    }
+    public void setStockId(String stockId) { this.stockId = stockId; }
+    public void setNumeroLot(String numeroLot) { this.numeroLot = numeroLot; }
+    public void setDatePeremption(String datePeremption) { this.datePeremption = datePeremption; }
 }

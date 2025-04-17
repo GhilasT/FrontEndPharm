@@ -543,8 +543,9 @@ private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
                 medicament.setId(medicamentJson.getLong("id"));
                 medicament.setCodeCip13(medicamentJson.getString("codeCip13"));
                 medicament.setLibelle(medicamentJson.getString("libelle"));
-                medicament.setPrix(medicamentJson.getDouble("prix"));
-                medicament.setQuantite(medicamentJson.getInt("quantite"));
+                if (medicamentJson.has("prix")) {
+                    medicament.setPrixTTC(BigDecimal.valueOf(medicamentJson.getDouble("prix")));
+                }                medicament.setQuantite(medicamentJson.getInt("quantite"));
 
                 // Nouveau champ pour stockId
                 if (medicamentJson.has("stockId")) {
@@ -761,76 +762,110 @@ private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
      */
     private static Vente parseVenteJson(JSONObject venteJson) {
         Vente vente = new Vente();
-
+        
         try {
-            vente.setIdVente(UUID.fromString(venteJson.getString("idVente")));
-
-            // Conversion de la date à partir d'une chaîne ISO
-            String dateStr = venteJson.getString("dateVente");
-            vente.setDateVente(Date.from(Instant.parse(dateStr)));
-
+            // Logging de l'ID pour le débogage
+            String venteId = venteJson.optString("idVente", "inconnu");
+            LOGGER.log(Level.INFO, "Début du parsing de la vente ID: {0}", venteId);
+            
+            // Parsing des champs principaux
+            vente.setIdVente(UUID.fromString(venteId));
+            vente.setDateVente(Date.from(Instant.parse(venteJson.getString("dateVente"))));
             vente.setModePaiement(venteJson.getString("modePaiement"));
             vente.setMontantTotal(venteJson.getDouble("montantTotal"));
             vente.setMontantRembourse(venteJson.getDouble("montantRembourse"));
             vente.setPharmacienAdjointId(UUID.fromString(venteJson.getString("pharmacienAdjointId")));
             vente.setClientId(UUID.fromString(venteJson.getString("clientId")));
-
-            if (venteJson.has("notification")) {
-                vente.setNotification(venteJson.getString("notification"));
-            }
-
+    
+            // Gestion sécurisée de la notification
+            vente.setNotification(venteJson.optString("notification", null));
+    
+            // Parsing des médicaments
             List<Medicament> medicaments = new ArrayList<>();
             JSONArray medicamentsArray = venteJson.getJSONArray("medicamentIds");
-
+            
             for (int j = 0; j < medicamentsArray.length(); j++) {
                 JSONObject medicamentJson = medicamentsArray.getJSONObject(j);
                 Medicament medicament = new Medicament();
-
+                
+                // Utilisation exclusive des champs existants dans le JSON
                 medicament.setId(medicamentJson.getLong("id"));
                 medicament.setCodeCip13(medicamentJson.getString("codeCip13"));
-                medicament.setLibelle(medicamentJson.getString("libelle"));
-                medicament.setPrix(medicamentJson.getDouble("prix"));
-                medicament.setQuantite(medicamentJson.getInt("quantite"));
-
+                medicament.setNumeroLot(medicamentJson.optString("numeroLot", null));
+                medicament.setDatePeremption(medicamentJson.optString("datePeremption", null));
+                medicament.setQuantite(medicamentJson.optInt("quantite", 0));
+                
+                // Logging de validation
+                LOGGER.log(Level.FINE, "Médicament parsé - ID: {0}, Lot: {1}", 
+                    new Object[]{medicament.getId(), medicament.getNumeroLot()});
+                
                 medicaments.add(medicament);
             }
-
+            
             vente.setMedicaments(medicaments);
+            
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors du parsing d'un objet JSON vente", e);
+            LOGGER.log(Level.SEVERE, "Échec du parsing pour la vente ID: " 
+                + venteJson.optString("idVente", "inconnu"), e);
         }
-
+        
         return vente;
     }
 
     public static JSONObject getMedicamentInfosAdmin(String codeCip13) {
         // Implémentation: récupérer les infos admin d'un médicament
         // Logique pour récupérer les informations administratives d'un médicament
-        return null; // À remplacer par votre logique
+        return null; 
     }
 
     public static JSONObject getMedicamentInfosDispo(String codeCip13) {
         // Implémentation: récupérer les infos de disponibilité d'un médicament
         // Logique pour récupérer les informations de disponibilité d'un médicament
-        return null; // À remplacer par votre logique
+        return null; 
     }
 
     public static JSONObject getMedicamentInfosPrescription(String codeCip13) {
         // Implémentation: récupérer les infos de prescription d'un médicament
         // Logique pour récupérer les informations de prescription d'un médicament
-        return null; // À remplacer par votre logique
+        return null; 
     }
 
     public static JSONObject getMedicamentInfosGeneriques(String codeCip13) {
         // Implémentation: récupérer les infos des génériques d'un médicament
         // Logique pour récupérer les informations des génériques d'un médicament
-        return null; // À remplacer par votre logique
+        return null;
     }
 
     public static boolean updateMedicamentStock(String codeCip13, Integer quantite) {
         // Implémentation: mettre à jour le stock d'un médicament
         // Logique pour mettre à jour le stock d'un médicament
-        return false; // À remplacer par votre logique
+        return false; 
     }
-
+    public static List<Vente> getVentesByClientId(UUID clientId) throws Exception {
+        String url = API_BASE_URL + "/ventes/client/" + clientId;
+        LOGGER.log(Level.INFO, "Récupération des ventes pour le client ID: {0}", clientId);
+        return sendVentesRequest(url);
+    }
+    
+    public static List<Vente> getVentesByPharmacienId(UUID pharmacienId) throws Exception {
+        String url = API_BASE_URL + "/ventes/pharmacien/" + pharmacienId;
+        LOGGER.log(Level.INFO, "Récupération des ventes pour le pharmacien ID: {0}", pharmacienId);
+        return sendVentesRequest(url);
+    }
+    
+    private static List<Vente> sendVentesRequest(String url) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+    
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    
+        if (response.statusCode() == 200) {
+            return parseVentesResponse(response.body());
+        } else {
+            throw new Exception("Erreur HTTP " + response.statusCode());
+        }
+    }
 }
