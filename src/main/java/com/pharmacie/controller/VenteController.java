@@ -163,7 +163,7 @@ public void ajouterMedicament(String selected) {
             LOGGER.warning("Code CIP13 manquant pour le médicament : " + med.getLibelle());
             return;
         }
-
+ 
         Label labelNom = new Label(nom);
         labelNom.setTextFill(Color.WHITE);
         labelNom.setUserData(codeCip13); 

@@ -36,6 +36,17 @@
                               <Font name="Open Sans Semibold" size="16.0" />
                            </font>
                         </Button>
+                        <Button fx:id="btnToggleVentes" mnemonicParsing="false"
+                           onAction="#handleToggleVentes"
+                           prefHeight="50.0" prefWidth="200.0"
+                           minWidth="280.0" maxWidth="280.0"
+                           style="-fx-background-color: #007B3D; -fx-background-radius: 5;"
+                           text="Afficher mes ventes"
+                           textFill="WHITE">
+                           <font>
+                              <Font name="Open Sans Semibold" size="16.0" />
+                           </font>
+                        </Button>
                         <Button fx:id="btnReset" mnemonicParsing="false" onAction="#handleReset"
                            prefHeight="50.0" prefWidth="200.0"
                            style="-fx-background-color: #95A5A6; -fx-background-radius: 5;"
@@ -59,7 +70,7 @@
                   <TableColumn fx:id="montantColumn" prefWidth="150.0" text="Montant Total" />
                   <TableColumn fx:id="paiementColumn" prefWidth="150.0" text="Mode Paiement" />
                   <TableColumn fx:id="actionsColumn" prefWidth="400.0" text="Actions" />
-                  
+
                </columns>
                <VBox.margin>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />

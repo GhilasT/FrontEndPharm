@@ -62,6 +62,10 @@ public class VentesController {
     private ObservableList<Vente> ventesData = FXCollections.observableArrayList();
 
     @FXML
+    private Button btnToggleVentes;
+    private boolean showMySales = false;
+
+    @FXML
     public void initialize() {
         configureTableColumns();
         loadVentes();
@@ -277,7 +281,36 @@ public class VentesController {
     }
 
     @FXML
+    private void handleToggleVentes(ActionEvent event) {
+        showMySales = !showMySales;
+
+        if (showMySales) {
+            btnToggleVentes.setText("Afficher toutes les ventes");
+            btnToggleVentes.setStyle("-fx-background-color: #1F82F2; -fx-background-radius: 5;");
+            loadMyVentes();
+        } else {
+            btnToggleVentes.setText("Afficher mes ventes");
+            btnToggleVentes.setStyle("-fx-background-color: #007B3D; -fx-background-radius: 5;");
+            loadVentes();
+        }
+    }
+
+    private void loadMyVentes() {
+        try {
+            UUID pharmacienId = LoggedSeller.getInstance().getId();
+            List<Vente> ventes = ApiRest.getVentesByPharmacienId(pharmacienId);
+            ventesData.setAll(ventes);
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Chargement impossible",
+                    "Erreur lors du chargement des ventes: " + e.getMessage());
+        }
+    }
+
+    @FXML
     private void handleReset(ActionEvent event) {
+        showMySales = false;
+    btnToggleVentes.setText("Afficher mes ventes");
+    btnToggleVentes.setStyle("-fx-background-color: #007B3D; -fx-background-radius: 5;");
         loadVentes();
     }
 }
