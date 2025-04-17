@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
@@ -811,7 +812,120 @@ private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
         
         return vente;
     }
+    // Dans la classe ApiRest.java
 
+/**
+ * Récupère un client par son ID depuis l'API.
+ * 
+ * @param id ID du client
+ * @return Client correspondant à l'ID
+ * @throws Exception En cas d'erreur lors de la communication avec l'API
+ */
+public static Client getClientById(UUID id) throws Exception {
+    String url = API_BASE_URL + "/client/" + id;
+    
+    LOGGER.log(Level.INFO, "Envoi d'une requête GET pour récupérer le client {0}", id);
+    
+    try {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .timeout(Duration.ofSeconds(15))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            return parseClientResponse(response.body());
+        } else {
+            String errorMessage = "Erreur HTTP " + response.statusCode() + " - " + response.body();
+            LOGGER.log(Level.SEVERE, errorMessage);
+            throw new Exception(errorMessage);
+        }
+    } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du client", e);
+        throw new Exception("Erreur de communication avec l'API: " + e.getMessage());
+    }
+}
+
+/**
+ * Récupère un pharmacien adjoint par son ID depuis l'API.
+ * 
+ * @param id ID du pharmacien
+ * @return PharmacienAdjoint correspondant à l'ID
+ * @throws Exception En cas d'erreur lors de la communication avec l'API
+ */
+public static PharmacienAdjoint getPharmacienById(UUID id) throws Exception {
+    String url = API_BASE_URL + "/pharmaciens-adjoints/" + id;
+    
+    LOGGER.log(Level.INFO, "Envoi d'une requête GET pour récupérer le pharmacien {0}", id);
+    
+    try {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .timeout(Duration.ofSeconds(15))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            return parsePharmacienResponse(response.body());
+        } else {
+            String errorMessage = "Erreur HTTP " + response.statusCode() + " - " + response.body();
+            LOGGER.log(Level.SEVERE, errorMessage);
+            throw new Exception(errorMessage);
+        }
+    } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du pharmacien", e);
+        throw new Exception("Erreur de communication avec l'API: " + e.getMessage());
+    }
+}
+
+// Méthodes de parsing
+private static Client parseClientResponse(String jsonResponse) {
+    JSONObject json = new JSONObject(jsonResponse);
+    Client client = new Client();
+    
+    client.setId(UUID.fromString(json.getString("idPersonne")));
+    client.setNom(json.getString("nom"));
+    client.setPrenom(json.getString("prenom"));
+    client.setEmail(json.getString("email"));
+    client.setTelephone(json.getString("telephone"));
+    client.setAdresse(json.getString("adresse"));
+    
+    // Champs optionnels
+    if(json.has("numeroSecu") && !json.isNull("numeroSecu")) {
+        client.setNumeroSecu(json.getString("numeroSecu"));
+    }
+    if(json.has("mutuelle") && !json.isNull("mutuelle")) {
+        client.setMutuelle(json.getString("mutuelle"));
+    }
+    
+    return client;
+}
+
+private static PharmacienAdjoint parsePharmacienResponse(String jsonResponse) {
+    JSONObject json = new JSONObject(jsonResponse);
+    
+    return new PharmacienAdjoint(
+        UUID.fromString(json.getString("idPersonne")),
+        json.getString("nom"),
+        json.getString("prenom"),
+        json.getString("email"),
+        json.getString("telephone"),
+        json.getString("adresse"),
+        json.getString("matricule"),
+        LocalDate.parse(json.getString("dateEmbauche").split("T")[0]),
+        json.getDouble("salaire"),
+        json.getString("poste"),
+        json.getString("statutContrat"),
+        json.optString("diplome", null),
+        json.getString("emailPro")
+    );
+}
     public static JSONObject getMedicamentInfosAdmin(String codeCip13) {
         // Implémentation: récupérer les infos admin d'un médicament
         // Logique pour récupérer les informations administratives d'un médicament
