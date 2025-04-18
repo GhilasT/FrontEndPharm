@@ -2,8 +2,12 @@ package com.pharmacie.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.pharmacie.App;
+import com.pharmacie.model.Dashboard;
+import com.pharmacie.service.ApiRest;
 import com.pharmacie.util.LoggedSeller;
 
 import javafx.animation.TranslateTransition;
@@ -14,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.*;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -22,6 +27,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
 
 public class PharmacyDashboard extends StackPane {
     private static final int MENU_WIDTH = 300;
@@ -198,19 +204,41 @@ private void showAccessDenied() {
         menuVisible
     ));
 
-        String[] titles = {"Ventes", "Médicaments", "Clients", "Commandes", 
-                          "Fournisseurs", "Alertes", "CA Journalier", "CA Mensuel"};
-        String[] values = {"142", "358", "89", "23", "15", "9", "€2450", "€58900"};
+        String[] titles = {"CA", "Bénéfices","Employés", "Clients","Médecins", "Médicaments",
+                            "Médicaments en rupture de stock", "Médicaments périmés", "Médicaments Stock Faible", "Médicaments péremption - 1 mois"};
+        List<String> values = new ArrayList<>(); // {"142", "358", "89", "23", "15", "9", "€2450", "€58900"};
         String[] colors = {"#1F82F2", "#1F82F2", "#E74C3C", "#9B59B6", 
-                          "#F39C12", "#16A085", "#34495E", "#7F8C8D"};
+                          "#F39C12", "#16A085", "#34495E", "#7F8C8D", "#E74C3C", "#16A085"};
 
-        for(int i = 0; i < 8; i++) {
-            dashboardTilePane.getChildren().add(
-                createCard(titles[i], values[i], colors[i])
-            );
+        try {
+            Dashboard dashboardValues = ApiRest.getDashboardRequest();
+            values.add(dashboardValues.getCA());
+            values.add(dashboardValues.getBenefices());
+            values.add(dashboardValues.getNbEmployes());
+            values.add(dashboardValues.getNbClients());
+            values.add(dashboardValues.getNbMedecins());
+            values.add(dashboardValues.getNbMedicaments());
+            values.add(dashboardValues.getNbMedicamentsRuptureStock());
+            values.add(dashboardValues.getNbMedicamentsPerimes());
+            values.add(dashboardValues.getNbMedicamentsAlerte());
+            values.add(dashboardValues.getNbMedicamentsAlerteBientotPerimee());
+
+            for(int i = 0; i < titles.length; i++) {
+                dashboardTilePane.getChildren().add(
+                        createCard(titles[i], values.get(i), colors[i])
+                );
+            }
+
+            contentPane.getChildren().setAll(dashboardTilePane);
+        }
+        catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR,
+                    "Erreur",
+                    "Recherche impossible",
+                    "Erreur serveur : " + e.getMessage());
         }
 
-        contentPane.getChildren().setAll(dashboardTilePane);
+
         if(menuVisible.get()) toggleMenu();
     }
     private int calculateColumns() {
@@ -318,6 +346,14 @@ private void showAccessDenied() {
         slideTransition.setToX(newVisibility ? 0 : -300);
         slideTransition.setOnFinished(e -> menuVisible.set(newVisibility));
         slideTransition.play();
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String header, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     private void setActiveButton(Button activeButton) {

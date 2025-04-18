@@ -1036,4 +1036,62 @@ public class ApiRest {
             throw new Exception("Erreur HTTP " + response.statusCode());
         }
     }
+
+
+    /**
+     * Récupère les informations du tableau de bord.
+     *
+     * @return les statistiques du tableau de bord
+     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @author raphaelcharoze
+     */
+    public static Dashboard getDashboardRequest() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(API_BASE_URL + "dashboard"))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            return parseDashboardResponse(response.body());
+        } else {
+            throw new Exception("Erreur HTTP " + response.statusCode());
+        }
+    }
+
+    /**
+     * Parse la réponse JSON du tableau de bord.
+     *
+     * @param body Réponse JSON
+     * @return Liste des statistiques du tableau de bord
+     * @author raphaelcharoze
+     */
+    private static Dashboard parseDashboardResponse(String body) {
+
+        Dashboard dash = new Dashboard();
+
+        try {
+            JSONObject stat = new JSONObject(body);
+
+            dash.setCA(stat.getDouble("CA"));
+            dash.setBenefices(stat.getDouble("benefices"));
+            dash.setNbEmployes(stat.getInt("nbEmployes"));
+            dash.setNbClients(stat.getInt("nbClients"));
+            dash.setNbMedecins(stat.getInt("nbMedecins"));
+            dash.setNbMedicaments(stat.getInt("nbMedicaments"));
+            dash.setNbMedicamentsRuptureStock(stat.getInt("nbMedicamentsRuptureStock"));
+            dash.setNbMedicamentsPerimes(stat.getInt("nbMedicamentsPerimes"));
+            dash.setNbMedicamentsAlerte(stat.getInt("nbMedicamentsAlerte"));
+            dash.setNbMedicamentsAlerteBientotPerimee(stat.getInt("nbMedicamentsAlerteBientotPerimee"));
+
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du parsing de la réponse JSON des ventes", e);
+        }
+
+        return dash;
+
+    }
 }
