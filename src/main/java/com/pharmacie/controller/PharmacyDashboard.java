@@ -212,16 +212,17 @@ private void showAccessDenied() {
 
         try {
             Dashboard dashboardValues = ApiRest.getDashboardRequest();
-            values.add(dashboardValues.getCA());
-            values.add(dashboardValues.getBenefices());
-            values.add(dashboardValues.getNbEmployes());
-            values.add(dashboardValues.getNbClients());
-            values.add(dashboardValues.getNbMedecins());
-            values.add(dashboardValues.getNbMedicaments());
-            values.add(dashboardValues.getNbMedicamentsRuptureStock());
-            values.add(dashboardValues.getNbMedicamentsPerimes());
-            values.add(dashboardValues.getNbMedicamentsAlerte());
-            values.add(dashboardValues.getNbMedicamentsAlerteBientotPerimee());
+            values.addAll(
+                    dashboardValues.getCA().toString(),
+                    dashboardValues.getBenefices().toString(),
+                    dashboardValues.getNbEmployes().toString(),
+                    dashboardValues.getNbClients().toString(),
+                    dashboardValues.getNbMedecins().toString(),
+                    dashboardValues.getNbMedicaments().toString(),
+                    dashboardValues.getNbMedicamentsRuptureStock().toString(),
+                    dashboardValues.getNbMedicamentsPerimes().toString(),
+                    dashboardValues.getNbMedicamentsAlerte().toString(),
+                    dashboardValues.getNbMedicamentsAlerteBientotPerimee().toString());
 
             for(int i = 0; i < titles.length; i++) {
                 dashboardTilePane.getChildren().add(
