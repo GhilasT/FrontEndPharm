@@ -212,7 +212,7 @@ private void showAccessDenied() {
 
         try {
             Dashboard dashboardValues = ApiRest.getDashboardRequest();
-            values.addAll(
+            values.addAll(List.of(
                     String.valueOf(dashboardValues.getCA()),
                     String.valueOf(dashboardValues.getBenefices()),
                     String.valueOf(dashboardValues.getNbEmployes()),
@@ -222,7 +222,7 @@ private void showAccessDenied() {
                     String.valueOf(dashboardValues.getNbMedicamentsRuptureStock()),
                     String.valueOf(dashboardValues.getNbMedicamentsPerimes()),
                     String.valueOf(dashboardValues.getNbMedicamentsAlerte()),
-                    String.valueOf(dashboardValues.getNbMedicamentsAlerteBientotPerimee()));
+                    String.valueOf(dashboardValues.getNbMedicamentsAlerteBientotPerimee())));
 
             for(int i = 0; i < titles.length; i++) {
                 dashboardTilePane.getChildren().add(
