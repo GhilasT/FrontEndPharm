@@ -2,6 +2,7 @@ package com.pharmacie.controller;
 
 import com.pharmacie.model.Client;
 import com.pharmacie.model.Employe;
+import com.pharmacie.model.Medicament;
 import com.pharmacie.model.PharmacienAdjoint;
 import com.pharmacie.model.Vente;
 import com.pharmacie.service.ApiRest;
@@ -18,8 +19,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -246,148 +249,266 @@ public class VentesController {
     }
 
     private void handleDetailsVente(Vente vente) {
-    Stage dialog = new Stage();
-    dialog.initModality(Modality.APPLICATION_MODAL);
-    dialog.setTitle("Détails de la vente " + tronquerUUID(vente.getIdVente()));
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.setTitle("Détails de la vente " + tronquerUUID(vente.getIdVente()));
 
-    Button btnPharmacien = new Button("Détails du Pharmacien");
-    Button btnClient = new Button("Détails du Client");
-    Button btnMedicaments = new Button("Liste des médicaments");
+        Button btnPharmacien = new Button("Détails du Pharmacien");
+        Button btnClient = new Button("Détails du Client");
+        Button btnMedicaments = new Button("Liste des médicaments");
 
-    // Style cohérent avec l'application
-    String buttonStyle = "-fx-pref-width: 200px; -fx-padding: 8px;";
-    btnPharmacien.setStyle(buttonStyle + "-fx-background-color: #3498DB; -fx-text-fill: white;");
-    btnClient.setStyle(buttonStyle + "-fx-background-color: #2ECC71; -fx-text-fill: white;");
-    btnMedicaments.setStyle(buttonStyle + "-fx-background-color: #9B59B6; -fx-text-fill: white;");
+        // Style cohérent avec l'application
+        String buttonStyle = "-fx-pref-width: 200px; -fx-padding: 8px;";
+        btnPharmacien.setStyle(buttonStyle + "-fx-background-color: #3498DB; -fx-text-fill: white;");
+        btnClient.setStyle(buttonStyle + "-fx-background-color: #2ECC71; -fx-text-fill: white;");
+        btnMedicaments.setStyle(buttonStyle + "-fx-background-color: #9B59B6; -fx-text-fill: white;");
 
-    // Gestion des clics
-    btnPharmacien.setOnAction(e -> {
-        try {
-            PharmacienAdjoint pharmacien = ApiRest.getPharmacienById(vente.getPharmacienAdjointId());
-            afficherDetailsPharmacien(pharmacien);
-        } catch (Exception ex) {
-            gererErreurApi("pharmacien", ex);
+        // Gestion des clics
+        btnPharmacien.setOnAction(e -> {
+            try {
+                PharmacienAdjoint pharmacien = ApiRest.getPharmacienById(vente.getPharmacienAdjointId());
+                afficherDetailsPharmacien(pharmacien);
+            } catch (Exception ex) {
+                gererErreurApi("pharmacien", ex);
+            }
+        });
+
+        btnClient.setOnAction(e -> {
+            try {
+                Client client = ApiRest.getClientById(vente.getClientId());
+                afficherDetailsClient(client);
+            } catch (Exception ex) {
+                gererErreurApi("client", ex);
+            }
+        });
+
+        btnMedicaments.setOnAction(e -> {
+    Stage medicamentStage = new Stage();
+    medicamentStage.initModality(Modality.APPLICATION_MODAL);
+    medicamentStage.setTitle("Médicaments de la vente - " + tronquerUUID(vente.getIdVente()));
+
+    VBox vbox = new VBox(10);
+    vbox.setPadding(new Insets(15));
+    vbox.setStyle("-fx-background-color: #f5f5f5;");
+
+    for (Medicament medicament : vente.getMedicaments()) {
+        GridPane grid = new GridPane();
+        grid.setMaxWidth(580);
+        grid.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-radius: 5;");
+        
+        // Configuration des colonnes (3/5 - 1/5 - 1/5)
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setPercentWidth(60); // 3/5 de l'espace
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setPercentWidth(20); // 1/5
+        ColumnConstraints col3 = new ColumnConstraints();
+        col3.setPercentWidth(20); // 1/5
+        grid.getColumnConstraints().addAll(col1, col2, col3);
+
+        // 1ère colonne: Dénomination
+        String denomination = medicament.getDenomination();
+        int maxLength = 50;
+        if (denomination.length() > maxLength) {
+            denomination = denomination.substring(0, maxLength) + "...";
         }
-    });
+        Label nomLabel = new Label(denomination);
+        nomLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+        grid.add(nomLabel, 0, 0);
 
-    btnClient.setOnAction(e -> {
-        try {
-            Client client = ApiRest.getClientById(vente.getClientId());
-            afficherDetailsClient(client);
-        } catch (Exception ex) {
-            gererErreurApi("client", ex);
+        // 2ème colonne: Quantité
+        Medicament.Stock stock = !medicament.getStocks().isEmpty() ? 
+            medicament.getStocks().get(0) : null;
+        String quantite = stock != null ? String.valueOf(stock.getQuantite()) : "N/A";
+        Label qteLabel = new Label("• Quantité: " + quantite);
+        qteLabel.setStyle("-fx-text-fill: #666; -fx-alignment: CENTER;");
+        grid.add(qteLabel, 1, 0);
+
+        // 3ème colonne: Bouton
+        Button detailsBtn = new Button("Détails");
+        detailsBtn.setMaxWidth(Double.MAX_VALUE);
+        detailsBtn.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        detailsBtn.setOnAction(event -> {
+            try {
+                Medicament fullMed = ApiRest.getMedicamentByCodeCip13(medicament.getCodeCip13());
+                showMedicamentDetails(fullMed);
+            } catch (Exception ex) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Détails indisponibles", 
+                        ex.getMessage());
+            }
+        });
+        
+        // Alignement du bouton
+        HBox btnContainer = new HBox(detailsBtn);
+        btnContainer.setAlignment(Pos.CENTER_RIGHT);
+        grid.add(btnContainer, 2, 0);
+
+        vbox.getChildren().add(grid);
+    }
+
+    ScrollPane scrollPane = new ScrollPane(vbox);
+    scrollPane.setFitToWidth(true);
+    medicamentStage.setScene(new Scene(scrollPane, 600, 400));
+    medicamentStage.showAndWait();
+});
+        
+        VBox layout = new VBox(15);
+        layout.setAlignment(Pos.CENTER);
+        layout.setPadding(new Insets(20));
+        layout.getChildren().addAll(btnPharmacien, btnClient, btnMedicaments);
+
+        dialog.setScene(new Scene(layout, 350, 250));
+        dialog.showAndWait();
+    }
+
+    private void showMedicamentDetails(Medicament medicament) {
+        Stage detailsStage = new Stage();
+        detailsStage.initModality(Modality.APPLICATION_MODAL);
+        detailsStage.setTitle("Détails médicament - " + medicament.getCodeCip13());
+
+        GridPane grid = new GridPane();
+        grid.setHgap(15);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20));
+        grid.setStyle("-fx-background-color: #ffffff;");
+
+        // Style commun
+        String labelStyle = "-fx-text-fill: #666; -fx-font-weight: bold;";
+        String valueStyle = "-fx-text-fill: #333;";
+
+        int row = 0;
+
+        // Informations générales
+        addStyledRow(grid, row++, "Dénomination:", medicament.getDenomination(), labelStyle, valueStyle);
+        addStyledRow(grid, row++, "Libelle:", medicament.getLibelle(), labelStyle, valueStyle);
+        addStyledRow(grid, row++, "Code CIP13:", medicament.getCodeCip13(), labelStyle, valueStyle);
+        addStyledRow(grid, row++, "Prix TTC:", medicament.getPrixTTC() + " €", labelStyle, valueStyle);
+
+        // Informations du premier stock
+        if (!medicament.getStocks().isEmpty()) {
+            Medicament.Stock stock = medicament.getStocks().get(0);
+            addStyledRow(grid, row++, "Lot:", stock.getNumeroLot(), labelStyle, valueStyle);
+            addStyledRow(grid, row++, "Péremption:", stock.getDatePeremption(), labelStyle, valueStyle);
+            addStyledRow(grid, row++, "Emplacement:", stock.getEmplacement(), labelStyle, valueStyle);
+            addStyledRow(grid, row++, "Stock actuel:", String.valueOf(stock.getQuantite()), labelStyle, valueStyle);
+            addStyledRow(grid, row++, "Seuil d'alerte:", String.valueOf(stock.getSeuilAlerte()), labelStyle,
+                    valueStyle);
+        } else {
+            addStyledRow(grid, row++, "Stock:", "Aucune information disponible", labelStyle, valueStyle);
         }
-    });
 
-    btnMedicaments.setOnAction(e -> 
-        showNotImplementedAlert("Liste des médicaments"));
-
-    VBox layout = new VBox(15);
-    layout.setAlignment(Pos.CENTER);
-    layout.setPadding(new Insets(20));
-    layout.getChildren().addAll(btnPharmacien, btnClient, btnMedicaments);
-
-    dialog.setScene(new Scene(layout, 350, 250));
-    dialog.showAndWait();
-}
-
-
-private void afficherDetailsClient(Client client) {
-    Stage dialog = new Stage();
-    dialog.initModality(Modality.APPLICATION_MODAL);
-    dialog.setTitle("📋 Détails Client");
-
-    GridPane grid = new GridPane();
-    grid.setPadding(new Insets(20));
-    grid.setHgap(15);
-    grid.setVgap(10);
-    grid.getStyleClass().add("details-dialog");
-
-    // Header
-    Label header = new Label("Fiche Client");
-    header.getStyleClass().add("details-header");
-    grid.add(header, 0, 0, 2, 1);
-
-    // Lignes d'information
-    addFormRow(grid, 1, "👤", "Nom Complet:", client.getPrenom() + " " + client.getNom());
-    addFormRow(grid, 2, "📧", "Email:", client.getEmail());
-    addFormRow(grid, 3, "📱", "Téléphone:", client.getTelephone());
-    addFormRow(grid, 4, "🏠", "Adresse:", client.getAdresse());
-    
-    if(client.getNumeroSecu() != null) {
-        addFormRow(grid, 5, "🆔", "Numéro Sécu:", client.getNumeroSecu());
-    }
-    if(client.getMutuelle() != null) {
-        addFormRow(grid, 6, "🏥", "Mutuelle:", client.getMutuelle());
+        Scene scene = new Scene(grid);
+        detailsStage.setScene(scene);
+        detailsStage.sizeToScene();
+        detailsStage.showAndWait();
     }
 
-    Scene scene = new Scene(grid);
-    scene.getStylesheets().add(getClass().getResource("/com/pharmacie/css/styles.css").toExternalForm());
-    dialog.setScene(scene);
-    dialog.sizeToScene();
-    dialog.show();
-}
+    private void addStyledRow(GridPane grid, int row, String labelText, String value, String labelStyle,
+            String valueStyle) {
+        Label label = new Label(labelText);
+        label.setStyle(labelStyle);
 
-private void afficherDetailsPharmacien(PharmacienAdjoint pharmacien) {
-    Stage dialog = new Stage();
-    dialog.initModality(Modality.APPLICATION_MODAL);
-    dialog.setTitle("💼 Détails Pharmacien");
+        Label valueLabel = new Label(value != null ? value : "N/A");
+        valueLabel.setStyle(valueStyle);
+        valueLabel.setWrapText(true);
 
-    GridPane grid = new GridPane();
-    grid.setPadding(new Insets(20));
-    grid.setHgap(15);
-    grid.setVgap(10);
-    grid.getStyleClass().add("details-dialog");
+        grid.add(label, 0, row);
+        grid.add(valueLabel, 1, row);
+    }
 
-    // Header
-    Label header = new Label("Profil Professionnel");
-    header.getStyleClass().add("details-header");
-    grid.add(header, 0, 0, 2, 1);
+    private void afficherDetailsClient(Client client) {
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.setTitle("📋 Détails Client");
 
-    // Lignes d'information
-    addFormRow(grid, 1, "👤", "Nom Complet:", pharmacien.getPrenom() + " " + pharmacien.getNom());
-    addFormRow(grid, 2, "🆔", "Matricule:", pharmacien.getMatricule());
-    addFormRow(grid, 3, "📧", "Email Pro:", pharmacien.getEmailPro());
-    addFormRow(grid, 4, "📅", "Date Embauche:", pharmacien.getDateEmbauche().toString());
-    addFormRow(grid, 5, "💰", "Salaire:", String.format("%.2f €", pharmacien.getSalaire()));
-    addFormRow(grid, 6, "🏢", "Poste:", pharmacien.getPoste());
-    addFormRow(grid, 7, "📝", "Statut Contrat:", pharmacien.getStatutContrat());
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(20));
+        grid.setHgap(15);
+        grid.setVgap(10);
+        grid.getStyleClass().add("details-dialog");
 
-    Scene scene = new Scene(grid);
-    scene.getStylesheets().add(getClass().getResource("/com/pharmacie/css/styles.css").toExternalForm());
-    dialog.setScene(scene);
-    dialog.sizeToScene();
-    dialog.show();
-}
-private void addFormRow(GridPane grid, int row, String icon, String labelText, String value) {
-    Label iconLabel = new Label(icon);
-    iconLabel.getStyleClass().add("detail-icon");
-    
-    Label label = new Label(labelText);
-    label.getStyleClass().add("detail-label");
-    
-    Label valueLabel = new Label(value != null ? value : "N/A");
-    valueLabel.getStyleClass().add("detail-value");
-    valueLabel.setWrapText(true);
+        // Header
+        Label header = new Label("Fiche Client");
+        header.getStyleClass().add("details-header");
+        grid.add(header, 0, 0, 2, 1);
 
-    HBox hbox = new HBox(5, iconLabel, label);
-    hbox.setAlignment(Pos.CENTER_LEFT);
+        // Lignes d'information
+        addFormRow(grid, 1, "👤", "Nom Complet:", client.getPrenom() + " " + client.getNom());
+        addFormRow(grid, 2, "📧", "Email:", client.getEmail());
+        addFormRow(grid, 3, "📱", "Téléphone:", client.getTelephone());
+        addFormRow(grid, 4, "🏠", "Adresse:", client.getAdresse());
 
-    grid.add(hbox, 0, row);
-    grid.add(valueLabel, 1, row);
-}
+        if (client.getNumeroSecu() != null) {
+            addFormRow(grid, 5, "🆔", "Numéro Sécu:", client.getNumeroSecu());
+        }
+        if (client.getMutuelle() != null) {
+            addFormRow(grid, 6, "🏥", "Mutuelle:", client.getMutuelle());
+        }
 
+        Scene scene = new Scene(grid);
+        scene.getStylesheets().add(getClass().getResource("/com/pharmacie/css/styles.css").toExternalForm());
+        dialog.setScene(scene);
+        dialog.sizeToScene();
+        dialog.show();
+    }
 
+    private void afficherDetailsPharmacien(PharmacienAdjoint pharmacien) {
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.setTitle("💼 Détails Pharmacien");
 
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(20));
+        grid.setHgap(15);
+        grid.setVgap(10);
+        grid.getStyleClass().add("details-dialog");
 
-// Gestion des erreurs d'API
-private void gererErreurApi(String entite, Exception ex) {
-    LOGGER.log(Level.SEVERE, "Erreur API - " + entite, ex);
-    showAlert(Alert.AlertType.ERROR, "Erreur", 
-        "Erreur de communication", 
-        String.format("Impossible de récupérer les détails du %s: %s", 
-            entite, ex.getMessage()));
-}
+        // Header
+        Label header = new Label("Profil Professionnel");
+        header.getStyleClass().add("details-header");
+        grid.add(header, 0, 0, 2, 1);
+
+        // Lignes d'information
+        addFormRow(grid, 1, "👤", "Nom Complet:", pharmacien.getPrenom() + " " + pharmacien.getNom());
+        addFormRow(grid, 2, "🆔", "Matricule:", pharmacien.getMatricule());
+        addFormRow(grid, 3, "📧", "Email Pro:", pharmacien.getEmailPro());
+        addFormRow(grid, 4, "📅", "Date Embauche:", pharmacien.getDateEmbauche().toString());
+        addFormRow(grid, 5, "💰", "Salaire:", String.format("%.2f €", pharmacien.getSalaire()));
+        addFormRow(grid, 6, "🏢", "Poste:", pharmacien.getPoste());
+        addFormRow(grid, 7, "📝", "Statut Contrat:", pharmacien.getStatutContrat());
+
+        Scene scene = new Scene(grid);
+        scene.getStylesheets().add(getClass().getResource("/com/pharmacie/css/styles.css").toExternalForm());
+        dialog.setScene(scene);
+        dialog.sizeToScene();
+        dialog.show();
+    }
+
+    private void addFormRow(GridPane grid, int row, String icon, String labelText, String value) {
+        Label iconLabel = new Label(icon);
+        iconLabel.getStyleClass().add("detail-icon");
+
+        Label label = new Label(labelText);
+        label.getStyleClass().add("detail-label");
+
+        Label valueLabel = new Label(value != null ? value : "N/A");
+        valueLabel.getStyleClass().add("detail-value");
+        valueLabel.setWrapText(true);
+
+        HBox hbox = new HBox(5, iconLabel, label);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+
+        grid.add(hbox, 0, row);
+        grid.add(valueLabel, 1, row);
+    }
+
+    // Gestion des erreurs d'API
+    private void gererErreurApi(String entite, Exception ex) {
+        LOGGER.log(Level.SEVERE, "Erreur API - " + entite, ex);
+        showAlert(Alert.AlertType.ERROR, "Erreur",
+                "Erreur de communication",
+                String.format("Impossible de récupérer les détails du %s: %s",
+                        entite, ex.getMessage()));
+    }
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
@@ -450,10 +571,11 @@ private void gererErreurApi(String entite, Exception ex) {
     @FXML
     private void handleReset(ActionEvent event) {
         showMySales = false;
-    btnToggleVentes.setText("Afficher mes ventes");
-    btnToggleVentes.setStyle("-fx-background-color: #007B3D; -fx-background-radius: 5;");
+        btnToggleVentes.setText("Afficher mes ventes");
+        btnToggleVentes.setStyle("-fx-background-color: #007B3D; -fx-background-radius: 5;");
         loadVentes();
     }
+
     private void showNotImplementedAlert(String featureName) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");

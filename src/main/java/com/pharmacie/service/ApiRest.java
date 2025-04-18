@@ -344,43 +344,44 @@ public class ApiRest {
     }
 
     public static List<Medicament> searchForVente(String searchTerm) throws Exception {
-    String url = API_BASE_URL + "/medicaments/search/all?searchTerm=" + URLEncoder.encode(searchTerm, StandardCharsets.UTF_8);
-    
-    HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create(url))
-        .header("Content-Type", "application/json")
-        .timeout(Duration.ofSeconds(15))
-        .GET()
-        .build();
+        String url = API_BASE_URL + "/medicaments/search/all?searchTerm="
+                + URLEncoder.encode(searchTerm, StandardCharsets.UTF_8);
 
-    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-    
-    if (response.statusCode() == 200) {
-        return parseVenteSearchResponse(response.body());
-    } else {
-        throw new Exception("Erreur HTTP " + response.statusCode());
-    }
-}
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .timeout(Duration.ofSeconds(15))
+                .GET()
+                .build();
 
-private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
-    List<Medicament> medicaments = new ArrayList<>();
-    try {
-        JSONArray medicamentsArray = new JSONArray(jsonResponse);
-        for (int i = 0; i < medicamentsArray.length(); i++) {
-            JSONObject medJson = medicamentsArray.getJSONObject(i);
-            Medicament m = new Medicament();
-            m.setCodeCip13(medJson.getString("codeCip13"));
-            m.setLibelle(medJson.optString("libelle", ""));
-            m.setDenomination(medJson.optString("denomination", ""));
-            String prixTTC = medJson.optString("prixTTC", "0.0");
-            m.setPrixTTC(new BigDecimal(prixTTC));
-            medicaments.add(m);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            return parseVenteSearchResponse(response.body());
+        } else {
+            throw new Exception("Erreur HTTP " + response.statusCode());
         }
-    } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, "Erreur parsing réponse vente", e);
     }
-    return medicaments;
-}
+
+    private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
+        List<Medicament> medicaments = new ArrayList<>();
+        try {
+            JSONArray medicamentsArray = new JSONArray(jsonResponse);
+            for (int i = 0; i < medicamentsArray.length(); i++) {
+                JSONObject medJson = medicamentsArray.getJSONObject(i);
+                Medicament m = new Medicament();
+                m.setCodeCip13(medJson.getString("codeCip13"));
+                m.setLibelle(medJson.optString("libelle", ""));
+                m.setDenomination(medJson.optString("denomination", ""));
+                String prixTTC = medJson.optString("prixTTC", "0.0");
+                m.setPrixTTC(new BigDecimal(prixTTC));
+                medicaments.add(m);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur parsing réponse vente", e);
+        }
+        return medicaments;
+    }
 
     /**
      * Récupère une vente par son ID depuis l'API.
@@ -546,7 +547,8 @@ private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
                 medicament.setLibelle(medicamentJson.getString("libelle"));
                 if (medicamentJson.has("prix")) {
                     medicament.setPrixTTC(BigDecimal.valueOf(medicamentJson.getDouble("prix")));
-                }                medicament.setQuantite(medicamentJson.getInt("quantite"));
+                }
+                medicament.setQuantite(medicamentJson.getInt("quantite"));
 
                 // Nouveau champ pour stockId
                 if (medicamentJson.has("stockId")) {
@@ -765,12 +767,8 @@ private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
         Vente vente = new Vente();
         
         try {
-            // Logging de l'ID pour le débogage
-            String venteId = venteJson.optString("idVente", "inconnu");
-            LOGGER.log(Level.INFO, "Début du parsing de la vente ID: {0}", venteId);
-            
             // Parsing des champs principaux
-            vente.setIdVente(UUID.fromString(venteId));
+            vente.setIdVente(UUID.fromString(venteJson.getString("idVente")));
             vente.setDateVente(Date.from(Instant.parse(venteJson.getString("dateVente"))));
             vente.setModePaiement(venteJson.getString("modePaiement"));
             vente.setMontantTotal(venteJson.getDouble("montantTotal"));
@@ -778,27 +776,34 @@ private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
             vente.setPharmacienAdjointId(UUID.fromString(venteJson.getString("pharmacienAdjointId")));
             vente.setClientId(UUID.fromString(venteJson.getString("clientId")));
     
-            // Gestion sécurisée de la notification
-            vente.setNotification(venteJson.optString("notification", null));
-    
-            // Parsing des médicaments
+            // Parsing des médicaments avec leurs stocks
             List<Medicament> medicaments = new ArrayList<>();
             JSONArray medicamentsArray = venteJson.getJSONArray("medicamentIds");
             
             for (int j = 0; j < medicamentsArray.length(); j++) {
                 JSONObject medicamentJson = medicamentsArray.getJSONObject(j);
-                Medicament medicament = new Medicament();
                 
-                // Utilisation exclusive des champs existants dans le JSON
+                Medicament medicament = new Medicament();
+                Medicament.Stock stock = new Medicament.Stock(); // Création d'un stock
+                medicament.setDenomination(medicamentJson.optString("denomination", "Nom inconnu"));
+
+                // Informations de base du médicament
                 medicament.setId(medicamentJson.getLong("id"));
                 medicament.setCodeCip13(medicamentJson.getString("codeCip13"));
-                medicament.setNumeroLot(medicamentJson.optString("numeroLot", null));
-                medicament.setDatePeremption(medicamentJson.optString("datePeremption", null));
-                medicament.setQuantite(medicamentJson.optInt("quantite", 0));
+                medicament.setDenomination(medicamentJson.getString("denomination"));
+                // Remplissage des détails du stock
+                stock.setNumeroLot(medicamentJson.optString("numeroLot", "N/A"));
+                stock.setQuantite(medicamentJson.optInt("quantite", 0));
+                stock.setDatePeremption(medicamentJson.optString("datePeremption", "N/A"));
+                stock.setEmplacement(medicamentJson.optString("emplacement", "N/A"));
+                stock.setSeuilAlerte(medicamentJson.optInt("seuilAlerte", 0));
                 
-                // Logging de validation
-                LOGGER.log(Level.FINE, "Médicament parsé - ID: {0}, Lot: {1}", 
-                    new Object[]{medicament.getId(), medicament.getNumeroLot()});
+                
+                // Ajout du stock à la liste
+                medicament.getStocks().add(stock);
+                
+                // Quantité vendue
+                medicament.setQuantite(stock.getQuantite()); 
                 
                 medicaments.add(medicament);
             }
@@ -812,21 +817,80 @@ private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
         
         return vente;
     }
-    // Dans la classe ApiRest.java
 
-/**
- * Récupère un client par son ID depuis l'API.
- * 
- * @param id ID du client
- * @return Client correspondant à l'ID
- * @throws Exception En cas d'erreur lors de la communication avec l'API
- */
-public static Client getClientById(UUID id) throws Exception {
-    String url = API_BASE_URL + "/client/" + id;
-    
-    LOGGER.log(Level.INFO, "Envoi d'une requête GET pour récupérer le client {0}", id);
-    
-    try {
+    /**
+     * Récupère un client par son ID depuis l'API.
+     * 
+     * @param id ID du client
+     * @return Client correspondant à l'ID
+     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     */
+    public static Client getClientById(UUID id) throws Exception {
+        String url = API_BASE_URL + "/client/" + id;
+
+        LOGGER.log(Level.INFO, "Envoi d'une requête GET pour récupérer le client {0}", id);
+
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .timeout(Duration.ofSeconds(15))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                return parseClientResponse(response.body());
+            } else {
+                String errorMessage = "Erreur HTTP " + response.statusCode() + " - " + response.body();
+                LOGGER.log(Level.SEVERE, errorMessage);
+                throw new Exception(errorMessage);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du client", e);
+            throw new Exception("Erreur de communication avec l'API: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Récupère un pharmacien adjoint par son ID depuis l'API.
+     * 
+     * @param id ID du pharmacien
+     * @return PharmacienAdjoint correspondant à l'ID
+     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     */
+    public static PharmacienAdjoint getPharmacienById(UUID id) throws Exception {
+        String url = API_BASE_URL + "/pharmaciens-adjoints/" + id;
+
+        LOGGER.log(Level.INFO, "Envoi d'une requête GET pour récupérer le pharmacien {0}", id);
+
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .timeout(Duration.ofSeconds(15))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                return parsePharmacienResponse(response.body());
+            } else {
+                String errorMessage = "Erreur HTTP " + response.statusCode() + " - " + response.body();
+                LOGGER.log(Level.SEVERE, errorMessage);
+                throw new Exception(errorMessage);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du pharmacien", e);
+            throw new Exception("Erreur de communication avec l'API: " + e.getMessage());
+        }
+    }
+
+    public static Medicament getMedicamentByCodeCip13(String codeCip13) throws Exception {
+        String url = API_BASE_URL + "/medicaments/code/" + codeCip13;
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
@@ -837,111 +901,100 @@ public static Client getClientById(UUID id) throws Exception {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() == 200) {
-            return parseClientResponse(response.body());
+            return parseMedicamentByCodeResponse(response.body());
         } else {
-            String errorMessage = "Erreur HTTP " + response.statusCode() + " - " + response.body();
-            LOGGER.log(Level.SEVERE, errorMessage);
-            throw new Exception(errorMessage);
+            throw new Exception("Erreur HTTP " + response.statusCode());
         }
-    } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du client", e);
-        throw new Exception("Erreur de communication avec l'API: " + e.getMessage());
     }
-}
 
-/**
- * Récupère un pharmacien adjoint par son ID depuis l'API.
- * 
- * @param id ID du pharmacien
- * @return PharmacienAdjoint correspondant à l'ID
- * @throws Exception En cas d'erreur lors de la communication avec l'API
- */
-public static PharmacienAdjoint getPharmacienById(UUID id) throws Exception {
-    String url = API_BASE_URL + "/pharmaciens-adjoints/" + id;
+    private static Medicament parseMedicamentByCodeResponse(String jsonResponse) {
+        Medicament medicament = new Medicament();
+        try {
+            JSONObject json = new JSONObject(jsonResponse);
+            // Correction : Utilisation correcte des clés JSON et peuplement des stocks
+            medicament.setDenomination(json.optString("denomination", ""));
+            medicament.setLibelle(json.optString("libellePresentation", ""));
+            medicament.setTauxRemboursement(json.optString("tauxRemboursement", ""));
+            medicament.setPrixHT(new BigDecimal(json.optString("prixHT", "0.00")));
+            medicament.setPrixTTC(new BigDecimal(json.optString("prixTTC", "0.00")));
+            medicament.setTaxe(new BigDecimal(json.optString("taxe", "0.00")));
     
-    LOGGER.log(Level.INFO, "Envoi d'une requête GET pour récupérer le pharmacien {0}", id);
-    
-    try {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "application/json")
-                .timeout(Duration.ofSeconds(15))
-                .GET()
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() == 200) {
-            return parsePharmacienResponse(response.body());
-        } else {
-            String errorMessage = "Erreur HTTP " + response.statusCode() + " - " + response.body();
-            LOGGER.log(Level.SEVERE, errorMessage);
-            throw new Exception(errorMessage);
+            // Peuplement de la liste des stocks
+            JSONArray stocks = json.optJSONArray("stocks");
+            if (stocks != null && !stocks.isEmpty()) {
+                JSONObject stockJson = stocks.getJSONObject(0);
+                Medicament.Stock stock = new Medicament.Stock();
+                stock.setNumeroLot(stockJson.optString("numeroLot", ""));
+                stock.setDatePeremption(stockJson.optString("datePeremption", ""));
+                stock.setEmplacement(stockJson.optString("emplacement", ""));
+                stock.setSeuilAlerte(stockJson.optInt("seuilAlerte", 0));
+                stock.setQuantite(stockJson.optInt("quantite", 0));
+                medicament.getStocks().add(stock); // Ajout du stock à la liste
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur parsing medicament by code", e);
         }
-    } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du pharmacien", e);
-        throw new Exception("Erreur de communication avec l'API: " + e.getMessage());
+        return medicament;
     }
-}
 
-// Méthodes de parsing
-private static Client parseClientResponse(String jsonResponse) {
-    JSONObject json = new JSONObject(jsonResponse);
-    Client client = new Client();
-    
-    client.setId(UUID.fromString(json.getString("idPersonne")));
-    client.setNom(json.getString("nom"));
-    client.setPrenom(json.getString("prenom"));
-    client.setEmail(json.getString("email"));
-    client.setTelephone(json.getString("telephone"));
-    client.setAdresse(json.getString("adresse"));
-    
-    // Champs optionnels
-    if(json.has("numeroSecu") && !json.isNull("numeroSecu")) {
-        client.setNumeroSecu(json.getString("numeroSecu"));
-    }
-    if(json.has("mutuelle") && !json.isNull("mutuelle")) {
-        client.setMutuelle(json.getString("mutuelle"));
-    }
-    
-    return client;
-}
+    // Méthodes de parsing
+    private static Client parseClientResponse(String jsonResponse) {
+        JSONObject json = new JSONObject(jsonResponse);
+        Client client = new Client();
 
-private static PharmacienAdjoint parsePharmacienResponse(String jsonResponse) {
-    JSONObject json = new JSONObject(jsonResponse);
-    
-    return new PharmacienAdjoint(
-        UUID.fromString(json.getString("idPersonne")),
-        json.getString("nom"),
-        json.getString("prenom"),
-        json.getString("email"),
-        json.getString("telephone"),
-        json.getString("adresse"),
-        json.getString("matricule"),
-        LocalDate.parse(json.getString("dateEmbauche").split("T")[0]),
-        json.getDouble("salaire"),
-        json.getString("poste"),
-        json.getString("statutContrat"),
-        json.optString("diplome", null),
-        json.getString("emailPro")
-    );
-}
+        client.setId(UUID.fromString(json.getString("idPersonne")));
+        client.setNom(json.getString("nom"));
+        client.setPrenom(json.getString("prenom"));
+        client.setEmail(json.getString("email"));
+        client.setTelephone(json.getString("telephone"));
+        client.setAdresse(json.getString("adresse"));
+
+        // Champs optionnels
+        if (json.has("numeroSecu") && !json.isNull("numeroSecu")) {
+            client.setNumeroSecu(json.getString("numeroSecu"));
+        }
+        if (json.has("mutuelle") && !json.isNull("mutuelle")) {
+            client.setMutuelle(json.getString("mutuelle"));
+        }
+
+        return client;
+    }
+
+    private static PharmacienAdjoint parsePharmacienResponse(String jsonResponse) {
+        JSONObject json = new JSONObject(jsonResponse);
+
+        return new PharmacienAdjoint(
+                UUID.fromString(json.getString("idPersonne")),
+                json.getString("nom"),
+                json.getString("prenom"),
+                json.getString("email"),
+                json.getString("telephone"),
+                json.getString("adresse"),
+                json.getString("matricule"),
+                LocalDate.parse(json.getString("dateEmbauche").split("T")[0]),
+                json.getDouble("salaire"),
+                json.getString("poste"),
+                json.getString("statutContrat"),
+                json.optString("diplome", null),
+                json.getString("emailPro"));
+    }
+
     public static JSONObject getMedicamentInfosAdmin(String codeCip13) {
         // Implémentation: récupérer les infos admin d'un médicament
         // Logique pour récupérer les informations administratives d'un médicament
-        return null; 
+        return null;
     }
 
     public static JSONObject getMedicamentInfosDispo(String codeCip13) {
         // Implémentation: récupérer les infos de disponibilité d'un médicament
         // Logique pour récupérer les informations de disponibilité d'un médicament
-        return null; 
+        return null;
     }
 
     public static JSONObject getMedicamentInfosPrescription(String codeCip13) {
         // Implémentation: récupérer les infos de prescription d'un médicament
         // Logique pour récupérer les informations de prescription d'un médicament
-        return null; 
+        return null;
     }
 
     public static JSONObject getMedicamentInfosGeneriques(String codeCip13) {
@@ -953,29 +1006,30 @@ private static PharmacienAdjoint parsePharmacienResponse(String jsonResponse) {
     public static boolean updateMedicamentStock(String codeCip13, Integer quantite) {
         // Implémentation: mettre à jour le stock d'un médicament
         // Logique pour mettre à jour le stock d'un médicament
-        return false; 
+        return false;
     }
+
     public static List<Vente> getVentesByClientId(UUID clientId) throws Exception {
         String url = API_BASE_URL + "/ventes/client/" + clientId;
         LOGGER.log(Level.INFO, "Récupération des ventes pour le client ID: {0}", clientId);
         return sendVentesRequest(url);
     }
-    
+
     public static List<Vente> getVentesByPharmacienId(UUID pharmacienId) throws Exception {
         String url = API_BASE_URL + "/ventes/pharmacien/" + pharmacienId;
         LOGGER.log(Level.INFO, "Récupération des ventes pour le pharmacien ID: {0}", pharmacienId);
         return sendVentesRequest(url);
     }
-    
+
     private static List<Vente> sendVentesRequest(String url) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
-    
+
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-    
+
         if (response.statusCode() == 200) {
             return parseVentesResponse(response.body());
         } else {
