@@ -177,7 +177,7 @@ private void showAccessDenied() {
         
         btnAnalytics.setOnAction(event -> {
             setActiveButton(btnAnalytics);
-            loadContent("Analyse des ventes");
+            loadAnalytics();
         });
         
         btnSettings.setOnAction(event -> {
@@ -406,6 +406,16 @@ private void showAccessDenied() {
         menuButton.setText("☰");
         sideMenu.setTranslateX(-300);
     }
-
+    private void loadAnalytics() {
+        setActiveButton(btnAnalytics);
+        updateHeaderTitle("Analyse des ventes");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/analyse_ventes.fxml"));
+            Parent analyticsView = loader.load();
+            contentPane.getChildren().setAll(analyticsView);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

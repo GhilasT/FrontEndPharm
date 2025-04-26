@@ -9,6 +9,7 @@ C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\FournisseursController.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\AddAdminDialogController.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\ApprentiUpdateRequest.java
+C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\AnalyseVenteData.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\service\PharmacienAdjointApi.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\PageResponse.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\AddFournisseurDialogController.java
@@ -26,6 +27,7 @@ C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\EditApprentiDialogController.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\service\ApiRest.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\FournisseurCreateRequest.java
+C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\AnalyseVentesController.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Fournisseur.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\PopupVenteController.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\AddApprentiDialogController.java
@@ -45,6 +47,7 @@ C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\RechercheMedicamentsController.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\util\SessionUtilisateur.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\VenteController.java
+C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\service\AnalyseVenteApi.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\Login.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\PharmacienAdjointUpdateRequest.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Vente.java
@@ -52,6 +55,7 @@ C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionPharmacienAdjointController.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Medecin.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\SystemInfo.java
+C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Dashboard.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Preparateur.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Employe.java
 C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\LoginResponse.java

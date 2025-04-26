@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.XYChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.chart.CategoryAxis?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.pharmacie.controller.AnalyseVentesController">
+    <HBox spacing="10" style="-fx-padding: 10;">
+        <Button text="Semaine" onAction="#handleSemaine"/>
+        <Button text="Mois" onAction="#handleMois"/>
+        <Button text="6 Mois" onAction="#handleSixMois"/>
+        <Button text="Année" onAction="#handleAnnee"/>
+        <Spinner fx:id="nbMoisSpinner" editable="true"/>
+        <Button text="Personnalisé" onAction="#handlePersonnalise"/>
+    </HBox>
+
+    <LineChart fx:id="ventesChart">
+        <xAxis>
+            <CategoryAxis label="Période"/>
+        </xAxis>
+        <yAxis>
+            <NumberAxis label="Ventes/Commandes"/>
+        </yAxis>
+    </LineChart>
+
+    <LineChart fx:id="caChart">
+        <xAxis>
+            <CategoryAxis label="Période"/>
+        </xAxis>
+        <yAxis>
+            <NumberAxis label="Chiffre d'Affaires (€)"/>
+        </yAxis>
+    </LineChart>
+</VBox>
