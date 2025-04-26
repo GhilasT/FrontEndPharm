@@ -47,9 +47,19 @@ public class ApiRest {
     // Taille de page par défaut retournée par le backend
     private static final int DEFAULT_PAGE_SIZE = 50;
 
+    public static boolean validerOrdonnance(UUID id){
+        if(id != null){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    public static Boolean OrdonnaceValide=false;
+
     /**
      * Récupère l'URL de base de l'API.
-     *
+     * 
      * @return URL de base de l'API
      */
     public static String getApiBaseUrl() {
@@ -58,13 +68,16 @@ public class ApiRest {
 
     /**
      * Récupère tous les médicaments depuis l'API.
-     *
+     * 
      * @return Liste des médicaments
      * @throws Exception En cas d'erreur lors de la communication avec l'API
      */
     public static List<Medicament> getMedicaments() throws Exception {
         return getMedicaments("");
     }
+
+
+
 
     public static List<Medicament> getAllMedicaments(String searchTerm) throws Exception {
         String url = API_BASE_URL + "/medicaments/search/all?searchTerm=" + searchTerm;
@@ -89,7 +102,7 @@ public class ApiRest {
 
     /**
      * Recherche des médicaments par terme de recherche.
-     *
+     * 
      * @param searchTerm Terme de recherche
      * @return Liste des médicaments correspondant au terme de recherche
      * @throws Exception En cas d'erreur lors de la communication avec l'API
@@ -133,7 +146,7 @@ public class ApiRest {
 
     /**
      * Récupère une page de médicaments depuis l'API.
-     *
+     * 
      * @param page Numéro de page (commence à 0)
      * @return Réponse paginée contenant les médicaments et les métadonnées de
      *         pagination
@@ -145,7 +158,7 @@ public class ApiRest {
 
     /**
      * Recherche des médicaments par terme de recherche avec pagination.
-     *
+     * 
      * @param page       Numéro de page (commence à 0)
      * @param searchTerm Terme de recherche (optionnel)
      * @return Réponse paginée contenant les médicaments et les métadonnées de
@@ -194,7 +207,7 @@ public class ApiRest {
 
     /**
      * Récupère une page de médicaments depuis l'API de manière asynchrone.
-     *
+     * 
      * @param page       Numéro de page (commence à 0)
      * @param searchTerm Terme de recherche (optionnel)
      * @return CompletableFuture contenant la réponse paginée
@@ -237,7 +250,7 @@ public class ApiRest {
 
     /**
      * Récupère les médicaments depuis l'API de manière asynchrone.
-     *
+     * 
      * @param searchTerm Terme de recherche (optionnel)
      * @return CompletableFuture contenant la liste des médicaments
      */
@@ -277,7 +290,7 @@ public class ApiRest {
 
     /**
      * Vérifie si un médicament nécessite une ordonnance.
-     *
+     * 
      * @param medicamentId ID du médicament
      * @return true si le médicament nécessite une ordonnance, false sinon
      * @throws Exception En cas d'erreur lors de la communication avec l'API
@@ -315,7 +328,7 @@ public class ApiRest {
 
     /**
      * Récupère toutes les ventes depuis l'API.
-     *
+     * 
      * @return Liste des ventes
      * @throws Exception En cas d'erreur lors de la communication avec l'API
      */
@@ -352,47 +365,47 @@ public class ApiRest {
     }
 
     public static List<Medicament> searchForVente(String searchTerm) throws Exception {
-        String url = API_BASE_URL + "/medicaments/search/all?searchTerm=" + URLEncoder.encode(searchTerm, StandardCharsets.UTF_8);
+    String url = API_BASE_URL + "/medicaments/search/all?searchTerm=" + URLEncoder.encode(searchTerm, StandardCharsets.UTF_8);
+    
+    HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create(url))
+        .header("Content-Type", "application/json")
+        .timeout(Duration.ofSeconds(15))
+        .GET()
+        .build();
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "application/json")
-                .timeout(Duration.ofSeconds(15))
-                .GET()
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() == 200) {
-            return parseVenteSearchResponse(response.body());
-        } else {
-            throw new Exception("Erreur HTTP " + response.statusCode());
-        }
+    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    
+    if (response.statusCode() == 200) {
+        return parseVenteSearchResponse(response.body());
+    } else {
+        throw new Exception("Erreur HTTP " + response.statusCode());
     }
+}
 
-    private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
-        List<Medicament> medicaments = new ArrayList<>();
-        try {
-            JSONArray medicamentsArray = new JSONArray(jsonResponse);
-            for (int i = 0; i < medicamentsArray.length(); i++) {
-                JSONObject medJson = medicamentsArray.getJSONObject(i);
-                Medicament m = new Medicament();
-                m.setCodeCip13(medJson.getString("codeCip13"));
-                m.setLibelle(medJson.optString("libelle", ""));
-                m.setDenomination(medJson.optString("denomination", ""));
-                String prixTTC = medJson.optString("prixTTC", "0.0");
-                m.setPrixTTC(new BigDecimal(prixTTC));
-                medicaments.add(m);
-            }
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur parsing réponse vente", e);
+private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
+    List<Medicament> medicaments = new ArrayList<>();
+    try {
+        JSONArray medicamentsArray = new JSONArray(jsonResponse);
+        for (int i = 0; i < medicamentsArray.length(); i++) {
+            JSONObject medJson = medicamentsArray.getJSONObject(i);
+            Medicament m = new Medicament();
+            m.setCodeCip13(medJson.getString("codeCip13"));
+            m.setLibelle(medJson.optString("libelle", ""));
+            m.setDenomination(medJson.optString("denomination", ""));
+            String prixTTC = medJson.optString("prixTTC", "0.0");
+            m.setPrixTTC(new BigDecimal(prixTTC));
+            medicaments.add(m);
         }
-        return medicaments;
+    } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Erreur parsing réponse vente", e);
     }
+    return medicaments;
+}
 
     /**
      * Récupère une vente par son ID depuis l'API.
-     *
+     * 
      * @param id ID de la vente
      * @return Vente correspondant à l'ID
      * @throws Exception En cas d'erreur lors de la communication avec l'API
@@ -432,7 +445,7 @@ public class ApiRest {
 
     /**
      * Crée une nouvelle vente via l'API.
-     *
+     * 
      * @param request Requête de création de vente
      * @return Vente créée
      * @throws Exception En cas d'erreur lors de la communication avec l'API
@@ -453,12 +466,12 @@ public class ApiRest {
             jsonRequest.put("modePaiement", request.getModePaiement());
             jsonRequest.put("montantTotal", request.getMontantTotal());
             jsonRequest.put("montantRembourse", request.getMontantRembourse());
-            jsonRequest.put("ordonnanceAjoutee", request.isOrdonnanceAjoutee());
+            jsonRequest.put("ordonnanceAjoutee", OrdonnaceValide);
 
             JSONArray medicamentsArray = new JSONArray();
             for (MedicamentPanier mp : request.getMedicaments()) {
                 JSONObject medicamentJson = new JSONObject();
-                medicamentJson.put("codeCip13", mp.getCodeCip13());
+                medicamentJson.put("codeCip13", mp.getCodeCip13()); 
                 medicamentJson.put("quantite", mp.getQuantite());
                 medicamentsArray.put(medicamentJson);
             }
@@ -485,19 +498,27 @@ public class ApiRest {
                 LOGGER.log(Level.INFO, "Création réussie de la vente {0}", vente.getIdVente());
                 return vente;
             } else {
-                String errorMessage = "Erreur HTTP " + response.statusCode() + " lors de la création de la vente";
-                LOGGER.log(Level.SEVERE, errorMessage);
-                throw new Exception(errorMessage + ": " + response.body());
+                if (response.statusCode() == 428) {
+                    String errorMessage= "Ordonnance requise pour finaliser la vente";
+                    LOGGER.log(Level.INFO, "Ordonnance requise pour finaliser la vente");
+                    throw new Exception(errorMessage + ": " + response.body());
+                }else {
+                    String errorMessage = "Erreur HTTP " + response.statusCode() + " lors de la création de la vente";
+                    LOGGER.log(Level.SEVERE, errorMessage);
+                    throw new Exception(errorMessage + ": " + response.body());
+                }
+
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Exception lors de la communication avec l'API", e);
             throw new Exception("Erreur de communication avec le serveur: " + e.getMessage(), e);
         }
+
     }
 
     /**
      * Supprime une vente via l'API.
-     *
+     * 
      * @param id ID de la vente à supprimer
      * @throws Exception En cas d'erreur lors de la communication avec l'API
      */
@@ -534,7 +555,7 @@ public class ApiRest {
 
     /**
      * Parse la réponse JSON contenant une liste de médicaments.
-     *
+     * 
      * @param jsonResponse Réponse JSON
      * @return Liste des médicaments
      */
@@ -570,7 +591,7 @@ public class ApiRest {
 
     /**
      * Vérifie si le backend est accessible.
-     *
+     * 
      * @return true si le backend est accessible, false sinon
      */
     public static boolean isBackendAccessible() {
@@ -594,7 +615,7 @@ public class ApiRest {
 
     /**
      * Parse la réponse JSON contenant une page de médicaments.
-     *
+     * 
      * @param jsonResponse Réponse JSON
      * @return Réponse paginée contenant les médicaments
      */
@@ -725,7 +746,7 @@ public class ApiRest {
 
     /**
      * Parse la réponse JSON contenant une liste de ventes.
-     *
+     * 
      * @param jsonResponse Réponse JSON
      * @return Liste des ventes
      */
@@ -748,7 +769,7 @@ public class ApiRest {
 
     /**
      * Parse la réponse JSON contenant une vente.
-     *
+     * 
      * @param jsonResponse Réponse JSON
      * @return Vente
      */
@@ -764,7 +785,7 @@ public class ApiRest {
 
     /**
      * Parse un objet JSON représentant une vente.
-     *
+     * 
      * @param venteJson Objet JSON
      * @return Vente
      */
@@ -1194,6 +1215,9 @@ public class ApiRest {
         if (response.statusCode() == 201) {
             // On s'attend à recevoir l'UUID en plain-text dans le body
             String body = response.body().replace("\"", "");
+            validerOrdonnance(UUID.fromString(body));
+            OrdonnaceValide = true;
+
             return UUID.fromString(body);
         } else {
             if (response.statusCode() == 409) {
