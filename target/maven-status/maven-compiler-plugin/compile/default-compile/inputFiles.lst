@@ -1,68 +1,78 @@
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\ApprentiCreateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\service\FournisseurApi.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\util\HttpClientUtil.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\AddPreparateurDialogController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\PreparateurUpdateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\PreparateurCreateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\PharmacienAdjoint.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\MedicamentsController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\FournisseursController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\AddAdminDialogController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\ApprentiUpdateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\service\PharmacienAdjointApi.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\PageResponse.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\AddFournisseurDialogController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\VentesController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\service\AdminApi.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\util\Global.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\PharmacyDashboard.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\AdminUpdateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\AdministrateurCreateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Personne.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Admin.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\MedecinUpdateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\PharmacyDashboardModifier.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionFournisseurController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\EditApprentiDialogController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\service\ApiRest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\FournisseurCreateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Fournisseur.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\PopupVenteController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\AddApprentiDialogController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Medicament.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\MedicamentPanier.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\EditAdminDialogController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\service\PreparateurApi.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\App.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\EditFournisseurDialogController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionPersonnelController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\service\ApprentiApi.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\VenteCreateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\TestUtils.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\DashboardAdminController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\FournisseurUpdateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Client.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\RechercheMedicamentsController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\util\SessionUtilisateur.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\VenteController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\Login.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\PharmacienAdjointUpdateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Vente.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\EditPreparateurDialogController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionPharmacienAdjointController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Medecin.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\SystemInfo.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Preparateur.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Employe.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\LoginResponse.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionPreparateurController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\PharmacienAdjointCreateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionAdminController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\util\LoggedSeller.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\FormulaireClientController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionApprentiController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\dto\MedecinCreateRequest.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\util\PersonneMixin.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\AddPharmacienAdjointDialogController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\controller\EditPharmacienAdjointDialogController.java
-C:\Users\Dell\Desktop\PROJETPharmaplus\FrontEndPharm\src\main\java\com\pharmacie\model\Apprenti.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\MedicamentsController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\ApprentiUpdateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\VentesController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\AdminUpdateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\util\PersonneMixin.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\TestUtils.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\VenteCreateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\MedicamentPanier.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\MedecinCreateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\StockMedicamentDTO.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\service\CommandeService.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\service\PharmacienAdjointApi.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\EditApprentiDialogController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\Fournisseur.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\ApprentiCreateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\service\EmailService.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\FournisseurUpdateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\EditAdminDialogController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionPersonnelController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\util\HttpClientUtil.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionPharmacienAdjointController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\LoginResponse.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\util\SessionUtilisateur.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\Personne.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\Preparateur.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\Medicament.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\Client.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\util\LoggedSeller.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\service\LigneCommandeService.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\AdministrateurCreateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\Login.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\Vente.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\PharmacyDashboardModifier.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\Commande.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\FournisseurCreateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\MedecinUpdateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\DashboardAdminController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\PharmacyDashboard.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionCommandeController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\LigneCommande.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\PharmacienAdjointUpdateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\AddPreparateurDialogController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\EditFournisseurDialogController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\VenteController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\service\AdminApi.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\PopupVenteController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\PasserCommandeController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionFournisseurController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionPreparateurController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\PharmacienAdjointCreateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\Employe.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\PreparateurCreateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionApprentiController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\Apprenti.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\App.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\PageResponse.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\FormulaireClientController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\FournisseursController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\AddAdminDialogController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\EditPreparateurDialogController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\Medecin.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\service\ApiRest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\AddPharmacienAdjointDialogController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\service\PreparateurApi.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\EmailCommandeRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\SystemInfo.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\AddApprentiDialogController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\Admin.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\util\DialogService.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\RechercheMedicamentsController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\service\FournisseurApi.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\EditPharmacienAdjointDialogController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\PharmacienAdjoint.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\model\dto\PreparateurUpdateRequest.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\util\Global.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\AddFournisseurDialogController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\controller\GestionAdminController.java
+C:\Users\93abd\OneDrive\Bureau\2024-L3O2\branches\ElMassaoudi Abdelkarim\PharmaFinal\FrontEndPharm\src\main\java\com\pharmacie\service\ApprentiApi.java

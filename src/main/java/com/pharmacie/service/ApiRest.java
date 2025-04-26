@@ -157,7 +157,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .timeout(Duration.ofSeconds(15))
+                    .timeout(Duration.ofSeconds(800))
                     .GET()
                     .build();
 
@@ -575,7 +575,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .timeout(Duration.ofSeconds(5))
+                    .timeout(Duration.ofSeconds(80))
                     .GET()
                     .build();
 

@@ -128,10 +128,18 @@
                            <Font name="Open Sans Semibold" size="20.0" />
                         </font>
                      </Button>
+                     <Button fx:id="btnCommandes" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
+                        minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
+                        style="-fx-background-color: transparent;"  text="Commandes"  
+                        textFill="WHITE" GridPane.rowIndex="3">
+                        <font>
+                           <Font name="Open Sans Semibold" size="20.0" />
+                        </font>
+                     </Button>
                      <Button fx:id="btnSuppliers" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
                         minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
                         style="-fx-background-color: transparent;" text="Fournisseurs"
-                        textFill="WHITE" GridPane.rowIndex="3">
+                        textFill="WHITE" GridPane.rowIndex="4">
                         <font>
                            <Font name="Open Sans Semibold" size="20.0" />
                         </font>
@@ -139,7 +147,7 @@
                      <Button fx:id="btnAnalytics" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
                         minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
                         style="-fx-background-color: transparent;" text="Analyse des ventes"
-                        textFill="WHITE" GridPane.rowIndex="4">
+                        textFill="WHITE" GridPane.rowIndex="5">
                         <font>
                            <Font name="Open Sans Semibold" size="20.0" />
                         </font>
@@ -147,7 +155,7 @@
                      <Button fx:id="btnSettings" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
                         minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
                         style="-fx-background-color: transparent;" text="Paramètres"
-                        textFill="WHITE" GridPane.rowIndex="5">
+                        textFill="WHITE" GridPane.rowIndex="6">
                         <font>
                            <Font name="Open Sans Semibold" size="20.0" />
                         </font>
