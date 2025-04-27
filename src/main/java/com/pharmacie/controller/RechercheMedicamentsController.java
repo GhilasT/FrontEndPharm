@@ -285,6 +285,7 @@ public class RechercheMedicamentsController {
 
     private void ajouterAuPanier(Medicament medicament) {
         String codeCIS = medicament.getCodeCIS();
+        String nomMedic = medicament.getDenomination();
 
         if (codeCIS == null || codeCIS.isBlank()) {
             LOGGER.warning("Code CIS manquant pour le médicament : " + medicament);
