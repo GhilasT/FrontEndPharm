@@ -39,6 +39,7 @@ public class PharmacyDashboard extends StackPane {
     @FXML private Button btnDashboard;
     @FXML private Button btnSales;
     @FXML private Button btnMedics;
+    @FXML private Button btnCommandes;
     @FXML private Button btnSuppliers;
     @FXML private Button btnAnalytics;
     @FXML private Button btnSettings;
@@ -143,6 +144,7 @@ private void showAccessDenied() {
         configureMenuButton(btnDashboard, "dashboard.png", "Tableau de Bord");
         configureMenuButton(btnSales, "ventes.png", "Ventes");
         configureMenuButton(btnMedics, "médicaments.png", "Médicaments");
+        configureMenuButton(btnCommandes, "gestionCommande.png", "Commandes");
         configureMenuButton(btnSuppliers, "fournisseurs.png", "Fournisseurs");
         configureMenuButton(btnAnalytics, "analyseventes.png", "Analyse des ventes");
         configureMenuButton(btnSettings, "paramètres.png", "Paramètres");
@@ -168,6 +170,11 @@ private void showAccessDenied() {
         btnMedics.setOnAction(event -> {
             setActiveButton(btnMedics);
             loadContent("Médicaments");
+        });
+
+        btnCommandes.setOnAction(event -> {
+            setActiveButton(btnCommandes);
+            loadContent("Commandes");
         });
         
         btnSuppliers.setOnAction(event -> {
@@ -386,6 +393,12 @@ private void showAccessDenied() {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/fournisseurs.fxml"));
                 Parent fournisseursView = loader.load();
                 contentPane.getChildren().add(fournisseursView);
+            }
+            else if(title.equals("Commandes")) {
+                // Chemin ABSOLU depuis les resources
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionCommande.fxml"));
+                Parent commandesView = loader.load();
+                contentPane.getChildren().add(commandesView);
             }
             else {
                 contentPane.getChildren().add(new Label(title));
