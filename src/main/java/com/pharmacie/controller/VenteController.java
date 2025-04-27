@@ -16,6 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.event.ActionEvent;
@@ -36,6 +37,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.json.JSONObject;
 
+import javafx.scene.image.ImageView;
+
 public class VenteController {
 
     @FXML
@@ -52,6 +55,8 @@ public class VenteController {
     private Label LabelQuantierValue;
     @FXML
     private Label LabelPrixValue;
+    @FXML
+    private ImageView boutonTrash;
 
     @FXML
     private Button btnAjouterOrdonnance;
@@ -61,9 +66,18 @@ public class VenteController {
     private UUID clientId;
     private UUID pharmacienAdjointId;
 
+    // Modèle du panier
+    private final List<MedicamentPanier> panierItems = new ArrayList<>();
+
+    // Garde rowCount interne pour le GridPane, ou calcule-le dans refreshGrid()
     private int rowCount = 1;
     private ObservableList<Medicament> suggestions = FXCollections.observableArrayList();
     private final Logger LOGGER = Logger.getLogger(VenteController.class.getName());
+
+
+
+
+
 
     @FXML
     public void initialize() {
@@ -137,6 +151,59 @@ private void rechercherMedicaments(String searchTerm) {
     }
 }
 
+    @FXML
+    public void ajouterMedicament(String selected) {
+        try {
+            // 1) Extraction du nom et du prix depuis la chaîne "Libellé - XX,XX€"
+            String[] parts = selected.split(" - ");
+            if (parts.length < 2) {
+                LOGGER.warning("Format invalide : " + selected);
+                return;
+            }
+            String nom = parts[0].trim();
+            double prix = Double.parseDouble(parts[1]
+                    .replace("€", "")
+                    .replace(",", ".")
+                    .trim());
+
+            // 2) On retrouve l'objet Medicament correspondant
+            Optional<Medicament> match = suggestions.stream()
+                    .filter(m -> {
+                        String n = m.getDenomination() != null ? m.getDenomination() : m.getLibelle();
+                        return selected.startsWith(n);
+                    })
+                    .findFirst();
+            if (match.isEmpty()) {
+                LOGGER.warning("Aucun médicament correspondant trouvé pour : " + nom);
+                return;
+            }
+
+            // 3) Vérification du code CIP13
+            Medicament med = match.get();
+            String codeCip13 = med.getCodeCip13();
+            if (codeCip13 == null || codeCip13.isBlank()) {
+                LOGGER.warning("Code CIP13 manquant pour : " + med.getLibelle());
+                return;
+            }
+
+            // 4) Création et peuplement de l'objet métier
+            MedicamentPanier mp = new MedicamentPanier(codeCip13, 1, prix);
+            mp.setNomMedicament(nom);
+
+            // 5) Ajout au modèle
+            panierItems.add(mp);
+
+            // 6) Rafraîchissement complet de la grille et des totaux
+            refreshGrid();
+
+            // 7) Remise à zéro de la barre de recherche
+            barDeRecherche.clear();
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de l'ajout du médicament", e);
+        }
+    }
+/*
 @FXML
 public void ajouterMedicament(String selected) {
     try {
@@ -167,10 +234,10 @@ public void ajouterMedicament(String selected) {
             LOGGER.warning("Code CIP13 manquant pour le médicament : " + med.getLibelle());
             return;
         }
- 
+
         Label labelNom = new Label(nom);
         labelNom.setTextFill(Color.WHITE);
-        labelNom.setUserData(codeCip13); 
+        labelNom.setUserData(codeCip13);
 
         TextField qteField = new TextField("1");
         qteField.setStyle("-fx-text-fill: white; -fx-control-inner-background: rgba(0,122,255,1);");
@@ -220,6 +287,8 @@ public void ajouterMedicament(String selected) {
         LabelQuantierValue.setText(String.valueOf(sommeQte));
         LabelPrixValue.setText(String.format("%.2f €", total));
     }
+
+ */
 
     @FXML
     private void handlePayer(ActionEvent event) {
@@ -387,5 +456,87 @@ public void ajouterMedicament(String selected) {
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page des médecins", e.getMessage());
         }
+    }
+
+    private void majInfosPanier() {
+        int sommeQte = 0;
+        double total = 0.0;
+
+        for (MedicamentPanier mp : panierItems) {
+            sommeQte += mp.getQuantite();
+            total    += mp.getQuantite() * mp.getPrixUnitaire();
+        }
+
+        LabelQuantierValue.setText(String.valueOf(sommeQte));
+        LabelPrixValue.setText(String.format("%.2f €", total));
+    }
+
+    private void refreshGrid() {
+        // 1) Supprimer uniquement les nœuds de la grille ayant rowIndex > 0
+        List<Node> toRemove = new ArrayList<>();
+        for (Node node : gridPanePanier.getChildren()) {
+            Integer r = GridPane.getRowIndex(node);
+            // r peut être null (par défaut row=0),
+            // ou explicite. On ne considère que r>0.
+            if (r != null && r > 0) {
+                toRemove.add(node);
+            }
+        }
+        gridPanePanier.getChildren().removeAll(toRemove);
+
+        // 2) Reconstruire les lignes de données à partir du modèle
+        int row = 1;
+        for (MedicamentPanier mp : panierItems) {
+            // Nom
+            Label labelNom = new Label(mp.getNomMedicament());
+            labelNom.setTextFill(Color.WHITE);
+
+            // Quantité
+            TextField qteField = new TextField(String.valueOf(mp.getQuantite()));
+            qteField.setStyle("-fx-text-fill: white; -fx-control-inner-background: rgba(0,122,255,1);");
+            qteField.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (!newVal.matches("\\d*")) {
+                    qteField.setText(newVal.replaceAll("[^\\d]", ""));
+                    return;
+                }
+                if (!newVal.isEmpty() && Integer.parseInt(newVal) == 0) {
+                    panierItems.remove(mp);
+                    refreshGrid();
+                    return;
+                }
+                if (!newVal.isEmpty()) {
+                    mp.setQuantite(Integer.parseInt(newVal));
+                }
+                majInfosPanier();
+            });
+
+            // Prix unitaire
+            Label labelPrix = new Label(String.format("%.2f €", mp.getPrixUnitaire()));
+            labelPrix.setTextFill(Color.WHITE);
+
+            // Ajout des nœuds à la ligne `row`
+            gridPanePanier.add(labelNom, 0, row);
+            gridPanePanier.add(qteField, 1, row);
+            gridPanePanier.add(labelPrix, 2, row);
+
+            row++;
+        }
+
+        // 3) Mettre à jour les totaux
+        majInfosPanier();
+    }
+
+    /**
+     * Vide complètement le panier (modèle + vue) quand on clique sur la poubelle.
+     */
+    @FXML
+    private void handleEmptyCart(MouseEvent event) {
+        // 1) Vide le modèle
+        panierItems.clear();
+        // 2) Reconstruit la grille vide
+        refreshGrid();
+        // 3) Remet les compteurs à zéro
+        LabelQuantierValue.setText("0");
+        LabelPrixValue.setText("0.00 €");
     }
 }
