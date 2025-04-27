@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pharmacie.controller.AddMedecinController" spacing="15" style="-fx-padding: 20;">
+
+    <GridPane hgap="10" vgap="10">
+        <!-- Civilité -->
+        <Label text="Civilité" GridPane.columnIndex="0" />
+        <HBox GridPane.columnIndex="1" spacing="10">
+            <RadioButton fx:id="radioBtnMr" text="M." />
+            <RadioButton fx:id="radioBtnMme" text="Mme" />
+        </HBox>
+
+        <!-- Nom -->
+        <Label text="Nom" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+        <TextField fx:id="nomField" promptText="Entrez le nom" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <!-- Prénom -->
+        <Label text="Prénom" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+        <TextField fx:id="prenomField" promptText="Entrez le prénom" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <!-- Numéro RPPS -->
+        <Label text="Numéro RPPS" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+        <TextField fx:id="rppsField" promptText="Entrez le numéro RPPS" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <!-- Profession -->
+        <Label text="Profession" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+        <TextField fx:id="professionField" promptText="Entrez la profession" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+        <!-- Catégorie Professionnelle -->
+        <Label text="Catégorie Professionnelle" GridPane.rowIndex="5" GridPane.columnIndex="0" />
+        <TextField fx:id="categorieProfessionnelleField" promptText="Catégorie Professionnelle" GridPane.rowIndex="5" GridPane.columnIndex="1" prefWidth="300"/>
+
+        <!-- Mode d'Exercice -->
+        <Label text="Mode d'Exercice" GridPane.rowIndex="6" GridPane.columnIndex="0" />
+        <TextField fx:id="modeExerciceField" promptText="Entrez le mode d'exercice" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+        <!-- Qualifications -->
+        <Label text="Qualifications" GridPane.rowIndex="7" GridPane.columnIndex="0" />
+        <TextField fx:id="qualificationsField" promptText="Entrez les qualifications" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+
+        <!-- Structure d'Exercice -->
+        <Label text="Structure d'Exercice" GridPane.rowIndex="8" GridPane.columnIndex="0" />
+        <TextField fx:id="structureExerciceField" promptText="Entrez la structure d'exercice" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+
+        <!-- Fonction Activité -->
+        <Label text="Fonction Activité" GridPane.rowIndex="9" GridPane.columnIndex="0" />
+        <TextField fx:id="fonctionActiviteField" promptText="Entrez la fonction activité" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+
+        <!-- Genre Activité -->
+        <Label text="Genre Activité" GridPane.rowIndex="10" GridPane.columnIndex="0" />
+        <TextField fx:id="genreActiviteField" promptText="Entrez le genre d'activité" GridPane.rowIndex="10" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <!-- Bouton pour ajouter le médecin -->
+    <Button fx:id="btnAjouterMedecin" text="Ajouter Médecin" onAction="#handleAjouterMedecin" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+    <Button text="Annuler" fx:id="btnAnnuler" onAction="#handleAnnuler" />
+</VBox>

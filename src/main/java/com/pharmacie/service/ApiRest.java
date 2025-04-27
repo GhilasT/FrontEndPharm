@@ -1,6 +1,12 @@
 package com.pharmacie.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pharmacie.model.*;
+import com.pharmacie.model.dto.MedecinCreateRequest;
+import com.pharmacie.model.dto.MedecinResponse;
+import com.pharmacie.model.dto.OrdonnanceCreateRequest;
+import com.pharmacie.model.dto.PrescriptionCreateRequest;
 import com.pharmacie.util.Global;
 
 import org.json.JSONArray;
@@ -28,13 +34,15 @@ import java.util.logging.Logger;
  * backend.
  */
 public class ApiRest {
-
     private static final String API_BASE_URL = Global.getBaseUrl();
     private static final HttpClient client = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .followRedirects(HttpClient.Redirect.NORMAL)
             .build();
     private static final Logger LOGGER = Logger.getLogger(ApiRest.class.getName());
+
+    public static Boolean OrdonnaceValide=false;
+
 
     // Taille de page par défaut retournée par le backend
     private static final int DEFAULT_PAGE_SIZE = 50;
@@ -1093,5 +1101,337 @@ public class ApiRest {
 
         return dash;
 
+    }
+
+    /**
+     * Supprime un médecin via l'API en utilisant son RPPS.
+     *
+     * @param rpps Le RPPS du médecin à supprimer
+     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     */
+    public static void deleteMedecin(String rpps) throws Exception {
+        String url = API_BASE_URL + "/medecins/rpps/" + rpps;  // Utiliser le RPPS pour supprimer le médecin
+
+        LOGGER.log(Level.INFO, "Envoi d'une requête DELETE pour supprimer le médecin avec RPPS: " + rpps);
+
+        try {
+            // Création de la requête HTTP DELETE
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .timeout(Duration.ofSeconds(15))
+                    .DELETE()
+                    .build();
+
+            // Envoi de la requête et récupération de la réponse
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            LOGGER.log(Level.INFO, "Réponse reçue avec le code " + response.statusCode());
+
+            if (response.statusCode() == 204) {
+                LOGGER.log(Level.INFO, "Suppression réussie du médecin avec RPPS: " + rpps);
+            } else {
+                String errorMessage = "Erreur HTTP " + response.statusCode() + " lors de la suppression du médecin avec RPPS: " + rpps;
+                LOGGER.log(Level.SEVERE, errorMessage);
+                throw new Exception(errorMessage);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Exception lors de la communication avec l'API pour supprimer le médecin", e);
+            throw new Exception("Erreur de communication avec le serveur: " + e.getMessage(), e);
+        }
+    }
+
+    public static List<Medecin> searchMedecins(String searchTerm) throws Exception {
+        String url = API_BASE_URL + "/medecins/search?term=" + searchTerm;  // URL de l'API avec le terme de recherche
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .timeout(Duration.ofSeconds(15))
+                .GET()  // Utiliser GET pour récupérer les données
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            // Convertir la réponse JSON en une liste de Medecin
+            return new ObjectMapper().readValue(response.body(), new TypeReference<List<Medecin>>() {});
+        } else {
+            throw new Exception("Erreur de recherche: " + response.statusCode());
+        }
+    }
+
+
+    public static UUID createOrdonnance(OrdonnanceCreateRequest req) throws Exception {
+        String url = API_BASE_URL + "/ordonnances";
+        LOGGER.log(Level.INFO, "Envoi d'une requête POST pour créer une ordonnance");
+
+        // 1) Construis le JSON de la requête
+        JSONObject json = new JSONObject();
+        // Date au format ISO
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH");
+        fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String dateStr = fmt.format(req.getDateEmission());
+        json.put("dateEmission", dateStr);
+        System.out.println("1 : " + dateStr);
+        json.put("rppsMedecin", req.getRppsMedecin());
+        System.out.println("2 : " + req.getRppsMedecin());
+        json.put("clientId", req.getClientId().toString());
+        System.out.println("3 : " + req.getClientId());
+
+
+        // Tableau des prescriptions
+        JSONArray prescArray = new JSONArray();
+        for (PrescriptionCreateRequest p : req.getPrescriptions()) {
+            JSONObject o = new JSONObject();
+            o.put("medicament", p.getMedicament());
+            o.put("quantitePrescrite", p.getQuantitePrescrite());
+            o.put("duree", p.getDuree());
+            o.put("posologie", p.getPosologie());
+            prescArray.put(o);
+        }
+        json.put("prescriptions", prescArray);
+
+        System.out.println("4 : " + prescArray);
+
+        // 2) Prépare et envoie la requête HTTP
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .timeout(Duration.ofSeconds(15))
+                .POST(HttpRequest.BodyPublishers.ofString(json.toString()))
+                .build();
+
+        HttpResponse<String> response =
+                client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+        LOGGER.log(Level.INFO, "Réponse ordonnance création code {0}", response.statusCode());
+        LOGGER.log(Level.FINE, "Corps de réponse : {0}", response.body());
+
+        // 3) Traite la réponse
+        if (response.statusCode() == 201) {
+            // On s'attend à recevoir l'UUID en plain-text dans le body
+            String body = response.body().replace("\"", "");
+            OrdonnaceValide = true;
+
+            return UUID.fromString(body);
+        } else {
+            if (response.statusCode() == 409) {
+                // Lire le message d’erreur renvoyé par le serveur, le logguer ou le remonter à l'utilisateur
+                throw new RuntimeException("Conflit à la création d'ordonnance: " + response.body());
+            } else {
+                throw new RuntimeException(
+                        "Échec création ordonnance: HTTP " + response.statusCode() + " / " + response.body());
+            }
+        }
+    }
+
+    // Méthodes pour récupérer les médecins avec pagination
+    public static PageResponse<Medecin> getMedecinsPagines(int page) throws Exception {
+        return getMedecinsPagines(page, ""); // Appel avec un terme de recherche vide
+    }
+
+    public static PageResponse<Medecin> getMedecinsPagines(int page, String searchTerm) throws Exception {
+        String url = API_BASE_URL + "/medecins/page";
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            url += "?searchTerm=" + searchTerm; // Ajout du terme de recherche dans l'URL
+        }
+
+        LOGGER.log(Level.INFO, "Envoi d'une requête GET paginée à " + url);
+
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .timeout(Duration.ofSeconds(15))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            LOGGER.log(Level.INFO, "Réponse paginée reçue avec le code {0}", response.statusCode());
+
+            if (response.statusCode() == 200) {
+                PageResponse<Medecin> pageResponse = parsePageResponseMedecins(response.body());
+                LOGGER.log(Level.INFO, "Récupération réussie de la page {0}/{1} avec {2} médecins",
+                        new Object[]{pageResponse.getCurrentPage(), pageResponse.getTotalPages(),
+                                pageResponse.getContent().size()});
+                return pageResponse;
+            } else {
+                String errorMessage = "Erreur HTTP " + response.statusCode()
+                        + " lors de la récupération des médecins paginés";
+                LOGGER.log(Level.SEVERE, errorMessage);
+                throw new Exception(errorMessage);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Exception lors de la communication avec l'API paginée", e);
+            throw new Exception("Erreur de communication avec le serveur: " + e.getMessage(), e);
+        }
+    }
+
+    // Méthode pour parser une page JSON des médecins
+    private static PageResponse<Medecin> parsePageResponseMedecins(String jsonResponse) {
+        List<Medecin> medecins = new ArrayList<>();
+        int currentPage = 0;
+        int totalPages = 0;
+        long totalElements = 0;
+
+        try {
+            // La réponse reçue est une liste directe d'objets Medecin, donc on ne s'attend pas à un objet avec une clé "content"
+            JSONArray contentArray = new JSONArray(jsonResponse);
+
+            // En fonction de votre structure de réponse, il faudrait peut-être aussi prendre les informations de pagination
+            // En ajoutant ces informations à votre réponse, par exemple :
+            currentPage = 0;  // A vous de gérer la page courante si vous en avez besoin
+            totalPages = 1;   // Idem, à ajuster selon votre API
+            totalElements = contentArray.length();
+
+            // Maintenant, on parse les médecins dans la réponse
+            for (int i = 0; i < contentArray.length(); i++) {
+                JSONObject medJson = contentArray.getJSONObject(i);
+                Medecin medecin = new Medecin();
+                medecin.setCivilite(medJson.getString("civilite"));
+                medecin.setNomExercice(medJson.getString("nomExercice"));
+                medecin.setPrenomExercice(medJson.getString("prenomExercice"));
+                medecin.setRppsMedecin(medJson.getString("rppsMedecin"));
+                medecin.setCategorieProfessionnelle(medJson.getString("categorieProfessionnelle"));
+                medecin.setProfession(medJson.getString("profession"));
+                medecin.setModeExercice(medJson.getString("modeExercice"));
+                medecin.setQualifications(medJson.getString("qualifications"));
+                medecin.setStructureExercice(medJson.getString("structureExercice"));
+                medecin.setFonctionActivite(medJson.getString("fonctionActivite"));
+                medecin.setGenreActivite(medJson.getString("genreActivite"));
+                medecins.add(medecin);
+            }
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du parsing de la page JSON des médecins", e);
+        }
+        return new PageResponse<>(medecins, currentPage, totalPages, totalElements);
+    }
+
+    // Méthode pour analyser la réponse JSON d'un médecin et la convertir en objet MedecinResponse
+    private static MedecinResponse parseMedecinResponse(String jsonResponse) throws Exception {
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+
+            // Extraire les informations du médecin à partir de la réponse JSON
+            String civilite = jsonObject.getString("civilite");
+            String nomExercice = jsonObject.getString("nomExercice");
+            String prenomExercice = jsonObject.getString("prenomExercice");
+            String rppsMedecin = jsonObject.getString("rppsMedecin");
+            String categorieProfessionnelle = jsonObject.getString("categorieProfessionnelle");
+            String profession = jsonObject.getString("profession");
+            String modeExercice = jsonObject.getString("modeExercice");
+            String qualifications = jsonObject.getString("qualifications");
+            String structureExercice = jsonObject.getString("structureExercice");
+            String fonctionActivite = jsonObject.getString("fonctionActivite");
+            String genreActivite = jsonObject.getString("genreActivite");
+
+            // Créer et retourner l'objet MedecinResponse
+            return new MedecinResponse(
+                    null,  // L'id du médecin peut être assigné à partir de la réponse API si disponible
+                    civilite,
+                    nomExercice,
+                    prenomExercice,
+                    rppsMedecin,
+                    categorieProfessionnelle,
+                    profession,
+                    modeExercice,
+                    qualifications,
+                    structureExercice,
+                    fonctionActivite,
+                    genreActivite
+            );
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du parsing de la réponse JSON du médecin", e);
+            throw new Exception("Erreur lors de l'analyse de la réponse JSON du médecin: " + e.getMessage(), e);
+        }
+    }
+
+    // Méthode pour créer un médecin
+    public static MedecinResponse createMedecin(MedecinCreateRequest request) throws Exception {
+        String url = API_BASE_URL + "/medecins";
+        LOGGER.log(Level.INFO, "Envoi d'une requête POST pour créer un médecin");
+
+        try {
+            // Préparation du JSON de la requête
+            JSONObject jsonRequest = new JSONObject();
+            jsonRequest.put("civilite", request.getCivilite());
+            jsonRequest.put("nomExercice", request.getNomExercice());
+            jsonRequest.put("prenomExercice", request.getPrenomExercice());
+            jsonRequest.put("rppsMedecin", request.getRppsMedecin());
+            jsonRequest.put("categorieProfessionnelle", request.getCategorieProfessionnelle());
+            jsonRequest.put("profession", request.getProfession());
+            jsonRequest.put("modeExercice", request.getModeExercice());
+            jsonRequest.put("qualifications", request.getQualifications());
+            jsonRequest.put("structureExercice", request.getStructureExercice());
+            jsonRequest.put("fonctionActivite", request.getFonctionActivite());
+            jsonRequest.put("genreActivite", request.getGenreActivite());
+
+            // Envoi de la requête HTTP
+            HttpRequest httpRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .timeout(Duration.ofSeconds(70))
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonRequest.toString()))
+                    .build();
+
+            // Récupération de la réponse de l'API
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            LOGGER.log(Level.INFO, "Réponse brute de l'API : " + response.body());
+            LOGGER.log(Level.INFO, "Réponse reçue avec le code {0}", response.statusCode());
+
+            // Vérification du code de statut HTTP
+            if (response.statusCode() == 201) {
+                // Si la création a réussi, on parse la réponse JSON en un MedecinResponse
+                return parseMedecinResponse(response.body());
+            } else {
+                // Si la création échoue, on génère une exception avec le message d'erreur
+                String errorMessage = "Erreur HTTP " + response.statusCode() + " lors de la création du médecin";
+                LOGGER.log(Level.SEVERE, errorMessage);
+                throw new Exception(errorMessage);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Exception lors de la communication avec l'API", e);
+            throw new Exception("Erreur de communication avec le serveur: " + e.getMessage(), e);
+        }
+    }
+
+    public static MedecinResponse checkMedecinByRpps(String rpps) throws Exception {
+        // Créer l'URL de la requête pour vérifier l'existence du médecin par RPPS
+        String url = API_BASE_URL + "/medecins/rpps/" + rpps;
+
+        LOGGER.log(Level.INFO, "Envoi de la requête GET pour vérifier le médecin avec RPPS: " + rpps);
+
+        try {
+            // Création de la requête HTTP GET
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .timeout(Duration.ofSeconds(15))
+                    .GET()
+                    .build();
+
+            // Envoi de la requête et récupération de la réponse
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            LOGGER.log(Level.INFO, "Réponse reçue avec le code " + response.statusCode());
+
+            if (response.statusCode() == 200) {
+                // Si le médecin existe, on retourne les informations du médecin
+                return parseMedecinResponse(response.body());
+            } else if (response.statusCode() == 404) {
+                // Si le médecin n'existe pas, on retourne null
+                return null;
+            } else {
+                String errorMessage = "Erreur HTTP " + response.statusCode() + " lors de la vérification du médecin.";
+                LOGGER.log(Level.SEVERE, errorMessage);
+                throw new Exception(errorMessage);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la communication avec l'API pour vérifier le médecin", e);
+            throw new Exception("Erreur de communication avec le serveur: " + e.getMessage(), e);
+        }
     }
 }

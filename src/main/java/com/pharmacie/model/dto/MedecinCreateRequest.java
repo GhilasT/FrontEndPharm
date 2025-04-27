@@ -1,107 +1,124 @@
 package com.pharmacie.model.dto;
 
-import java.time.LocalDate;
-import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.stage.Stage;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
+import java.io.IOException;
+
+
+@Builder  // Génère un constructeur avec des paramètres pour initialiser les champs
+@NoArgsConstructor  // Génère un constructeur sans argument
+@AllArgsConstructor  // Génère un constructeur avec tous les arguments
 public class MedecinCreateRequest {
-    private String nom;
-    private String prenom;
-    private String email;
-    private String telephone;
-    private String adresse;
-    private String password;
-    private String rpps;
-    private String adeli;
-    private String civilite;
-    private String profession;
-    private String specialitePrincipale;
-    private String specialiteSecondaire;
-    private String modeExercice;
-    private String codePostal;
-    private String ville;
-    private String siteWeb;
-    private String secteur;
-    private String conventionnement;
-    private String honoraires;
-    private Boolean carteVitale;
-    private Boolean teleconsultation;
-    private List<String> languesParlees;
-    private String siret;
-    private LocalDate dateMiseAJour;
 
-    // Constructeurs
-    public MedecinCreateRequest() {}
+    private String civilite;  // Civilité (M. / Mme, etc.)
+    private String nomExercice;  // Nom d'exercice
+    private String prenomExercice;  // Prénom d'exercice
+    private String rppsMedecin;  // Numéro RPPS unique
+    private String categorieProfessionnelle;  // Civil, militaire, étudiant, etc.
+    private String profession;  // Profession (Médecin, Chirurgien, etc.)
+    private String modeExercice;  // Mode d'exercice (libéral, salarié, bénévole)
+    private String qualifications;  // Qualifications, diplômes, autorisations, savoir-faire
+    private String structureExercice;  // Coordonnées des structures d'exercice (cabinet, hôpital, etc.)
+    private String fonctionActivite;  // Fonction dans l'exercice médical (par exemple, Médecin traitant)
+    private String genreActivite;  // Genre d’activité (consultation, chirurgie, soins palliatifs, etc.)
 
-    // Getters et Setters
-    public String getNom() { return nom; }
-    public void setNom(String nom) { this.nom = nom; }
+    // Getters
+    public String getCivilite() {
+        return civilite;
+    }
 
-    public String getPrenom() { return prenom; }
-    public void setPrenom(String prenom) { this.prenom = prenom; }
+    public String getNomExercice() {
+        return nomExercice;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getPrenomExercice() {
+        return prenomExercice;
+    }
 
-    public String getTelephone() { return telephone; }
-    public void setTelephone(String telephone) { this.telephone = telephone; }
+    public String getRppsMedecin() {
+        return rppsMedecin;
+    }
 
-    public String getAdresse() { return adresse; }
-    public void setAdresse(String adresse) { this.adresse = adresse; }
+    public String getCategorieProfessionnelle() {
+        return categorieProfessionnelle;
+    }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public String getProfession() {
+        return profession;
+    }
 
-    public String getRpps() { return rpps; }
-    public void setRpps(String rpps) { this.rpps = rpps; }
+    public String getModeExercice() {
+        return modeExercice;
+    }
 
-    public String getAdeli() { return adeli; }
-    public void setAdeli(String adeli) { this.adeli = adeli; }
+    public String getQualifications() {
+        return qualifications;
+    }
 
-    public String getCivilite() { return civilite; }
-    public void setCivilite(String civilite) { this.civilite = civilite; }
+    public String getStructureExercice() {
+        return structureExercice;
+    }
 
-    public String getProfession() { return profession; }
-    public void setProfession(String profession) { this.profession = profession; }
+    public String getFonctionActivite() {
+        return fonctionActivite;
+    }
 
-    public String getSpecialitePrincipale() { return specialitePrincipale; }
-    public void setSpecialitePrincipale(String specialitePrincipale) { this.specialitePrincipale = specialitePrincipale; }
+    public String getGenreActivite() {
+        return genreActivite;
+    }
 
-    public String getSpecialiteSecondaire() { return specialiteSecondaire; }
-    public void setSpecialiteSecondaire(String specialiteSecondaire) { this.specialiteSecondaire = specialiteSecondaire; }
+    // Setters
+    public void setCivilite(String civilite) {
+        this.civilite = civilite;
+    }
 
-    public String getModeExercice() { return modeExercice; }
-    public void setModeExercice(String modeExercice) { this.modeExercice = modeExercice; }
+    public void setNomExercice(String nomExercice) {
+        this.nomExercice = nomExercice;
+    }
 
-    public String getCodePostal() { return codePostal; }
-    public void setCodePostal(String codePostal) { this.codePostal = codePostal; }
+    public void setPrenomExercice(String prenomExercice) {
+        this.prenomExercice = prenomExercice;
+    }
 
-    public String getVille() { return ville; }
-    public void setVille(String ville) { this.ville = ville; }
+    public void setRppsMedecin(String rppsMedecin) {
+        this.rppsMedecin = rppsMedecin;
+    }
 
-    public String getSiteWeb() { return siteWeb; }
-    public void setSiteWeb(String siteWeb) { this.siteWeb = siteWeb; }
+    public void setCategorieProfessionnelle(String categorieProfessionnelle) {
+        this.categorieProfessionnelle = categorieProfessionnelle;
+    }
 
-    public String getSecteur() { return secteur; }
-    public void setSecteur(String secteur) { this.secteur = secteur; }
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
 
-    public String getConventionnement() { return conventionnement; }
-    public void setConventionnement(String conventionnement) { this.conventionnement = conventionnement; }
+    public void setModeExercice(String modeExercice) {
+        this.modeExercice = modeExercice;
+    }
 
-    public String getHonoraires() { return honoraires; }
-    public void setHonoraires(String honoraires) { this.honoraires = honoraires; }
+    public void setQualifications(String qualifications) {
+        this.qualifications = qualifications;
+    }
 
-    public Boolean getCarteVitale() { return carteVitale; }
-    public void setCarteVitale(Boolean carteVitale) { this.carteVitale = carteVitale; }
+    public void setStructureExercice(String structureExercice) {
+        this.structureExercice = structureExercice;
+    }
 
-    public Boolean getTeleconsultation() { return teleconsultation; }
-    public void setTeleconsultation(Boolean teleconsultation) { this.teleconsultation = teleconsultation; }
+    public void setFonctionActivite(String fonctionActivite) {
+        this.fonctionActivite = fonctionActivite;
+    }
 
-    public List<String> getLanguesParlees() { return languesParlees; }
-    public void setLanguesParlees(List<String> languesParlees) { this.languesParlees = languesParlees; }
+    public void setGenreActivite(String genreActivite) {
+        this.genreActivite = genreActivite;
+    }
 
-    public String getSiret() { return siret; }
-    public void setSiret(String siret) { this.siret = siret; }
-
-    public LocalDate getDateMiseAJour() { return dateMiseAJour; }
-    public void setDateMiseAJour(LocalDate dateMiseAJour) { this.dateMiseAJour = dateMiseAJour; }
 }

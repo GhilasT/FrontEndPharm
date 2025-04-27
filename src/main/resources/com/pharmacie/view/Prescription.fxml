@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import java.net.URL?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.pharmacie.controller.PrescriptionController"
+      spacing="15" style="-fx-padding:20;">
+    <stylesheets>
+        <URL value="@../css/styles.css"/>
+    </stylesheets>
+
+    <!-- Titre -->
+    <Label text="Prescription Médicale" style="-fx-font-size:18px;-fx-font-weight:bold;"/>
+
+    <!-- Nouveau Label pour le RPPS -->
+    <Label fx:id="rppsLabel"
+           text="RPPS du médecin : —"
+           style="-fx-font-size:14px;"/>
+
+    <!-- Table des prescriptions -->
+    <TableView fx:id="prescriptionTable" editable="true" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="medicamentColumn" text="Médicament" prefWidth="200"/>
+            <TableColumn fx:id="quantiteColumn"   text="Quantité"   prefWidth="100"/>
+            <TableColumn fx:id="dureeColumn"      text="Durée"      prefWidth="100"/>
+            <TableColumn fx:id="posologieColumn"  text="Posologie"  prefWidth="200"/>
+        </columns>
+    </TableView>
+
+    <!-- Boutons Valider / Annuler -->
+    <HBox spacing="10">
+        <Button text="Valider" onAction="#handleValiderPrescription"/>
+        <Button text="Annuler" onAction="#handleAnnulerPrescription"/>
+    </HBox>
+</VBox>
