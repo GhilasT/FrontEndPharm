@@ -157,7 +157,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .timeout(Duration.ofSeconds(15))
+                    .timeout(Duration.ofSeconds(800))
                     .GET()
                     .build();
 
@@ -575,7 +575,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .timeout(Duration.ofSeconds(5))
+                    .timeout(Duration.ofSeconds(80))
                     .GET()
                     .build();
 
@@ -1047,7 +1047,7 @@ public class ApiRest {
      */
     public static Dashboard getDashboardRequest() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_BASE_URL + "dashboard"))
+                .uri(URI.create(API_BASE_URL + "/dashboard"))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
@@ -1075,7 +1075,7 @@ public class ApiRest {
         try {
             JSONObject stat = new JSONObject(body);
 
-            dash.setCA(stat.getDouble("CA"));
+            dash.setCA(stat.getDouble("ca"));
             dash.setBenefices(stat.getDouble("benefices"));
             dash.setNbEmployes(stat.getInt("nbEmployes"));
             dash.setNbClients(stat.getInt("nbClients"));

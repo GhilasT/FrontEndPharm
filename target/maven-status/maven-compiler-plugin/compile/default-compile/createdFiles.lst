@@ -1,9 +1,2 @@
-com\pharmacie\controller\PharmacyDashboard.class
-com\pharmacie\service\ApiRest.class
-com\pharmacie\controller\Login.class
 com\pharmacie\controller\FournisseursController.class
-com\pharmacie\controller\MedicamentsController$1.class
-com\pharmacie\App.class
 com\pharmacie\model\Medicament.class
-com\pharmacie\controller\MedicamentsController.class
-com\pharmacie\SystemInfo.class
