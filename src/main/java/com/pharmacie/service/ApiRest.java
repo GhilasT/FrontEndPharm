@@ -1047,7 +1047,7 @@ public class ApiRest {
      */
     public static Dashboard getDashboardRequest() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_BASE_URL + "dashboard"))
+                .uri(URI.create(API_BASE_URL + "/dashboard"))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
