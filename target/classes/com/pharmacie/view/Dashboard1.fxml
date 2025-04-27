@@ -152,14 +152,6 @@
                            <Font name="Open Sans Semibold" size="20.0" />
                         </font>
                      </Button>
-                     <Button fx:id="btnSettings" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
-                        minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
-                        style="-fx-background-color: transparent;" text="Paramètres"
-                        textFill="WHITE" GridPane.rowIndex="6">
-                        <font>
-                           <Font name="Open Sans Semibold" size="20.0" />
-                        </font>
-                     </Button>
                      <Button fx:id="btnLogout" maxHeight="60.0" maxWidth="300.0" minHeight="60.0"
                         minWidth="300.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0"
                         style="-fx-background-color: transparent;" text="Déconnexion"

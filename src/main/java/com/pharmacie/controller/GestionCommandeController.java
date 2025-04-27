@@ -400,8 +400,7 @@ public class GestionCommandeController {
         try {
             JSONArray jsonQuantites = new JSONArray(nouvellesQuantites);
             String fullUrl = COMMANDES_URL + "/updateIncomplete/" + referenceCommande.toString();
-            System.out.println("URL de la requête: " + fullUrl); // Log l'URL
-            
+
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(fullUrl))
                     .header("Content-Type", "application/json")

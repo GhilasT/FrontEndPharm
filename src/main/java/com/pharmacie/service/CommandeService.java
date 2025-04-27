@@ -41,21 +41,16 @@ public class CommandeService {
         
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         
-        System.out.println("Réponse reçue avec statut: " + response.statusCode());
-        System.out.println("Corps de la réponse: " + response.body());
         
         if (response.statusCode() == 200) {
             JSONArray array = new JSONArray(response.body());
-            System.out.println("Nombre d'éléments dans le JSON: " + array.length());
             
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
-                System.out.println("Traitement de l'élément " + i + ": " + obj.toString());
                 
                 Commande commande = parseCommande(obj);
                 if (commande != null) {
                     resultats.add(commande);
-                    System.out.println("Commande ajoutée: " + commande);
                 } else {
                     System.out.println("La commande est null après parsing");
                 }
@@ -64,7 +59,6 @@ public class CommandeService {
             throw new RuntimeException("Erreur HTTP: " + response.statusCode());
         }
         
-        System.out.println("Nombre total de commandes récupérées: " + resultats.size());
         return resultats;
     }
 
@@ -77,17 +71,14 @@ public class CommandeService {
             return null;
         }
         
-        System.out.println("Début du parsing de la commande: " + obj.toString());
         
         // Parsing de la date
         Date dateCommande = null;
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS");
             String dateStr = obj.optString("dateCommande");
-            System.out.println("Date à parser: " + dateStr);
             if (!dateStr.isEmpty()) {
                 dateCommande = formatter.parse(dateStr);
-                System.out.println("Date parsée: " + dateCommande);
             }
         } catch (ParseException e) {
             System.err.println("Erreur de parsing de la date: " + e.getMessage());
@@ -96,7 +87,6 @@ public class CommandeService {
                 String dateStr = obj.optString("dateCommande");
                 if (!dateStr.isEmpty()) {
                     dateCommande = formatter2.parse(dateStr);
-                    System.out.println("Date parsée avec format alternatif: " + dateCommande);
                 }
             } catch (ParseException e2) {
                 System.err.println("Échec du parsing de la date avec le format alternatif: " + e2.getMessage());
@@ -108,7 +98,6 @@ public class CommandeService {
                             dateStr = dateStr.substring(0, dateStr.indexOf("."));
                         }
                         dateCommande = formatter3.parse(dateStr);
-                        System.out.println("Date parsée avec troisième format: " + dateCommande);
                     }
                 } catch (ParseException e3) {
                     System.err.println("Échec du parsing de la date avec le troisième format: " + e3.getMessage());
@@ -120,17 +109,14 @@ public class CommandeService {
         BigDecimal montantTotal = BigDecimal.ZERO;
         try {
             String montantStr = obj.optString("montantTotal");
-            System.out.println("Montant à parser: " + montantStr);
             if (!montantStr.isEmpty()) {
                 montantTotal = new BigDecimal(montantStr);
-                System.out.println("Montant parsé: " + montantTotal);
             }
         } catch (NumberFormatException e) {
             System.err.println("Erreur de parsing du montant: " + e.getMessage());
             try {
                 if (obj.has("montantTotal")) {
                     montantTotal = new BigDecimal(obj.get("montantTotal").toString());
-                    System.out.println("Montant parsé avec méthode alternative: " + montantTotal);
                 }
             } catch (Exception e2) {
                 System.err.println("Échec du parsing du montant avec méthode alternative: " + e2.getMessage());
@@ -141,10 +127,8 @@ public class CommandeService {
         UUID reference = null;
         try {
             String refStr = obj.optString("reference");
-            System.out.println("Référence à parser: " + refStr);
             if (!refStr.isEmpty()) {
                 reference = UUID.fromString(refStr);
-                System.out.println("Référence parsée: " + reference);
             }
         } catch (IllegalArgumentException e) {
             System.err.println("UUID de référence invalide: " + e.getMessage());
@@ -157,10 +141,8 @@ public class CommandeService {
             if (fournisseurStr.isEmpty()) {
                 fournisseurStr = obj.optString("fournisseurId");
             }
-            System.out.println("ID fournisseur à parser: " + fournisseurStr);
             if (!fournisseurStr.isEmpty()) {
                 fournisseurId = UUID.fromString(fournisseurStr);
-                System.out.println("ID fournisseur parsé: " + fournisseurId);
             } else {
                 System.out.println("ID fournisseur manquant");
             }
@@ -171,10 +153,8 @@ public class CommandeService {
         UUID pharmacienAdjointId = null;
         try {
             String pharmacienStr = obj.optString("pharmacienAdjointId");
-            System.out.println("ID pharmacien à parser: " + pharmacienStr);
             if (!pharmacienStr.isEmpty()) {
                 pharmacienAdjointId = UUID.fromString(pharmacienStr);
-                System.out.println("ID pharmacien parsé: " + pharmacienAdjointId);
             }
         } catch (IllegalArgumentException e) {
             System.err.println("UUID de pharmacien adjoint invalide: " + e.getMessage());
@@ -185,18 +165,13 @@ public class CommandeService {
         try {
             if (obj.has("ligneCommandes") && !obj.isNull("ligneCommandes")) {
                 JSONArray lignesArray = obj.getJSONArray("ligneCommandes");
-                System.out.println("Nombre de lignes de commande: " + lignesArray.length());
                 
                 for (int i = 0; i < lignesArray.length(); i++) {
                     JSONObject ligneObj = lignesArray.getJSONObject(i);
-                    System.out.println("Parsing ligne " + i + ": " + ligneObj.toString());
                     
                     LigneCommande ligne = LigneCommandeService.parseLigneCommande(ligneObj);
                     if (ligne != null) {
                         ligneCommandes.add(ligne);
-                        System.out.println("Ligne ajoutée: " + ligne);
-                    } else {
-                        System.out.println("La ligne est null après parsing");
                     }
                 }
             } else {
@@ -209,7 +184,6 @@ public class CommandeService {
         
         // Création et retour de l'objet Commande
         String statut = obj.optString("statut", "");
-        System.out.println("Statut parsé: " + statut);
         
         try {
             Commande commande = new Commande(
@@ -222,7 +196,6 @@ public class CommandeService {
                 ligneCommandes
             );
             
-            System.out.println("Commande recupere avec succès: " + commande);
             return commande;
         } catch (Exception e) {
             System.err.println("Erreur lors de la création de l'objet Commande: " + e.getMessage());
@@ -242,8 +215,6 @@ public class CommandeService {
         
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         
-        System.out.println("Réponse reçue avec statut: " + response.statusCode());
-        System.out.println("Corps de la réponse: " + response.body());
         
         return response;
     }

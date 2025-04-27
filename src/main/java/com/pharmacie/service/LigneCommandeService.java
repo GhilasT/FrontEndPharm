@@ -15,37 +15,30 @@ public class LigneCommandeService {
             System.out.println("JSONObject null, impossible de parser la ligne de commande");
             return null;
         }
-        
-        System.out.println("Début du parsing de la ligne de commande: " + obj.toString());
-        
+                
         try {
             // Parsing de StockMedicamentDTO
             Medicament medicament = null;
             if (obj.has("stockMedicamentDTO") && !obj.isNull("stockMedicamentDTO")) {
                 JSONObject stockMedicamentObj = obj.getJSONObject("stockMedicamentDTO");
                 medicament = parseMedicament(stockMedicamentObj);
-                System.out.println("StockMedicamentDTO parsé: " + medicament);
             }
             
             // Extraction de stockMedicamentId
             Long stockMedicamentId = null;
             if (obj.has("stockMedicamentId") && !obj.isNull("stockMedicamentId")) {
                 stockMedicamentId = obj.getLong("stockMedicamentId");
-                System.out.println("stockMedicamentId parsé: " + stockMedicamentId);
             }
             
             // Parsing de la quantité
             int quantite = obj.optInt("quantite", 0);
-            System.out.println("Quantité parsée: " + quantite);
             
             // Parsing du prix unitaire
             BigDecimal prixUnitaire = BigDecimal.ZERO;
             try {
                 String prixStr = obj.optString("prixUnitaire");
-                System.out.println("Prix unitaire à parser: " + prixStr);
                 if (!prixStr.isEmpty()) {
                     prixUnitaire = new BigDecimal(prixStr);
-                    System.out.println("Prix unitaire parsé: " + prixUnitaire);
                 }
             } catch (NumberFormatException e) {
                 System.err.println("Erreur de parsing du prix unitaire: " + e.getMessage());
@@ -53,10 +46,8 @@ public class LigneCommandeService {
             
             // Création de la ligne de commande 
             LigneCommande ligne = new LigneCommande(stockMedicamentId, quantite, prixUnitaire, medicament);
-            System.out.println("Ligne créée: " + ligne);
             
             ligne.calculerMontantLigneAvantSauvegarde();
-            System.out.println("Montant ligne calculé: " + ligne.getMontantLigne());
             
             return ligne;
         } catch (Exception e) {

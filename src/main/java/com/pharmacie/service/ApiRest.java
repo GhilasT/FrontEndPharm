@@ -1075,7 +1075,7 @@ public class ApiRest {
         try {
             JSONObject stat = new JSONObject(body);
 
-            dash.setCA(stat.getDouble("CA"));
+            dash.setCA(stat.getDouble("ca"));
             dash.setBenefices(stat.getDouble("benefices"));
             dash.setNbEmployes(stat.getInt("nbEmployes"));
             dash.setNbClients(stat.getInt("nbClients"));

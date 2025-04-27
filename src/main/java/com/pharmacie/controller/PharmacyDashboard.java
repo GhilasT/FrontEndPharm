@@ -28,24 +28,34 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-
 public class PharmacyDashboard extends StackPane {
     private static final int MENU_WIDTH = 300;
     private static final int CARD_SPACING = 52;
 
-    @FXML private Button menuButton;
-    @FXML private VBox sideMenu;
-    @FXML private StackPane contentPane;
-    @FXML private Button btnDashboard;
-    @FXML private Button btnSales;
-    @FXML private Button btnMedics;
-    @FXML private Button btnCommandes;
-    @FXML private Button btnSuppliers;
-    @FXML private Button btnAnalytics;
-    @FXML private Button btnSettings;
-    @FXML private Label headerTitle;
-    @FXML private Label userLabel;
-    @FXML private Button btnLogout;
+    @FXML
+    private Button menuButton;
+    @FXML
+    private VBox sideMenu;
+    @FXML
+    private StackPane contentPane;
+    @FXML
+    private Button btnDashboard;
+    @FXML
+    private Button btnSales;
+    @FXML
+    private Button btnMedics;
+    @FXML
+    private Button btnCommandes;
+    @FXML
+    private Button btnSuppliers;
+    @FXML
+    private Button btnAnalytics;
+    @FXML
+    private Label headerTitle;
+    @FXML
+    private Label userLabel;
+    @FXML
+    private Button btnLogout;
 
     private BooleanProperty menuVisible = new SimpleBooleanProperty(false);
     private TilePane dashboardTilePane;
@@ -79,26 +89,27 @@ public class PharmacyDashboard extends StackPane {
         userLabel.setText(LoggedSeller.getInstance().getNomComplet());
 
     }
-private boolean isAuthorizedRole() {
-    String role = LoggedSeller.getInstance().getRole();
-    return "PHARMACIEN_ADJOINT".equals(role) || "APPRENTI".equals(role);
-}
-public void refreshUserInfo() {
-    userLabel.setText(LoggedSeller.getInstance().getNomComplet());
-}
 
-private void showAccessDenied() {
-    contentPane.getChildren().clear();
-    contentPane.getChildren().add(new Label("Accès non autorisé"));
-    sideMenu.setVisible(false);
-    menuButton.setVisible(false);
-}
+    private boolean isAuthorizedRole() {
+        String role = LoggedSeller.getInstance().getRole();
+        return "PHARMACIEN_ADJOINT".equals(role) || "APPRENTI".equals(role);
+    }
 
+    public void refreshUserInfo() {
+        userLabel.setText(LoggedSeller.getInstance().getNomComplet());
+    }
+
+    private void showAccessDenied() {
+        contentPane.getChildren().clear();
+        contentPane.getChildren().add(new Label("Accès non autorisé"));
+        sideMenu.setVisible(false);
+        menuButton.setVisible(false);
+    }
 
     private void configureMenuButton(Button button, String iconName, String text) {
         HBox content = new HBox(10);
         content.setAlignment(Pos.CENTER_LEFT);
-        
+
         try {
             // Essayons plusieurs chemins possibles
             InputStream iconStream = getClass().getResourceAsStream("/Icones/" + iconName);
@@ -112,9 +123,10 @@ private void showAccessDenied() {
                 iconStream = getClass().getResourceAsStream("/com/pharmacie/images/Icones/" + iconName);
             }
             if (iconStream == null) {
-                iconStream = getClass().getResourceAsStream("../../../../../resources/com/pharmacie/images/Icones/" + iconName);
+                iconStream = getClass()
+                        .getResourceAsStream("../../../../../resources/com/pharmacie/images/Icones/" + iconName);
             }
-            
+
             if (iconStream != null) {
                 ImageView icon = new ImageView(new Image(iconStream));
                 icon.setFitHeight(24);
@@ -133,7 +145,7 @@ private void showAccessDenied() {
         Label label = new Label(text);
         label.setTextFill(javafx.scene.paint.Color.WHITE);
         label.setFont(Font.font("Open Sans Semibold", 20));
-        
+
         content.getChildren().add(label);
         button.setGraphic(content);
         button.setText("");
@@ -147,26 +159,26 @@ private void showAccessDenied() {
         configureMenuButton(btnCommandes, "gestionCommande.png", "Commandes");
         configureMenuButton(btnSuppliers, "fournisseurs.png", "Fournisseurs");
         configureMenuButton(btnAnalytics, "analyseventes.png", "Analyse des ventes");
-        configureMenuButton(btnSettings, "paramètres.png", "Paramètres");
     }
+
     private void handleLogout() {
-    LoggedSeller.getInstance().clearUser();
-    Stage stage = (Stage) getScene().getWindow();
-    stage.setScene(App.getLoginScene());
-    ((Login) App.getLoginScene().getRoot()).clearFields();
-}
+        LoggedSeller.getInstance().clearUser();
+        Stage stage = (Stage) getScene().getWindow();
+        stage.setScene(App.getLoginScene());
+        ((Login) App.getLoginScene().getRoot()).clearFields();
+    }
 
     private void setupMenuActions() {
         btnDashboard.setOnAction(event -> {
             setActiveButton(btnDashboard);
             loadDashboard();
         });
-        
+
         btnSales.setOnAction(event -> {
             setActiveButton(btnSales);
             loadContent("Ventes");
         });
-        
+
         btnMedics.setOnAction(event -> {
             setActiveButton(btnMedics);
             loadContent("Médicaments");
@@ -176,52 +188,47 @@ private void showAccessDenied() {
             setActiveButton(btnCommandes);
             loadContent("Commandes");
         });
-        
+
         btnSuppliers.setOnAction(event -> {
             setActiveButton(btnSuppliers);
             loadContent("Fournisseurs");
         });
-        
+
         btnAnalytics.setOnAction(event -> {
             setActiveButton(btnAnalytics);
             loadAnalytics();
         });
-        
-        btnSettings.setOnAction(event -> {
-            setActiveButton(btnSettings);
-            loadContent("Paramètres");
-        });
+
     }
 
     private void loadDashboard() {
         setActiveButton(btnDashboard);
         updateHeaderTitle("Tableau de Bord");
-        
+
         dashboardTilePane = new TilePane();
         dashboardTilePane.setPadding(new Insets(20, 20, 20, CARD_SPACING));
         dashboardTilePane.setHgap(CARD_SPACING);
         dashboardTilePane.setVgap(CARD_SPACING);
-        dashboardTilePane.prefColumnsProperty().bind(Bindings.createIntegerBinding(() -> 
-        calculateColumns(), 
-        menuVisible, 
-        contentPane.widthProperty()
-    ));
-        dashboardTilePane.paddingProperty().bind(Bindings.createObjectBinding(() -> 
-        new Insets(20, 20, 20, menuVisible.get() ? MENU_WIDTH + CARD_SPACING : CARD_SPACING), 
-        menuVisible
-    ));
+        dashboardTilePane.prefColumnsProperty().bind(Bindings.createIntegerBinding(() -> calculateColumns(),
+                menuVisible,
+                contentPane.widthProperty()));
+        dashboardTilePane.paddingProperty()
+                .bind(Bindings.createObjectBinding(
+                        () -> new Insets(20, 20, 20, menuVisible.get() ? MENU_WIDTH + CARD_SPACING : CARD_SPACING),
+                        menuVisible));
 
-        String[] titles = {"CA", "Bénéfices","Employés", "Clients","Médecins", "Médicaments",
-                            "Médicaments en rupture de stock", "Médicaments périmés", "Médicaments Stock Faible", "Médicaments péremption - 1 mois"};
+        String[] titles = { "CA", "Bénéfices", "Employés", "Clients", "Médecins", "Médicaments",
+                "Médicaments en rupture de stock", "Médicaments périmés", "Médicaments Stock Faible",
+                "Médicaments péremption - 1 mois" };
         List<String> values = new ArrayList<>(); // {"142", "358", "89", "23", "15", "9", "€2450", "€58900"};
-        String[] colors = {"#1F82F2", "#1F82F2", "#E74C3C", "#9B59B6", 
-                          "#F39C12", "#16A085", "#34495E", "#7F8C8D", "#E74C3C", "#16A085"};
+        String[] colors = { "#1F82F2", "#1F82F2", "#E74C3C", "#9B59B6",
+                "#F39C12", "#16A085", "#34495E", "#7F8C8D", "#E74C3C", "#16A085" };
 
         try {
             Dashboard dashboardValues = ApiRest.getDashboardRequest();
             values.addAll(List.of(
-                    String.valueOf(dashboardValues.getCA()),
-                    String.valueOf(dashboardValues.getBenefices()),
+                    String.format("%.2f", dashboardValues.getCA()),
+                    String.format("%.2f", dashboardValues.getBenefices()),
                     String.valueOf(dashboardValues.getNbEmployes()),
                     String.valueOf(dashboardValues.getNbClients()),
                     String.valueOf(dashboardValues.getNbMedecins()),
@@ -231,28 +238,28 @@ private void showAccessDenied() {
                     String.valueOf(dashboardValues.getNbMedicamentsAlerte()),
                     String.valueOf(dashboardValues.getNbMedicamentsAlerteBientotPerimee())));
 
-            for(int i = 0; i < titles.length; i++) {
+            for (int i = 0; i < titles.length; i++) {
                 dashboardTilePane.getChildren().add(
-                        createCard(titles[i], values.get(i), colors[i])
-                );
+                        createCard(titles[i], values.get(i), colors[i]));
             }
 
             contentPane.getChildren().setAll(dashboardTilePane);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR,
                     "Erreur",
                     "Recherche impossible",
                     "Erreur serveur : " + e.getMessage());
         }
 
-
-        if(menuVisible.get()) toggleMenu();
+        if (menuVisible.get())
+            toggleMenu();
     }
+
     private int calculateColumns() {
         double contentWidth = contentPane.getWidth();
-        if(contentWidth <= 0) return 4; // Valeur par défaut
-        
+        if (contentWidth <= 0)
+            return 4; // Valeur par défaut
+
         double availableWidth = contentWidth - (menuVisible.get() ? MENU_WIDTH : 0) - CARD_SPACING;
         return (int) Math.floor(availableWidth / (246 + CARD_SPACING));
     }
@@ -261,9 +268,9 @@ private void showAccessDenied() {
         GridPane card = new GridPane();
         card.setPrefSize(246, 150);
         card.setStyle("-fx-background-color: " + color + ";"
-            + "-fx-background-radius: 10;"
-            + "-fx-border-radius: 10;"
-            + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+                + "-fx-background-radius: 10;"
+                + "-fx-border-radius: 10;"
+                + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
 
         // Configuration des contraintes
         ColumnConstraints column = new ColumnConstraints();
@@ -271,7 +278,7 @@ private void showAccessDenied() {
         column.setMaxWidth(246);
         column.setMinWidth(246);
         column.setPrefWidth(246);
-        
+
         RowConstraints row1 = new RowConstraints();
         row1.setValignment(VPos.CENTER);
         row1.setVgrow(Priority.SOMETIMES);
@@ -308,9 +315,10 @@ private void showAccessDenied() {
                 iconStream = getClass().getResourceAsStream("/com/pharmacie/images/Icones/fournisseurs.png");
             }
             if (iconStream == null) {
-                iconStream = getClass().getResourceAsStream("../../../../../resources/com/pharmacie/images/Icones/fournisseurs.png");
+                iconStream = getClass()
+                        .getResourceAsStream("../../../../../resources/com/pharmacie/images/Icones/fournisseurs.png");
             }
-            
+
             if (iconStream != null) {
                 icon.setImage(new Image(iconStream));
             } else {
@@ -350,7 +358,7 @@ private void showAccessDenied() {
     private void toggleMenu() {
         TranslateTransition slideTransition = new TranslateTransition(Duration.seconds(0.3), sideMenu);
         boolean newVisibility = !menuVisible.get();
-        
+
         slideTransition.setToX(newVisibility ? 0 : -300);
         slideTransition.setOnFinished(e -> menuVisible.set(newVisibility));
         slideTransition.play();
@@ -365,11 +373,11 @@ private void showAccessDenied() {
     }
 
     private void setActiveButton(Button activeButton) {
-        Button[] menuButtons = {btnDashboard, btnSales, btnMedics, 
-                              btnSuppliers, btnAnalytics, btnSettings};
-        
-        for(Button btn : menuButtons) {
-            if(btn == activeButton) {
+        Button[] menuButtons = { btnDashboard, btnSales, btnMedics,
+                btnSuppliers, btnAnalytics};
+
+        for (Button btn : menuButtons) {
+            if (btn == activeButton) {
                 btn.setStyle("-fx-background-color: #00693E; -fx-padding: 0 0 0 20;");
             } else {
                 btn.setStyle("-fx-background-color: transparent; -fx-padding: 0 0 0 20;");
@@ -380,37 +388,35 @@ private void showAccessDenied() {
     private void loadContent(String title) {
         updateHeaderTitle(title);
         contentPane.getChildren().clear();
-        
+
         try {
-            if(title.equals("Médicaments")) {
+            if (title.equals("Médicaments")) {
                 // Chemin ABSOLU depuis les resources
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/médicaments.fxml"));
                 Parent medicamentsView = loader.load();
                 contentPane.getChildren().add(medicamentsView);
-            } 
-            else if(title.equals("Fournisseurs")) {
+            } else if (title.equals("Fournisseurs")) {
                 // Chemin ABSOLU depuis les resources
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/fournisseurs.fxml"));
                 Parent fournisseursView = loader.load();
                 contentPane.getChildren().add(fournisseursView);
-            }
-            else if(title.equals("Commandes")) {
+            } else if (title.equals("Commandes")) {
                 // Chemin ABSOLU depuis les resources
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionCommande.fxml"));
                 Parent commandesView = loader.load();
                 contentPane.getChildren().add(commandesView);
-            }
-            else {
+            } else {
                 contentPane.getChildren().add(new Label(title));
             }
         } catch (IOException e) {
             e.printStackTrace();
             contentPane.getChildren().add(new Label("Erreur de chargement: " + e.getMessage()));
         }
-        
-        if(menuVisible.get()) toggleMenu();
+
+        if (menuVisible.get())
+            toggleMenu();
     }
-    
+
     private void updateHeaderTitle(String newTitle) {
         headerTitle.setText(newTitle);
     }
@@ -419,6 +425,7 @@ private void showAccessDenied() {
         menuButton.setText("☰");
         sideMenu.setTranslateX(-300);
     }
+
     private void loadAnalytics() {
         setActiveButton(btnAnalytics);
         updateHeaderTitle("Analyse des ventes");
