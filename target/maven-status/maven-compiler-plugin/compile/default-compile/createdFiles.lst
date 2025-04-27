@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 com/pharmacie/controller/MedecinsController.class
 com/pharmacie/model/Dashboard.class
 com/pharmacie/model/dto/OrdonnanceCreateRequest.class
@@ -17,3 +18,7 @@ com/pharmacie/model/AnalyseVenteData.class
 com/pharmacie/model/dto/PrescriptionCreateRequest.class
 com/pharmacie/model/Medicament$Stock.class
 com/pharmacie/controller/MedecinsController$3.class
+=======
+com\pharmacie\controller\FournisseursController.class
+com\pharmacie\model\Medicament.class
+>>>>>>> d98d7e2ac293d574ee07a18828f97558e9755c06
