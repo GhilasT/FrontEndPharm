@@ -114,23 +114,24 @@ public class PrescriptionController {
     // Méthode pour valider les prescriptions (ajouter à l'ordonnance)
     @FXML
     private void handleValiderPrescription(ActionEvent event) {
-        // 1) Construis la liste DTO des prescriptions
+        // 1) Construis la liste DTO des prescriptions via le constructeur manuel
         List<PrescriptionCreateRequest> dtoPrescriptions = prescriptionsList.stream()
-                .map(p -> PrescriptionCreateRequest.builder()
-                        .medicament(p.getMedicament())
-                        .quantitePrescrite(p.getQuantitePrescrite())
-                        .duree(p.getDuree())
-                        .posologie(p.getPosologie())
-                        .build())
+                .map(p -> new PrescriptionCreateRequest(
+                        p.getMedicament(),
+                        p.getQuantitePrescrite(),
+                        p.getDuree(),
+                        p.getPosologie()
+                ))
                 .collect(Collectors.toList());
 
-        // 2) Monte le DTO global d’ordonnance en utilisant java.util.Date
-        OrdonnanceCreateRequest dto = OrdonnanceCreateRequest.builder()
-                .dateEmission(new Date())
-                .rppsMedecin(rppsMedecin)
-                .clientId(clientId)
-                .prescriptions(dtoPrescriptions)
-                .build();
+        // 2) Monte le DTO global d’ordonnance
+        // (Adapte ici si OrdonnanceCreateRequest a aussi perdu son builder)
+        OrdonnanceCreateRequest dto = new OrdonnanceCreateRequest(
+                new Date(),      // dateEmission
+                rppsMedecin,     // RPPS
+                clientId,        // clientId
+                dtoPrescriptions // prescriptions
+        );
 
         // 3) Envoie la requête HTTP comme avant…
         Task<UUID> task = new Task<>() {

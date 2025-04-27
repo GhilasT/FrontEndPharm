@@ -15,6 +15,9 @@ import javafx.concurrent.Task;
 import com.pharmacie.model.PageResponse;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import static com.pharmacie.controller.TestUtils.showAlert;
+import static com.pharmacie.service.ApiRest.LOGGER;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,8 +25,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-import static com.pharmacie.controller.TestUtils.showAlert;
-import static com.pharmacie.service.ApiRest.LOGGER;
+
 
 public class MedecinsController {
 

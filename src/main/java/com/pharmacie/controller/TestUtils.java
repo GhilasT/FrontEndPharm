@@ -31,20 +31,20 @@ public class TestUtils {
                 try {
                     FXMLLoader loader = new FXMLLoader(TestUtils.class.getResource("/com/pharmacie/view/popup-vente.fxml"));
                     Parent root = loader.load();
-                    
+
                     PopupVenteController controller = loader.getController();
-                    
+
                     Stage stage = new Stage();
                     stage.setTitle("Test Popup Vente");
                     stage.setScene(new Scene(root));
                     stage.initModality(Modality.APPLICATION_MODAL);
                     controller.setStage(stage);
                     stage.showAndWait();
-                    
+
                     LOGGER.log(Level.INFO, "Test du popup de vente réussi");
                 } catch (IOException e) {
                     LOGGER.log(Level.SEVERE, "Erreur lors du test du popup de vente", e);
-                    showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du test du popup de vente", 
+                    showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du test du popup de vente",
                             "Impossible d'ouvrir le popup: " + e.getMessage());
                 }
             });
@@ -62,17 +62,17 @@ public class TestUtils {
                 try {
                     FXMLLoader loader = new FXMLLoader(TestUtils.class.getResource("/com/pharmacie/view/formulaire-client.fxml"));
                     Parent root = loader.load();
-                    
+
                     Stage stage = new Stage();
                     stage.setTitle("Test Formulaire Client");
                     stage.setScene(new Scene(root));
                     stage.initModality(Modality.APPLICATION_MODAL);
                     stage.showAndWait();
-                    
+
                     LOGGER.log(Level.INFO, "Test du formulaire client réussi");
                 } catch (IOException e) {
                     LOGGER.log(Level.SEVERE, "Erreur lors du test du formulaire client", e);
-                    showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du test du formulaire client", 
+                    showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du test du formulaire client",
                             "Impossible d'ouvrir le formulaire: " + e.getMessage());
                 }
             });
@@ -90,20 +90,20 @@ public class TestUtils {
                 try {
                     FXMLLoader loader = new FXMLLoader(TestUtils.class.getResource("/com/pharmacie/view/recherche-medicaments.fxml"));
                     Parent root = loader.load();
-                    
+
                     RechercheMedicamentsController controller = loader.getController();
                     controller.setClientInfo(java.util.UUID.randomUUID(), "Nom Test", "Prénom Test", "0123456789", "test@example.com", "Adresse Test");
-                    
+
                     Stage stage = new Stage();
                     stage.setTitle("Test Recherche Médicaments");
                     stage.setScene(new Scene(root));
                     stage.initModality(Modality.APPLICATION_MODAL);
                     stage.showAndWait();
-                    
+
                     LOGGER.log(Level.INFO, "Test de la recherche de médicaments réussi");
                 } catch (IOException e) {
                     LOGGER.log(Level.SEVERE, "Erreur lors du test de la recherche de médicaments", e);
-                    showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du test de la recherche de médicaments", 
+                    showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du test de la recherche de médicaments",
                             "Impossible d'ouvrir la page: " + e.getMessage());
                 }
             });
@@ -121,17 +121,17 @@ public class TestUtils {
                 try {
                     FXMLLoader loader = new FXMLLoader(TestUtils.class.getResource("/com/pharmacie/view/ventes.fxml"));
                     Parent root = loader.load();
-                    
+
                     Stage stage = new Stage();
                     stage.setTitle("Test Page Ventes");
                     stage.setScene(new Scene(root));
                     stage.initModality(Modality.APPLICATION_MODAL);
                     stage.showAndWait();
-                    
+
                     LOGGER.log(Level.INFO, "Test de la page des ventes réussi");
                 } catch (IOException e) {
                     LOGGER.log(Level.SEVERE, "Erreur lors du test de la page des ventes", e);
-                    showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du test de la page des ventes", 
+                    showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du test de la page des ventes",
                             "Impossible d'ouvrir la page: " + e.getMessage());
                 }
             });
@@ -150,15 +150,15 @@ public class TestUtils {
                 alert.setTitle("Tests des fonctionnalités");
                 alert.setHeaderText("Voulez-vous exécuter tous les tests?");
                 alert.setContentText("Cela va ouvrir successivement toutes les fenêtres pour tester les fonctionnalités.");
-                
+
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent() && result.get() == ButtonType.OK) {
                     testPageVentes();
                     testPopupVente();
                     testFormulaireClient();
                     testRechercheMedicaments();
-                    
-                    showAlert(Alert.AlertType.INFORMATION, "Tests terminés", "Tests terminés", 
+
+                    showAlert(Alert.AlertType.INFORMATION, "Tests terminés", "Tests terminés",
                             "Tous les tests ont été exécutés avec succès.");
                 }
             });
@@ -167,7 +167,7 @@ public class TestUtils {
         }
     }
 
-    private static void showAlert(Alert.AlertType type, String title, String header, String content) {
+    public static void showAlert(Alert.AlertType type, String title, String header, String content) {
         Platform.runLater(() -> {
             Alert alert = new Alert(type);
             alert.setTitle(title);

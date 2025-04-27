@@ -39,7 +39,9 @@ public class ApiRest {
             .connectTimeout(Duration.ofSeconds(10))
             .followRedirects(HttpClient.Redirect.NORMAL)
             .build();
-    private static final Logger LOGGER = Logger.getLogger(ApiRest.class.getName());
+    public static final Logger LOGGER = Logger.getLogger(ApiRest.class.getName());
+
+
 
     public static Boolean OrdonnaceValide=false;
 
