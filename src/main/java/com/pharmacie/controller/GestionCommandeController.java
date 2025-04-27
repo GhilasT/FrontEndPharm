@@ -75,7 +75,6 @@ public class GestionCommandeController {
 
     @FXML
     public void initialize() {
-        System.out.println("Initialisation du contrôleur GestionCommandeController");
         configurationTable();
         chargeCommandeDonneAsync();
         btnInfosFournisseur.setOnAction(this::handleInfoFournisseur);
@@ -96,7 +95,6 @@ public class GestionCommandeController {
     }
 
     private void configurationTable() {
-        System.out.println("Configuration des colonnes de la table");
         
         // Configuration des colonnes en fonction de la classe Commande
         columnReference.setCellValueFactory(cell -> {
@@ -134,7 +132,6 @@ public class GestionCommandeController {
         });
         
         tableViewCommandes.setItems(commandesObservable);
-        System.out.println("Table configurée avec ObservableList");
     }
     
     private void executerTache(Task<?> task) {
@@ -144,7 +141,6 @@ public class GestionCommandeController {
     }
 
     private void chargeCommandeDonneAsync() {
-        System.out.println("Chargement asynchrone des commandes");
         executerTache(new Task<List<Commande>>() {
             @Override 
             protected List<Commande> call() throws Exception {
@@ -159,32 +155,18 @@ public class GestionCommandeController {
             @Override 
             protected void succeeded() {
                 List<Commande> listeCommandes = getValue();
-                System.out.println("Tâche réussie, mise à jour de l'UI avec " + listeCommandes.size() + " commandes");
                 
                 Platform.runLater(() -> {
-                    System.out.println("Mise à jour de l'UI sur le thread JavaFX");
                     commandes.clear();
                     commandes.addAll(listeCommandes);
                     
                     commandesObservable.clear();
                     commandesObservable.addAll(commandes);
                     
-                    System.out.println("Nombre de commandes dans l'observable après mise à jour: " + commandesObservable.size());
-                    System.out.println("Contenu de la table après mise à jour: " + tableViewCommandes.getItems().size() + " éléments");
                     
                     // Forcer le rafraîchissement de la table
                     tableViewCommandes.refresh();
                     
-                    // Afficher les commandes dans la console pour vérification
-                    System.out.println("=== COMMANDES DANS L'OBSERVABLE ===");
-                    for (Commande cmd : commandesObservable) {
-                        System.out.println("Commande: " + cmd);
-                        System.out.println("  - Référence: " + cmd.getReference());
-                        System.out.println("  - Date: " + cmd.getDateCommande());
-                        System.out.println("  - Fournisseur: " + cmd.getFournisseurId());
-                        System.out.println("  - Montant: " + cmd.getMontantTotal());
-                        System.out.println("  - Statut: " + cmd.getStatut());
-                    }
                 });
             }
 
@@ -417,8 +399,11 @@ public class GestionCommandeController {
     private void envoyerQuantitesMiseAJour(UUID referenceCommande, List<Integer> nouvellesQuantites) {
         try {
             JSONArray jsonQuantites = new JSONArray(nouvellesQuantites);
+            String fullUrl = COMMANDES_URL + "/updateIncomplete/" + referenceCommande.toString();
+            System.out.println("URL de la requête: " + fullUrl); // Log l'URL
+            
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(COMMANDES_URL+"/updateIncomplete/"+referenceCommande.toString()))
+                    .uri(URI.create(fullUrl))
                     .header("Content-Type", "application/json")
                     .PUT(HttpRequest.BodyPublishers.ofString(jsonQuantites.toString()))
                     .build();
@@ -430,14 +415,28 @@ public class GestionCommandeController {
                         "La commande a été mise à jour avec succès.");
                 rafraichirTableCommandes();
             } else {
-                System.err.println("Erreur lors de la mise à jour de la commande : " + response.statusCode());
-                System.err.println("Détails de l'erreur : " + response.body());
-                DialogService.afficherMessage(AlertType.ERROR, "Erreur", "Erreur lors de la mise à jour de la commande",
-                "Une erreur s'est produite lors de la mise à jour de la commande. Code: " + response.statusCode());
+                // Ajouter les détails du corps de la réponse
+                String errorDetails = "Code: " + response.statusCode() + "\nRéponse du serveur: " + response.body();
+                System.err.println("Erreur lors de la mise à jour: " + errorDetails);
+                
+                DialogService.afficherMessage(
+                    AlertType.ERROR, 
+                    "Erreur", 
+                    "Erreur lors de la mise à jour de la commande", 
+                    errorDetails // Affiche le corps de la réponse
+                );
             }
         } catch (Exception e) {
-            System.err.println("Erreur lors de l'envoi des quantités mises à jour: " + e.getMessage());
+            String errorMessage = "Erreur technique: " + e.getMessage();
+            System.err.println(errorMessage);
             e.printStackTrace();
+            
+            DialogService.afficherMessage(
+                AlertType.ERROR, 
+                "Erreur", 
+                "Erreur de communication", 
+                errorMessage
+            );
         }
     }
     
