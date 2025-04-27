@@ -515,6 +515,33 @@ private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
         }
 
     }
+    private static List<Vente> sendVentesRequest(String url) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            return parseVentesResponse(response.body());
+        } else {
+            throw new Exception("Erreur HTTP " + response.statusCode());
+        }
+    }
+
+    public static List<Vente> getVentesByClientId(UUID clientId) throws Exception {
+        String url = API_BASE_URL + "/ventes/client/" + clientId;
+        LOGGER.log(Level.INFO, "Récupération des ventes pour le client ID: {0}", clientId);
+        return sendVentesRequest(url);
+    }
+
+    public static List<Vente> getVentesByPharmacienId(UUID pharmacienId) throws Exception {
+        String url = API_BASE_URL + "/ventes/pharmacien/" + pharmacienId;
+        LOGGER.log(Level.INFO, "Récupération des ventes pour le pharmacien ID: {0}", pharmacienId);
+        return sendVentesRequest(url);
+    }
 
     /**
      * Supprime une vente via l'API.
