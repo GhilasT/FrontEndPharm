@@ -90,9 +90,13 @@
                         </AnchorPane>
                     </content>
                 </ScrollPane>
-                <ImageView id="boutonTrash" fitHeight="40.0" fitWidth="40.0" layoutX="241.0" layoutY="583.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="boutonTrash"
+                           fitHeight="40.0" fitWidth="40.0"
+                           layoutX="241.0" layoutY="583.0"
+                           pickOnBounds="true" preserveRatio="true"
+                           onMouseClicked="#handleEmptyCart">
                     <image>
-                        <Image url="@/com/pharmacie/images/Icones/Trash Can.png" />
+                        <Image url="@/com/pharmacie/images/Icones/TrashCan.png"/>
                     </image>
                 </ImageView>
                 <VBox layoutX="5.0" layoutY="490.0" spacing="10.0" prefWidth="303.0">
