@@ -74,11 +74,6 @@ public class VenteController {
     private ObservableList<Medicament> suggestions = FXCollections.observableArrayList();
     private final Logger LOGGER = Logger.getLogger(VenteController.class.getName());
 
-
-
-
-
-
     @FXML
     public void initialize() {
         barDeRecherche.textProperty().addListener((obs, oldVal, newVal) -> {
@@ -128,28 +123,32 @@ public class VenteController {
     }
 
     @FXML
-private void rechercherMedicaments(String searchTerm) {
-    try {
-        List<Medicament> medicaments = ApiRest.searchForVente(searchTerm);
-        ObservableList<String> results = FXCollections.observableArrayList();
-        
-        for (Medicament m : medicaments) {
-            String display = String.format("%s - %.2f€", 
-                !m.getDenomination().isEmpty() ? m.getDenomination() : m.getLibelle(),
-                m.getPrixTTC());
-            results.add(display);
+    private void rechercherMedicaments(String searchTerm) {
+        try {
+            List<Medicament> medicaments = ApiRest.searchForVente(searchTerm);
+            ObservableList<String> results = FXCollections.observableArrayList();
+
+            for (Medicament m : medicaments) {
+                String display = String.format("%s - %.2f€",
+                        !m.getDenomination().isEmpty() ? m.getDenomination() : m.getLibelle(),
+                        m.getPrixTTC());
+                results.add(display);
+            }
+
+            listView.setItems(results);
+            suggestions.setAll(medicaments);
+
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR,
+                    "Erreur",
+                    "Recherche impossible",
+                    "Erreur serveur : " + e.getMessage());
         }
-        
-        listView.setItems(results);
-        suggestions.setAll(medicaments);
-        
-    } catch (Exception e) {
-        showAlert(Alert.AlertType.ERROR, 
-            "Erreur", 
-            "Recherche impossible", 
-            "Erreur serveur : " + e.getMessage());
     }
-}
+
+    public void setOrdonnanceAjoutee(boolean valeur) {
+        this.ordonnanceAjoutee = valeur;
+    }
 
     @FXML
     public void ajouterMedicament(String selected) {
@@ -202,117 +201,104 @@ private void rechercherMedicaments(String searchTerm) {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de l'ajout du médicament", e);
         }
+
     }
-/*
-@FXML
-public void ajouterMedicament(String selected) {
-    try {
-        String[] parts = selected.split(" - ");
-        if (parts.length < 2) {
-            LOGGER.warning("Format invalide : " + selected);
-            return;
-        }
-
-        String nom = parts[0].trim();
-        double prix = Double.parseDouble(parts[1].replace("€", "").replace(",", ".").trim());
-
-        Optional<Medicament> match = suggestions.stream()
-                .filter(m -> {
-                    String nomMedoc = (m.getDenomination() != null) ? m.getDenomination() : m.getLibelle();
-                    return selected.startsWith(nomMedoc);
-                })
-                .findFirst();
-
-        if (match.isEmpty()) {
-            LOGGER.warning("Aucun médicament correspondant trouvé pour : " + nom);
-            return;
-        }
-
-        Medicament med = match.get();
-        String codeCip13 = med.getCodeCip13();
-        if (codeCip13 == null || codeCip13.isBlank()) {
-            LOGGER.warning("Code CIP13 manquant pour le médicament : " + med.getLibelle());
-            return;
-        }
-
-        Label labelNom = new Label(nom);
-        labelNom.setTextFill(Color.WHITE);
-        labelNom.setUserData(codeCip13);
-
-        TextField qteField = new TextField("1");
-        qteField.setStyle("-fx-text-fill: white; -fx-control-inner-background: rgba(0,122,255,1);");
-        qteField.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal.matches("\\d*")) {
-                qteField.setText(newVal.replaceAll("[^\\d]", ""));
-            }
-            majInfosPanier();
-        });
-
-        Label labelPrix = new Label(String.format("%.2f €", prix));
-        labelPrix.setTextFill(Color.WHITE);
-
-        gridPanePanier.add(labelNom, 0, rowCount);
-        gridPanePanier.add(qteField, 1, rowCount);
-        gridPanePanier.add(labelPrix, 2, rowCount);
-
-        rowCount++;
-        barDeRecherche.clear();
-        majInfosPanier();
-
-    } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, "Erreur lors de l'ajout du médicament", e);
-    }
-}
-
-    private void majInfosPanier() {
-        double total = 0.0;
-        int sommeQte = 0;
-        for (int i = 1; i < rowCount; i++) {
-            Node qteNode = gridPanePanier.getChildren().get(i * 3 + 1);
-            Node prixNode = gridPanePanier.getChildren().get(i * 3 + 2);
-
-            if (qteNode instanceof TextField && prixNode instanceof Label) {
-                TextField qteField = (TextField) qteNode;
-                Label prixLabel = (Label) prixNode;
-
-                String qteText = qteField.getText().trim();
-                if (!qteText.isEmpty() && qteText.matches("\\d+")) {
-                    int qte = Integer.parseInt(qteText);
-                    double prixUnit = Double.parseDouble(prixLabel.getText().replace(" €", "").replace(",", "."));
-                    total += qte * prixUnit;
-                    sommeQte += qte;
-                }
-            }
-        }
-        LabelQuantierValue.setText(String.valueOf(sommeQte));
-        LabelPrixValue.setText(String.format("%.2f €", total));
-    }
-
- */
+    /*
+     * @FXML
+     * public void ajouterMedicament(String selected) {
+     * try {
+     * String[] parts = selected.split(" - ");
+     * if (parts.length < 2) {
+     * LOGGER.warning("Format invalide : " + selected);
+     * return;
+     * }
+     * 
+     * String nom = parts[0].trim();
+     * double prix = Double.parseDouble(parts[1].replace("€", "").replace(",",
+     * ".").trim());
+     * 
+     * Optional<Medicament> match = suggestions.stream()
+     * .filter(m -> {
+     * String nomMedoc = (m.getDenomination() != null) ? m.getDenomination() :
+     * m.getLibelle();
+     * return selected.startsWith(nomMedoc);
+     * })
+     * .findFirst();
+     * 
+     * if (match.isEmpty()) {
+     * LOGGER.warning("Aucun médicament correspondant trouvé pour : " + nom);
+     * return;
+     * }
+     * 
+     * Medicament med = match.get();
+     * String codeCip13 = med.getCodeCip13();
+     * if (codeCip13 == null || codeCip13.isBlank()) {
+     * LOGGER.warning("Code CIP13 manquant pour le médicament : " +
+     * med.getLibelle());
+     * return;
+     * }
+     * 
+     * Label labelNom = new Label(nom);
+     * labelNom.setTextFill(Color.WHITE);
+     * labelNom.setUserData(codeCip13);
+     * 
+     * TextField qteField = new TextField("1");
+     * qteField.
+     * setStyle("-fx-text-fill: white; -fx-control-inner-background: rgba(0,122,255,1);"
+     * );
+     * qteField.textProperty().addListener((obs, oldVal, newVal) -> {
+     * if (!newVal.matches("\\d*")) {
+     * qteField.setText(newVal.replaceAll("[^\\d]", ""));
+     * }
+     * majInfosPanier();
+     * });
+     * 
+     * Label labelPrix = new Label(String.format("%.2f €", prix));
+     * labelPrix.setTextFill(Color.WHITE);
+     * 
+     * gridPanePanier.add(labelNom, 0, rowCount);
+     * gridPanePanier.add(qteField, 1, rowCount);
+     * gridPanePanier.add(labelPrix, 2, rowCount);
+     * 
+     * rowCount++;
+     * barDeRecherche.clear();
+     * majInfosPanier();
+     * 
+     * } catch (Exception e) {
+     * LOGGER.log(Level.SEVERE, "Erreur lors de l'ajout du médicament", e);
+     * }
+     * }
+     * 
+     * private void majInfosPanier() {
+     * double total = 0.0;
+     * int sommeQte = 0;
+     * for (int i = 1; i < rowCount; i++) {
+     * Node qteNode = gridPanePanier.getChildren().get(i * 3 + 1);
+     * Node prixNode = gridPanePanier.getChildren().get(i * 3 + 2);
+     * 
+     * if (qteNode instanceof TextField && prixNode instanceof Label) {
+     * TextField qteField = (TextField) qteNode;
+     * Label prixLabel = (Label) prixNode;
+     * 
+     * String qteText = qteField.getText().trim();
+     * if (!qteText.isEmpty() && qteText.matches("\\d+")) {
+     * int qte = Integer.parseInt(qteText);
+     * double prixUnit = Double.parseDouble(prixLabel.getText().replace(" €",
+     * "").replace(",", "."));
+     * total += qte * prixUnit;
+     * sommeQte += qte;
+     * }
+     * }
+     * }
+     * LabelQuantierValue.setText(String.valueOf(sommeQte));
+     * LabelPrixValue.setText(String.format("%.2f €", total));
+     * }
+     * 
+     */
 
     @FXML
     private void handlePayer(ActionEvent event) {
-        List<MedicamentPanier> panier = new ArrayList<>();
-
-        for (int i = 1; i < rowCount; i++) {
-            Label labelNom = (Label) gridPanePanier.getChildren().get(i * 3);
-            TextField qteField = (TextField) gridPanePanier.getChildren().get(i * 3 + 1);
-            Label prixLabel = (Label) gridPanePanier.getChildren().get(i * 3 + 2);
-
-            Object userData = labelNom.getUserData();
-            if (userData == null) {
-                LOGGER.warning("Code CIS manquant pour la ligne : " + labelNom.getText());
-                continue;
-            }
-
-            String codeCIS = userData.toString();
-            int qte = Integer.parseInt(qteField.getText());
-            double prixUnit = Double.parseDouble(prixLabel.getText().replace("€", "").replace(",", ".").trim());
-
-            MedicamentPanier mp = new MedicamentPanier(codeCIS, qte, prixUnit);
-            mp.setNomMedicament(labelNom.getText());
-            panier.add(mp);
-        }
+        List<MedicamentPanier> panier = new ArrayList<>(panierItems); // Utiliser directement panierItems
 
         if (clientId == null || pharmacienAdjointId == null || panier.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Champs manquants", "Informations incomplètes",
@@ -321,8 +307,8 @@ public void ajouterMedicament(String selected) {
                     + "Client ID: " + clientId + "\n"
                     + "Pharmacien ID: " + pharmacienAdjointId + "\n"
                     + "Médicaments: " + panier.stream()
-                    .map(m -> m.getCodeCip13() + " (x" + m.getQuantite() + ")")
-                    .collect(Collectors.joining(", ")));
+                            .map(m -> m.getCodeCip13() + " (x" + m.getQuantite() + ")")
+                            .collect(Collectors.joining(", ")));
             return;
         }
 
@@ -334,9 +320,9 @@ public void ajouterMedicament(String selected) {
         request.setMontantTotal(calculerMontantTotal(panier));
         request.setMontantRembourse(0.0);
         request.setMedicaments(panier);
+        request.setOrdonnanceAjoutee(ordonnanceAjoutee);
 
         try {
-            // Logging détaillé de la requête
             ObjectMapper mapper = new ObjectMapper();
             String requestJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
             LOGGER.info("Payload de la vente :\n" + requestJson);
@@ -345,15 +331,12 @@ public void ajouterMedicament(String selected) {
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Vente créée", "La vente a bien été enregistrée.");
             ((Stage) btnPayer.getScene().getWindow()).close();
         } catch (JsonProcessingException e) {
-            // Erreur de sérialisation
             LOGGER.log(Level.SEVERE, "Erreur de sérialisation JSON : " + e.getMessage(), e);
             showAlert(Alert.AlertType.ERROR,
                     "Erreur technique",
                     "Problème de format de données",
                     "Impossible de formater les données de la vente : " + e.getMessage());
-
         } catch (Exception e) {
-            // Récupère et affiche le message d'erreur renvoyé par le back
             LOGGER.log(Level.SEVERE, "Échec de la création de vente", e);
             String raw = e.getMessage();
             String message = raw;
@@ -367,7 +350,6 @@ public void ajouterMedicament(String selected) {
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "Impossible de parser le message d'erreur", ex);
             }
-
 
             showAlert(Alert.AlertType.ERROR,
                     "Vente bloqué",
@@ -389,28 +371,30 @@ public void ajouterMedicament(String selected) {
         alert.showAndWait();
     }
 
-    public UUID getClientId(){
+    public UUID getClientId() {
         return clientId;
     }
 
     /**
      * Récupère les médicaments du panier.
-     * @return Liste des médicaments ajoutés au panier sous forme de MedicamentPanier
+     * 
+     * @return Liste des médicaments ajoutés au panier sous forme de
+     *         MedicamentPanier
      */
     public List<MedicamentPanier> getMedicamentsPanier() {
-        List<MedicamentPanier> panier = new ArrayList<>();  // Liste pour contenir les médicaments du panier
+        List<MedicamentPanier> panier = new ArrayList<>(); // Liste pour contenir les médicaments du panier
 
         // Parcours de chaque ligne dans le panier
-        for (int i = 1; i < rowCount; i++) {  // On commence à 1 car la première ligne est l'entête
-            Label labelNom = (Label) gridPanePanier.getChildren().get(i * 3);  // Nom du médicament
-            TextField qteField = (TextField) gridPanePanier.getChildren().get(i * 3 + 1);  // Quantité
-            Label prixLabel = (Label) gridPanePanier.getChildren().get(i * 3 + 2);  // Prix
+        for (int i = 1; i < rowCount; i++) { // On commence à 1 car la première ligne est l'entête
+            Label labelNom = (Label) gridPanePanier.getChildren().get(i * 3); // Nom du médicament
+            TextField qteField = (TextField) gridPanePanier.getChildren().get(i * 3 + 1); // Quantité
+            Label prixLabel = (Label) gridPanePanier.getChildren().get(i * 3 + 2); // Prix
 
             // Vérification que le nom du médicament contient des informations
             Object userData = labelNom.getUserData();
             if (userData == null) {
                 LOGGER.warning("Code CIP manquant pour la ligne : " + labelNom.getText());
-                continue;  // Ignore cette ligne si le code CIP est manquant
+                continue; // Ignore cette ligne si le code CIP est manquant
             }
 
             // Récupère le codeCIP du médicament
@@ -424,9 +408,9 @@ public void ajouterMedicament(String selected) {
 
             // Crée un objet MedicamentPanier avec les informations récupérées
             MedicamentPanier mp = new MedicamentPanier(codeCIS, qte, prixUnit);
-            mp.setNomMedicament(labelNom.getText());  // Ajoute le nom du médicament
+            mp.setNomMedicament(labelNom.getText()); // Ajoute le nom du médicament
 
-            panier.add(mp);  // Ajoute le médicament au panier
+            panier.add(mp); // Ajoute le médicament au panier
         }
 
         System.out.println("jai recuperer les medoc");
@@ -446,7 +430,8 @@ public void ajouterMedicament(String selected) {
             stage.setScene(new Scene(root));
             stage.setTitle("Page des Médecins");
 
-            // Récupérer le contrôleur de la fenêtre et passer les informations si nécessaire
+            // Récupérer le contrôleur de la fenêtre et passer les informations si
+            // nécessaire
             MedecinsController medecinsController = loader.getController();
             // Passer l'instance de VenteController au MedecinsController
             medecinsController.setVenteController(this);
@@ -464,7 +449,7 @@ public void ajouterMedicament(String selected) {
 
         for (MedicamentPanier mp : panierItems) {
             sommeQte += mp.getQuantite();
-            total    += mp.getQuantite() * mp.getPrixUnitaire();
+            total += mp.getQuantite() * mp.getPrixUnitaire();
         }
 
         LabelQuantierValue.setText(String.valueOf(sommeQte));

@@ -146,6 +146,9 @@ public class PrescriptionController {
                     "Ordonnance créée",
                     "ID Ordonnance : " + ordonnanceId,
                     "Votre ordonnance a bien été enregistrée.");
+                    if (venteController != null) {
+                        venteController.setOrdonnanceAjoutee(true);
+                    }
             ((Stage) btnValider.getScene().getWindow()).close();
         });
         task.setOnFailed(e -> {
