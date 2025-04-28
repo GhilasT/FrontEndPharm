@@ -295,17 +295,26 @@ public class MedecinsController {
                     getClass().getResource("/com/pharmacie/view/Prescription.fxml"));
             Parent root = loader.load();
             PrescriptionController ctrl = loader.getController();
-
-            // ← 1) Passe le clientId récupéré depuis VenteController
-            ctrl.setClientId(venteController.getClientId());
-
-            // ← 2) Passe le RPPS
-            ctrl.setMedecinRpps(rpps);
-
-            // ← 3) Passe la liste des MedicamentPanier
-            List<MedicamentPanier> panier = venteController.getMedicamentsPanier();
-            ctrl.setMedicamentsPanier(panier != null ? panier : new ArrayList<>());
-
+    
+            // S'assurer que venteController n'est pas null
+            if (venteController != null) {
+                // 1) Passe le clientId récupéré depuis VenteController
+                ctrl.setClientId(venteController.getClientId());
+                
+                // 2) Passe le RPPS
+                ctrl.setMedecinRpps(rpps);
+                
+                // 3) Passe la référence au venteController pour avoir accès aux méthodes
+                ctrl.venteController = venteController;
+                
+                // 4) Passe la liste des MedicamentPanier
+                List<MedicamentPanier> panier = venteController.getMedicamentsPanier();
+                System.out.println("Taille du panier récupéré: " + (panier != null ? panier.size() : 0));
+                ctrl.setMedicamentsPanier(panier);
+            } else {
+                System.err.println("VenteController non initialisé!");
+            }
+    
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle("Prescription pour RPPS " + rpps);

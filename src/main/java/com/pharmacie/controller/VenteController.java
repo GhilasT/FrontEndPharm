@@ -382,40 +382,8 @@ public class VenteController {
      *         MedicamentPanier
      */
     public List<MedicamentPanier> getMedicamentsPanier() {
-        List<MedicamentPanier> panier = new ArrayList<>(); // Liste pour contenir les médicaments du panier
+        return new ArrayList<>(panierItems);
 
-        // Parcours de chaque ligne dans le panier
-        for (int i = 1; i < rowCount; i++) { // On commence à 1 car la première ligne est l'entête
-            Label labelNom = (Label) gridPanePanier.getChildren().get(i * 3); // Nom du médicament
-            TextField qteField = (TextField) gridPanePanier.getChildren().get(i * 3 + 1); // Quantité
-            Label prixLabel = (Label) gridPanePanier.getChildren().get(i * 3 + 2); // Prix
-
-            // Vérification que le nom du médicament contient des informations
-            Object userData = labelNom.getUserData();
-            if (userData == null) {
-                LOGGER.warning("Code CIP manquant pour la ligne : " + labelNom.getText());
-                continue; // Ignore cette ligne si le code CIP est manquant
-            }
-
-            // Récupère le codeCIP du médicament
-            String codeCIS = userData.toString();
-
-            // Récupère la quantité entrée
-            int qte = Integer.parseInt(qteField.getText());
-
-            // Récupère le prix unitaire du médicament
-            double prixUnit = Double.parseDouble(prixLabel.getText().replace("€", "").replace(",", ".").trim());
-
-            // Crée un objet MedicamentPanier avec les informations récupérées
-            MedicamentPanier mp = new MedicamentPanier(codeCIS, qte, prixUnit);
-            mp.setNomMedicament(labelNom.getText()); // Ajoute le nom du médicament
-
-            panier.add(mp); // Ajoute le médicament au panier
-        }
-
-        System.out.println("jai recuperer les medoc");
-
-        return panier;
     }
 
     @FXML

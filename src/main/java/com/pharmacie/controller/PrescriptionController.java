@@ -172,10 +172,10 @@ public class PrescriptionController {
     public void setMedicamentsPanier(List<MedicamentPanier> list) {
         // 1) Définit toujours une liste non-nulle
         this.medicamentsPanier = (list != null ? list : Collections.emptyList());
-
-        // 2) Vide d’abord l’ObservableList
+    
+        // 2) Vide d'abord l'ObservableList
         prescriptionsList.clear();
-
+    
         // 3) Si le panier contient des médicaments, on crée les Prescription
         for (MedicamentPanier mp : this.medicamentsPanier) {
             prescriptionsList.add(
@@ -187,6 +187,9 @@ public class PrescriptionController {
                     )
             );
         }
+        
+        // 4) Rafraîchir l'affichage dans la table
+        prescriptionTable.setItems(prescriptionsList);
     }
 
     public void setMedecinRpps(String rpps) {
