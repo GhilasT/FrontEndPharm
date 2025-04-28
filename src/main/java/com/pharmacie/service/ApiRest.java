@@ -951,24 +951,32 @@ public class ApiRest {
     private static Client parseClientResponse(String jsonResponse) {
         JSONObject json = new JSONObject(jsonResponse);
         Client client = new Client();
-
-        client.setId(UUID.fromString(json.getString("idPersonne")));
+    
+        // Champs obligatoires
         client.setNom(json.getString("nom"));
         client.setPrenom(json.getString("prenom"));
-        client.setEmail(json.getString("email"));
         client.setTelephone(json.getString("telephone"));
-        client.setAdresse(json.getString("adresse"));
-
+    
         // Champs optionnels
+        if (json.has("idPersonne") && !json.isNull("idPersonne")) {
+            client.setId(UUID.fromString(json.getString("idPersonne")));
+        }
+        if (json.has("email") && !json.isNull("email")) {
+            client.setEmail(json.getString("email"));
+        }
+        if (json.has("adresse") && !json.isNull("adresse")) {
+            client.setAdresse(json.getString("adresse"));
+        }
         if (json.has("numeroSecu") && !json.isNull("numeroSecu")) {
             client.setNumeroSecu(json.getString("numeroSecu"));
         }
         if (json.has("mutuelle") && !json.isNull("mutuelle")) {
             client.setMutuelle(json.getString("mutuelle"));
         }
-
+    
         return client;
     }
+    
 
     private static PharmacienAdjoint parsePharmacienResponse(String jsonResponse) {
         JSONObject json = new JSONObject(jsonResponse);

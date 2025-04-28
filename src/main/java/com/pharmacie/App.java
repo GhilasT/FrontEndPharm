@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ import com.pharmacie.util.LoggedSeller;
 public class App extends Application {
     private static Stage primaryStage;
     private static Scene loginScene;
+
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
@@ -37,6 +39,7 @@ public class App extends Application {
     PharmacyDashboard dashboard = new PharmacyDashboard();
     private Parent dashboardAdmin;
     Scene adminScene;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -44,6 +47,15 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         App.primaryStage = primaryStage;
+        primaryStage.getIcons()
+                .add(new Image(getClass().getResource("/com/pharmacie/images/Icones/logo16.png").toExternalForm()));
+        primaryStage.getIcons()
+                .add(new Image(getClass().getResource("/com/pharmacie/images/Icones/logo32.png").toExternalForm()));
+        primaryStage.getIcons()
+                .add(new Image(getClass().getResource("/com/pharmacie/images/Icones/logo48.png").toExternalForm()));
+        primaryStage.getIcons()
+                .add(new Image(getClass().getResource("/com/pharmacie/images/Icones/logo64.png").toExternalForm()));
+
         Login login = new Login();
         loginScene = new Scene(login);
         Scene dashBoardScene = new Scene(dashboard);
@@ -107,38 +119,36 @@ public class App extends Application {
         loginTask.setOnSucceeded(event -> {
             try {
                 LoginResponse response = loginTask.getValue();
-                
+
                 // Dans setupLoginTaskHandlers (App.java)
-if (response != null && response.isSuccess()) {
-    String role = response.getRole();
-    
-    if ("PHARMACIEN_ADJOINT".equalsIgnoreCase(role) 
-        || "APPRENTI".equalsIgnoreCase(role) 
-        || "ADMINISTRATEUR".equalsIgnoreCase(role)) { // Ajout du rôle ADMINISTRATEUR
-        
-        LoggedSeller.getInstance().setUser(
-            response.getId(),
-            response.getNom(),
-            response.getPrenom(), 
-            role
-        );
-        
-        if ("ADMINISTRATEUR".equalsIgnoreCase(role)) {
-            primaryStage.setScene(adminScene); // Charger la scène admin
-        } else {
-            dashboard.refreshUserInfo();
-            primaryStage.setScene(dashBoardScene); // Scène normale
-        }
-        
-        primaryStage.setTitle("Dashboard - " + LoggedSeller.getInstance().getNomComplet());
-    } else {
-        showAlert("Accès refusé", "Rôle non autorisé (" + role + ")");
-    }
-}
-                 else {
-                    String errorMessage = response == null 
-                        ? "Pas de réponse du serveur" 
-                        : "Erreur d'authentification";
+                if (response != null && response.isSuccess()) {
+                    String role = response.getRole();
+
+                    if ("PHARMACIEN_ADJOINT".equalsIgnoreCase(role)
+                            || "APPRENTI".equalsIgnoreCase(role)
+                            || "ADMINISTRATEUR".equalsIgnoreCase(role)) { // Ajout du rôle ADMINISTRATEUR
+
+                        LoggedSeller.getInstance().setUser(
+                                response.getId(),
+                                response.getNom(),
+                                response.getPrenom(),
+                                role);
+
+                        if ("ADMINISTRATEUR".equalsIgnoreCase(role)) {
+                            primaryStage.setScene(adminScene); // Charger la scène admin
+                        } else {
+                            dashboard.refreshUserInfo();
+                            primaryStage.setScene(dashBoardScene); // Scène normale
+                        }
+
+                        primaryStage.setTitle("Dashboard - " + LoggedSeller.getInstance().getNomComplet());
+                    } else {
+                        showAlert("Accès refusé", "Rôle non autorisé (" + role + ")");
+                    }
+                } else {
+                    String errorMessage = response == null
+                            ? "Pas de réponse du serveur"
+                            : "Erreur d'authentification";
                     showAlert("Échec", errorMessage);
                 }
             } catch (Exception e) {
@@ -146,12 +156,12 @@ if (response != null && response.isSuccess()) {
             }
         });
 
-    loginTask.setOnFailed(event->
+        loginTask.setOnFailed(event ->
 
-    {
-        showAlert("Connexion impossible",
-                "Erreur réseau: " + loginTask.getException().getMessage());
-    });
+        {
+            showAlert("Connexion impossible",
+                    "Erreur réseau: " + loginTask.getException().getMessage());
+        });
     }
 
     private void showAlert(String title, String content) {

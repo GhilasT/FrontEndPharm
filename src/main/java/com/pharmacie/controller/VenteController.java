@@ -21,6 +21,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -329,7 +330,26 @@ public class VenteController {
 
             ApiRest.createVente(request);
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Vente créée", "La vente a bien été enregistrée.");
-            ((Stage) btnPayer.getScene().getWindow()).close();
+
+            // Fermer cette fenêtre
+            Stage currentStage = (Stage) btnPayer.getScene().getWindow();
+            currentStage.close();
+
+            // Fermer toutes les fenêtres parentes qui pourraient être encore ouvertes
+            Window.getWindows().forEach(window -> {
+                if (window instanceof Stage && window != currentStage) {
+                    // Vérifier si c'est une fenêtre modale liée à notre flux de vente
+                    Stage stage = (Stage) window;
+                    if (stage.getTitle() != null &&
+                            (stage.getTitle().contains("Médecin") ||
+                                    stage.getTitle().contains("Ordonnance") ||
+                                    stage.getTitle().contains("Prescription") ||
+                                    stage.getTitle().contains("Client"))) {
+                        stage.close();
+                    }
+                }
+            });
+
         } catch (JsonProcessingException e) {
             LOGGER.log(Level.SEVERE, "Erreur de sérialisation JSON : " + e.getMessage(), e);
             showAlert(Alert.AlertType.ERROR,
