@@ -4,6 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 
 <fx:root type="StackPane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
 
@@ -12,7 +13,10 @@
          <BorderPane maxHeight="Infinity" maxWidth="Infinity" minHeight="400.0" minWidth="800.0">
             <top>
                <HBox fx:id="topBar" alignment="CENTER_LEFT" minHeight="60.0" prefHeight="100.0" style="-fx-background-color: #007B3D;"
-                  BorderPane.alignment="CENTER_LEFT">
+                  BorderPane.alignment="CENTER_LEFT" spacing="15.0">
+                  <padding>
+                     <Insets left="10.0" right="20.0" />
+                  </padding>
                   <children>
                      <Button fx:id="menuButton" maxWidth="60.0" minWidth="60.0" mnemonicParsing="false" prefWidth="60.0"
                         style="-fx-background-color: transparent;" text="☰" textFill="WHITE">
@@ -25,21 +29,26 @@
                            <Image url="@../Images/Icones/icons8-medicament-50.png" />
                         </image>
                      </ImageView>
-                     <Label text="Pharmacie" textFill="WHITE">
+                     <Label text="PharmaPlus" textFill="WHITE" minWidth="170.0" prefWidth="170.0">
                         <font>
                            <Font name="Open Sans Semibold" size="26.0" />
                         </font>
                      </Label>
-                     <Label text=" | " textFill="WHITE">
+                     <Label text="|" textFill="WHITE" minWidth="10.0" prefWidth="10.0" alignment="CENTER">
                         <font>
                            <Font name="Open Sans" size="24.0" />
                         </font>
                      </Label>
-                     <Label fx:id="headerTitle" HBox.hgrow="ALWAYS" maxWidth="Infinity" text="Tableau de bord" textFill="WHITE">
+                     <Label fx:id="headerTitle" HBox.hgrow="ALWAYS" maxWidth="Infinity" minWidth="300.0" 
+                        text="Tableau de bord" textFill="WHITE" wrapText="true">
                         <font>
                            <Font name="Open Sans" size="24.0" />
                         </font>
+                        <HBox.margin>
+                           <Insets left="10.0" right="20.0" />
+                        </HBox.margin>
                      </Label>
+                     <Region HBox.hgrow="ALWAYS" />
                      <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                         <image>
                            <Image url="@../Images/Icones/icons8-rappels-de-rendez-vous-40.png" />

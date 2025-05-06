@@ -67,6 +67,9 @@ public class PharmacyDashboard extends StackPane {
     private Button btnLogout;
     @FXML
     private HBox topBar; // Ajout de la référence à la barre supérieure
+    
+    // Nouvelle propriété pour garantir un espacement adéquat
+    private final double HEADER_SPACING = 20.0;
 
     private BooleanProperty menuVisible = new SimpleBooleanProperty(false);
     private TilePane dashboardTilePane;
@@ -615,6 +618,10 @@ public class PharmacyDashboard extends StackPane {
         } else {
             headerTitle.setStyle("-fx-font-size: 24px;");
         }
+        
+        // S'assurer que le titre a suffisamment d'espace
+        double minWidth = Math.max(300, newTitle.length() * 12); // Approximation: 12px par caractère
+        headerTitle.setMinWidth(minWidth);
     }
 
     private void initializeComponents() {
@@ -633,10 +640,26 @@ public class PharmacyDashboard extends StackPane {
         // Initialiser le padding du topBar à 0
         topBar.setPadding(new Insets(0));
 
-        // Contraintes de redimensionnement pour le header
+        // S'assurer que tous les éléments de la barre supérieure sont correctement dimensionnés
+        for (javafx.scene.Node node : topBar.getChildren()) {
+            if (node instanceof Label) {
+                Label label = (Label) node;
+                // Empêcher le texte de s'afficher avec des points de suspension
+                label.setTextOverrun(javafx.scene.control.OverrunStyle.CLIP);
+                // S'assurer que le texte est entièrement visible
+                if (!label.getText().equals("|") && label != headerTitle) {
+                    label.setMinWidth(Label.USE_PREF_SIZE);
+                }
+            }
+        }
+
+        // Modifier la contrainte de redimensionnement pour le header pour utiliser plus d'espace disponible
         headerTitle.prefWidthProperty().bind(
-                widthProperty().subtract(menuVisible.get() ? MENU_WIDTH : 0).subtract(250) // 250 pour les autres éléments de l'en-tête
+                widthProperty().subtract(menuVisible.get() ? MENU_WIDTH : 0).subtract(240) // Ajusté pour les éléments de la barre
         );
+
+        // Activer le wrapping de texte pour le headerTitle
+        headerTitle.setWrapText(true);
 
         // S'assurer que les étiquettes de menu s'adaptent à l'espace
         Button[] menuButtons = { btnDashboard, btnSales, btnMedics, btnCommandes, btnSuppliers, btnAnalytics,
