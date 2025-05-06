@@ -22,6 +22,23 @@
     .search-field {
         -fx-pref-width: 250;
     }
+    
+    .top-bar {
+        -fx-padding: 8 12;
+        -fx-spacing: 8;
+        -fx-min-height: 45;
+    }
+    
+    .side-menu {
+        -fx-min-width: 160;
+        -fx-pref-width: 200;
+        -fx-padding: 10;
+        -fx-spacing: 6;
+    }
+    
+    .central-panel {
+        -fx-padding: 10;
+    }
 }
 
 /* Styles pour les petits écrans (smartphones) */
@@ -65,6 +82,45 @@
     .hide-on-small {
         -fx-visible: false;
     }
+    
+    .top-bar {
+        -fx-padding: 6 10;
+        -fx-spacing: 6;
+        -fx-min-height: 40;
+        -fx-alignment: center;
+    }
+    
+    .side-menu {
+        -fx-min-width: 0;
+        -fx-pref-width: 160;
+        -fx-padding: 8;
+        -fx-spacing: 5;
+    }
+    
+    .central-panel {
+        -fx-padding: 8;
+    }
+    
+    /* Modification pour basculer le menu en mode compact sur très petit écran */
+    .collapsed-menu-trigger {
+        -fx-visible: true;
+    }
+}
+
+/* Pour les très petits écrans - possibilité de masquer/afficher le menu */
+@media screen and (max-width: 600px) {
+    .side-menu {
+        -fx-translate-x: -160; /* Menu caché par défaut */
+        -fx-transition: -fx-translate-x 0.3s ease;
+    }
+    
+    .side-menu.expanded {
+        -fx-translate-x: 0; /* Menu visible quand la classe expanded est ajoutée */
+    }
+    
+    .central-panel {
+        -fx-padding: 5;
+    }
 }
 
 /* Styles pour l'adaptation dynamique de la hauteur */
@@ -100,4 +156,68 @@
 /* Styles pour les éléments qui peuvent être masqués si nécessaire */
 .optional {
     -fx-shrink: 1;
+}
+
+/* Styles pour les composants principaux responsifs */
+.top-bar {
+    -fx-background-color: #4caf50;
+    -fx-padding: 10 15;
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+    -fx-min-height: 50;
+    -fx-max-height: 80;
+}
+
+.side-menu {
+    -fx-background-color: #f4f4f4;
+    -fx-min-width: 200;
+    -fx-pref-width: 250;
+    -fx-padding: 15;
+    -fx-spacing: 8;
+}
+
+.central-panel {
+    -fx-background-color: white;
+    -fx-padding: 15;
+    -fx-hgrow: always;
+    -fx-vgrow: always;
+}
+
+/* Layout responsif principal */
+.main-container {
+    -fx-fill-width: true;
+    -fx-fill-height: true;
+}
+
+/* Ajustements pour différentes tailles d'écran */
+@media screen and (max-width: 1200px) {
+    .side-menu {
+        -fx-min-width: 180;
+        -fx-pref-width: 220;
+        -fx-padding: 12;
+    }
+}
+
+/* Animation pour transitions fluides */
+.animated-transition {
+    -fx-transition: all 0.3s ease;
+}
+
+/* Classes pour contrôler l'affichage du menu latéral */
+.menu-toggle-button {
+    -fx-background-color: transparent;
+    -fx-content-display: graphic-only;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+    -fx-cursor: hand;
+}
+
+/* Superposition pour l'arrière-plan quand le menu est ouvert sur petit écran */
+.menu-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-visible: false;
+}
+
+.menu-overlay.active {
+    -fx-visible: true;
 }

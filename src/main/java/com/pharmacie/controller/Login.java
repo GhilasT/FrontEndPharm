@@ -1,180 +1,231 @@
 package com.pharmacie.controller;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-public class Login extends FlowPane {
+public class Login extends BorderPane {
     private final TextField username = new TextField();
     private final PasswordField password = new PasswordField();
     private final Button loginBtn = new Button("LOG IN");
+    
+    private AnchorPane leftPane;
+    private VBox rightPane;
+    
+    // Dimensions pour un ratio 16:9
+    private double minWidth = 1280; // 16 unités de largeur
+    private double minHeight = 720; // 9 unités de hauteur
 
     public Login() {
-        Pane leftPane = createLeftPane();
-        GridPane rightPane = createRightGridPane();
-        setPrefSize(1280, 820);
-        getChildren().addAll(leftPane, rightPane);
+        leftPane = createLeftPane();
+        rightPane = createRightPane();
+        
+        setLeft(leftPane);
+        setCenter(rightPane);
+        
+        // Configuration initiale des proportions
+        leftPane.setPrefWidth(minWidth * 0.55); // 55% de la largeur initiale
+        rightPane.setPrefWidth(minWidth * 0.45); // 45% de la largeur initiale
+        
+        // Add listeners for responsive behavior
+        widthProperty().addListener((obs, oldVal, newVal) -> {
+            handleResize();
+        });
+        
+        heightProperty().addListener((obs, oldVal, newVal) -> {
+            handleResize();
+        });
+        
+        // Set minimum size avec ratio 16:9
+        setMinSize(minWidth, minHeight);
+        setPrefSize(minWidth, minHeight);
+    }
+    
+    private void handleResize() {
+        double width = getWidth();
+        double height = getHeight();
+        
+        // If screen gets too small, adjust components
+        if (width < 1000) {
+            leftPane.setPrefWidth(width * 0.4);
+            rightPane.setPrefWidth(width * 0.6);
+        } else {
+            leftPane.setPrefWidth(width * 0.55);
+            rightPane.setPrefWidth(width * 0.45);
+        }
+        
+        // Adjust font sizes based on screen size
+        double fontScale = Math.max(0.7, Math.min(1.0, width / 1280.0));
+        
+        // Update label font sizes
+        for (Label label : findLabels(leftPane)) {
+            if (label.getText().equals("PharmaPlus")) {
+                label.setFont(Font.font("Open Sans", 90 * fontScale));
+            }
+        }
+        
+        // Also update form title font size
+        for (Label label : findLabels(rightPane)) {
+            if (label.getText().equals("Connexion")) {
+                label.setFont(Font.font("Open Sans", 40 * fontScale));
+            }
+        }
+    }
+    
+    private java.util.List<Label> findLabels(Pane pane) {
+        java.util.List<Label> labels = new java.util.ArrayList<>();
+        for (javafx.scene.Node node : pane.getChildren()) {
+            if (node instanceof Label) {
+                labels.add((Label) node);
+            } else if (node instanceof Pane) {
+                labels.addAll(findLabels((Pane) node));
+            }
+        }
+        return labels;
     }
 
-    private Pane createLeftPane() {
-        Pane pane = new Pane();
-        pane.setPrefSize(695, 820);
+    private AnchorPane createLeftPane() {
+        AnchorPane pane = new AnchorPane();
         pane.setStyle("-fx-background-color: #007B3D;");
 
-        // Correction des chemins d'accès aux images
+        // Images with responsive positioning
         ImageView img1 = createImageView("/com/pharmacie/images/MedocBois1.png", 360, 360);
-        img1.setLayoutX(-39);
-        img1.setLayoutY(-91);
+        AnchorPane.setTopAnchor(img1, -91.0);
+        AnchorPane.setLeftAnchor(img1, -39.0);
 
         ImageView img2 = createImageView("/com/pharmacie/images/img.png", 375, 674);
-        img2.setLayoutX(321);
-        img2.setLayoutY(117);
+        AnchorPane.setTopAnchor(img2, 117.0);
+        AnchorPane.setRightAnchor(img2, 0.0);
 
         ImageView img3 = createImageView("/com/pharmacie/images/Pomade.png", 468, 533);
-        img3.setLayoutX(-26);
-        img3.setLayoutY(322);
+        AnchorPane.setBottomAnchor(img3, 0.0);
+        AnchorPane.setLeftAnchor(img3, -26.0);
         img3.setBlendMode(javafx.scene.effect.BlendMode.SRC_ATOP);
 
-        Label title = new Label("Pharmacie");
-        title.setLayoutX(67);
-        title.setLayoutY(269);
-        title.setPrefSize(586, 174);
+        // Créer un conteneur StackPane pour centrer le titre
+        StackPane titleContainer = new StackPane();
+        AnchorPane.setTopAnchor(titleContainer, 0.0);
+        AnchorPane.setRightAnchor(titleContainer, 0.0);
+        AnchorPane.setLeftAnchor(titleContainer, 0.0);
+        AnchorPane.setBottomAnchor(titleContainer, 0.0);
+        
+        Label title = new Label("PharmaPlus");
         title.setTextFill(Color.WHITE);
         title.setFont(Font.font("Open Sans", 90));
+        
+        titleContainer.getChildren().add(title);
+        titleContainer.setAlignment(Pos.CENTER);
 
-        pane.getChildren().addAll(img1, img2, img3, title);
+        pane.getChildren().addAll(img1, img2, img3, titleContainer);
         return pane;
     }
 
     private ImageView createImageView(String resourcePath, double width, double height) {
         try {
-            Image image = new Image(getClass().getResourceAsStream(resourcePath));
+            Image image = new Image(getClass().getResourceAsStream(resourcePath), 
+                                   width, height, true, true);
             ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(width);
-            imageView.setFitHeight(height);
+            imageView.setPreserveRatio(true);
+            
+            // Ajuster la taille des images en fonction de la largeur de la fenêtre
+            imageView.fitWidthProperty().bind(widthProperty().multiply(0.25));
             return imageView;
         } catch (NullPointerException e) {
             System.err.println("Image non trouvée: " + resourcePath);
-            return new ImageView(); // Retourne une ImageView vide si l'image est introuvable
+            return new ImageView();
         }
     }
 
-    private GridPane createRightGridPane() {
-        GridPane grid = new GridPane();
-        grid.setPrefSize(585, 820);
-        grid.setStyle("-fx-background-color: #FFFFFF;");
-
-        // Configuration des colonnes
-        ColumnConstraints col1 = new ColumnConstraints();
-        ColumnConstraints col2 = new ColumnConstraints(255, 255, 313);
-        ColumnConstraints col3 = new ColumnConstraints();
-        col1.setMinWidth(85);
-        col3.setMinWidth(85);
-        grid.getColumnConstraints().addAll(col1, col2, col3);
-
-        // Configuration des lignes
-        RowConstraints row1 = new RowConstraints(170);
-        RowConstraints row2 = new RowConstraints(396);
-        RowConstraints row3 = new RowConstraints(255);
-        grid.getRowConstraints().addAll(row1, row2, row3);
-
-        GridPane loginGrid = createLoginForm();
-        grid.add(loginGrid, 1, 1);
-
-        return grid;
-    }
-
-    private GridPane createLoginForm() {
-        GridPane grid = new GridPane();
-        grid.setMaxWidth(330);
-        grid.setMinWidth(330);
+    private VBox createRightPane() {
+        VBox container = new VBox();
+        container.setAlignment(Pos.CENTER);
+        container.setStyle("-fx-background-color: #FFFFFF;");
+        container.setPadding(new Insets(50));
         
-        RowConstraints titleRow = new RowConstraints(105);
-        RowConstraints fieldsRow = new RowConstraints(181.67);
-        RowConstraints buttonsRow = new RowConstraints(125);
-        grid.getRowConstraints().addAll(titleRow, fieldsRow, buttonsRow);
-
-        Label title = new Label("Connexion");
-        title.setPrefSize(204, 57);
-        title.setFont(Font.font("Open Sans", 40));
-        GridPane.setHalignment(title, javafx.geometry.HPos.CENTER);
-        grid.add(title, 0, 0);
-
-        grid.add(createFieldsGrid(), 0, 1);
-        grid.add(createButtonsGrid(), 0, 2);
-
-        return grid;
+        // Center everything inside the right pane
+        VBox loginContainer = createLoginForm();
+        // Make the login container responsive
+        loginContainer.prefWidthProperty().bind(container.widthProperty().multiply(0.8));
+        loginContainer.maxWidthProperty().bind(container.widthProperty().multiply(0.9));
+        
+        container.getChildren().add(loginContainer);
+        
+        return container;
     }
 
-    private GridPane createFieldsGrid() {
-        GridPane grid = new GridPane();
-        grid.setVgap(20);
-        grid.setPadding(new Insets(10, 0, 10, 0));
+    private VBox createLoginForm() {
+        VBox container = new VBox();
+        container.setSpacing(30);
+        container.setAlignment(Pos.CENTER);
+        
+        Label title = new Label("Connexion");
+        title.setFont(Font.font("Open Sans", 40));
+        title.setAlignment(Pos.CENTER);
+        
+        VBox fieldsBox = createFieldsBox();
+        VBox buttonsBox = createButtonsBox();
+        
+        container.getChildren().addAll(title, fieldsBox, buttonsBox);
+        return container;
+    }
 
-        ColumnConstraints column = new ColumnConstraints(330, 330, 330);
-        grid.getColumnConstraints().add(column);
-
-        RowConstraints row1 = new RowConstraints(85);
-        RowConstraints row2 = new RowConstraints(85);
-        grid.getRowConstraints().addAll(row1, row2);
-
+    private VBox createFieldsBox() {
+        VBox box = new VBox();
+        box.setSpacing(20);
+        box.setAlignment(Pos.CENTER);
+        box.setMaxWidth(Double.MAX_VALUE);
+        
+        // Ajout de padding latéral pour les champs de texte
+        box.setPadding(new Insets(0, 45, 0, 45));
+        
         String fieldStyle = "-fx-background-color: #EDEDED; -fx-padding: 15; -fx-font-size: 18;";
         
         username.setPrefHeight(55);
-        username.setMaxWidth(330);
+        username.setMaxWidth(Double.MAX_VALUE);
         username.setPromptText("Identifiant");
         username.setStyle(fieldStyle);
 
         password.setPrefHeight(55);
-        password.setMaxWidth(330);
+        password.setMaxWidth(Double.MAX_VALUE);
         password.setPromptText("Mot de Passe");
         password.setStyle(fieldStyle);
-
-        grid.add(username, 0, 0);
-        grid.add(password, 0, 1);
-
-        return grid;
+        
+        box.getChildren().addAll(username, password);
+        return box;
     }
+
     public void clearFields() {
         username.clear();
         password.clear();
     }
-    private GridPane createButtonsGrid() {
-        GridPane grid = new GridPane();
-        grid.setHgap(20);
+    
+    private VBox createButtonsBox() {
+        VBox box = new VBox();
+        box.setSpacing(20);
+        box.setAlignment(Pos.CENTER);
+        box.setMaxWidth(Double.MAX_VALUE);
+        
+        // Ajout de padding latéral plus important pour le bouton de connexion
+        box.setPadding(new Insets(0, 70, 0, 70));
 
-        ColumnConstraints col1 = new ColumnConstraints(70);
-        ColumnConstraints col2 = new ColumnConstraints(175, 175, 183);
-        ColumnConstraints col3 = new ColumnConstraints(70);
-        grid.getColumnConstraints().addAll(col1, col2, col3);
-
-        String buttonStyle = "-fx-background-radius: 5; -fx-cursor: hand; -fx-pref-width: 173; -fx-pref-height: 34;";
+        String buttonStyle = "-fx-background-radius: 5; -fx-cursor: hand; -fx-font-size: 18;";
 
         loginBtn.setStyle(buttonStyle + "-fx-background-color: #007B3D;");
         loginBtn.setTextFill(Color.WHITE);
         loginBtn.setFont(Font.font("Open Sans Semibold", 18));
-
-        Button signupBtn = new Button("SIGN UP");
-        signupBtn.setStyle(buttonStyle + "-fx-background-color: #0F8AE1;");
-        signupBtn.setTextFill(Color.WHITE);
-        signupBtn.setFont(Font.font("Open Sans Semibold", 18));
+        loginBtn.setMaxWidth(Double.MAX_VALUE);
+        loginBtn.setPrefHeight(40);
         
-        grid.add(loginBtn, 1, 1);
-        grid.add(signupBtn, 1, 2);
-
-        return grid;
+        box.getChildren().add(loginBtn);
+        return box;
     }
 
     public Button getLoginButton() {
