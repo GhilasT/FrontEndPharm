@@ -244,6 +244,7 @@ public class GestionCommandeController {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(FOURNISSEURS_URL+"/"+ id.toString()))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
     
@@ -281,6 +282,7 @@ public class GestionCommandeController {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(EMPLOYES_URL+"/"+employeId.toString()))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
     
@@ -404,6 +406,7 @@ public class GestionCommandeController {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(fullUrl))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .PUT(HttpRequest.BodyPublishers.ofString(jsonQuantites.toString()))
                     .build();
             

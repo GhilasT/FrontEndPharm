@@ -8,6 +8,7 @@ public class LoggedSeller {
     private String nom;
     private String prenom;
     private String role;
+    private String token;
 
     public static LoggedSeller getInstance() {
         if (instance == null) {
@@ -16,11 +17,12 @@ public class LoggedSeller {
         return instance;
     }
 
-    public void setUser(UUID id, String nom, String prenom, String role) {
+    public void setUser(UUID id, String nom, String prenom, String role, String token) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
         this.role = role;
+        this.token = token;
     }
     public String getRole() {
         return this.role;
@@ -36,5 +38,6 @@ public class LoggedSeller {
         this.nom = null;
         this.prenom = null;
         this.role = null;
+        this.token = null;
     }
 }

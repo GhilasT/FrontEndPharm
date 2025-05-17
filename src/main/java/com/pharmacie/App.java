@@ -88,6 +88,7 @@ public class App extends Application {
                     HttpRequest request = HttpRequest.newBuilder()
                             .uri(URI.create(API_URL))
                             .header("Content-Type", "application/json")
+                            .header("Authorization", "Bearer " + Global.getToken())
                             .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                             .build();
 
@@ -111,6 +112,8 @@ public class App extends Application {
                 // Dans setupLoginTaskHandlers (App.java)
 if (response != null && response.isSuccess()) {
     String role = response.getRole();
+
+    Global.setToken(response.getToken()); //ajout du token
     
     if ("PHARMACIEN_ADJOINT".equalsIgnoreCase(role) 
         || "APPRENTI".equalsIgnoreCase(role) 
@@ -119,7 +122,8 @@ if (response != null && response.isSuccess()) {
         LoggedSeller.getInstance().setUser(
             response.getId(),
             response.getNom(),
-            response.getPrenom(), 
+            response.getPrenom(),
+            response.getToken(),
             role
         );
         

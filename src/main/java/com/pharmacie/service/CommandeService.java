@@ -36,6 +36,7 @@ public class CommandeService {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(COMMANDES_URL))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
                 .GET()
                 .build();
         
@@ -210,6 +211,7 @@ public class CommandeService {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
                 .PUT(HttpRequest.BodyPublishers.noBody())
                 .build();
         

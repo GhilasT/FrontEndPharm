@@ -37,6 +37,7 @@ public class FournisseurApi {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(FOURNISSEUR_URL))
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
 
@@ -58,6 +59,7 @@ public class FournisseurApi {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(FOURNISSEUR_URL + "/" + id))
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
 
@@ -78,6 +80,7 @@ public class FournisseurApi {
             String encodedEmail = java.net.URLEncoder.encode(email, "UTF-8");
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(FOURNISSEUR_URL + "/email/" + encodedEmail))
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
 
@@ -98,6 +101,7 @@ public class FournisseurApi {
             String encodedTel = java.net.URLEncoder.encode(telephone, "UTF-8");
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(FOURNISSEUR_URL + "/telephone/" + encodedTel))
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
 
@@ -153,6 +157,7 @@ public class FournisseurApi {
             String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(FOURNISSEUR_URL + "/search?q=" + encodedQuery))
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
     
@@ -173,6 +178,7 @@ public class FournisseurApi {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(FOURNISSEUR_URL + "/" + id))
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .DELETE()
                     .build();
 
