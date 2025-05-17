@@ -184,6 +184,7 @@ public class PasserCommandeController {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(FOURNISSEURS_URL))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
     

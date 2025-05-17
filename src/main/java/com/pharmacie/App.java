@@ -100,6 +100,7 @@ public class App extends Application {
                     HttpRequest request = HttpRequest.newBuilder()
                             .uri(URI.create(API_URL))
                             .header("Content-Type", "application/json")
+                            .header("Authorization", "Bearer " + Global.getToken())
                             .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                             .build();
 
@@ -121,34 +122,39 @@ public class App extends Application {
                 LoginResponse response = loginTask.getValue();
 
                 // Dans setupLoginTaskHandlers (App.java)
-                if (response != null && response.isSuccess()) {
-                    String role = response.getRole();
+if (response != null && response.isSuccess()) {
+    String role = response.getRole();
 
-                    if ("PHARMACIEN_ADJOINT".equalsIgnoreCase(role)
-                            || "APPRENTI".equalsIgnoreCase(role)
-                            || "ADMINISTRATEUR".equalsIgnoreCase(role)) { // Ajout du rôle ADMINISTRATEUR
-
-                        LoggedSeller.getInstance().setUser(
-                                response.getId(),
-                                response.getNom(),
-                                response.getPrenom(),
-                                role);
-
-                        if ("ADMINISTRATEUR".equalsIgnoreCase(role)) {
-                            primaryStage.setScene(adminScene); // Charger la scène admin
-                        } else {
-                            dashboard.refreshUserInfo();
-                            primaryStage.setScene(dashBoardScene); // Scène normale
-                        }
-
-                        primaryStage.setTitle("Dashboard - " + LoggedSeller.getInstance().getNomComplet());
-                    } else {
-                        showAlert("Accès refusé", "Rôle non autorisé (" + role + ")");
-                    }
-                } else {
-                    String errorMessage = response == null
-                            ? "Pas de réponse du serveur"
-                            : "Erreur d'authentification";
+    Global.setToken(response.getToken()); //ajout du token
+    
+    if ("PHARMACIEN_ADJOINT".equalsIgnoreCase(role) 
+        || "APPRENTI".equalsIgnoreCase(role) 
+        || "ADMINISTRATEUR".equalsIgnoreCase(role)) { // Ajout du rôle ADMINISTRATEUR
+        
+        LoggedSeller.getInstance().setUser(
+            response.getId(),
+            response.getNom(),
+            response.getPrenom(),
+            response.getToken(),
+            role
+        );
+        
+        if ("ADMINISTRATEUR".equalsIgnoreCase(role)) {
+            primaryStage.setScene(adminScene); // Charger la scène admin
+        } else {
+            dashboard.refreshUserInfo();
+            primaryStage.setScene(dashBoardScene); // Scène normale
+        }
+        
+        primaryStage.setTitle("Dashboard - " + LoggedSeller.getInstance().getNomComplet());
+    } else {
+        showAlert("Accès refusé", "Rôle non autorisé (" + role + ")");
+    }
+}
+                 else {
+                    String errorMessage = response == null 
+                        ? "Pas de réponse du serveur" 
+                        : "Erreur d'authentification";
                     showAlert("Échec", errorMessage);
                 }
             } catch (Exception e) {

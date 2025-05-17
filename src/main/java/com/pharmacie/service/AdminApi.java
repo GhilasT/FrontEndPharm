@@ -40,6 +40,7 @@ public class AdminApi {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(ADMIN_URL))
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
 
@@ -63,6 +64,7 @@ public class AdminApi {
             String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(ADMIN_URL + "/search?query=" + encodedQuery))
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
 
@@ -85,6 +87,7 @@ public class AdminApi {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(ADMIN_URL + "/" + idPersonne))
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .DELETE()
                     .build();
 
@@ -108,6 +111,7 @@ public class AdminApi {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(ADMIN_URL + "/" + idPersonne))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .PUT(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 
@@ -179,6 +183,7 @@ public class AdminApi {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(ADMIN_URL))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 

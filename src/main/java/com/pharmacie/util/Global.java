@@ -12,6 +12,14 @@ public class Global {
     public static String getBaseUrl() {
         return BASE_URL;
     }
+    private static String token = "";
+    public static String getToken() {
+        return token;
+    }
+    public static void setToken(String token) {
+        Global.token = token;
+    }
+
     public static UUID getClientId() {
         return GlobalClient.getIdPersonne();
     }
