@@ -31,6 +31,7 @@ public class AnalyseVenteApi {
     private static Map<LocalDate, AnalyseVenteData> fetchData(String endpoint) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(API_BASE_URL + endpoint))
+                .header("Authorization", "Bearer " + Global.getToken())
                 .GET()
                 .build();
     

@@ -35,6 +35,7 @@ public class HttpClientUtil {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/client/telephone/" + telephone))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
                 .GET()
                 .build();
         HttpResponse<String> response = HttpClient.newHttpClient()
@@ -58,6 +59,7 @@ public class HttpClientUtil {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/client"))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
         HttpResponse<String> response = HttpClient.newHttpClient()

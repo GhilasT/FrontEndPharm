@@ -40,6 +40,7 @@ public class ApprentiApi {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(APPRENTI_URL))
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
 
@@ -63,6 +64,7 @@ public class ApprentiApi {
             String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(APPRENTI_URL + "/search?term=" + encodedQuery))
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
 
@@ -85,6 +87,7 @@ public class ApprentiApi {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(APPRENTI_URL + "/" + idPersonne))
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .DELETE()
                     .build();
 
@@ -105,6 +108,7 @@ public class ApprentiApi {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(APPRENTI_URL + "/" + idPersonne))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .PUT(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 
@@ -160,6 +164,7 @@ public class ApprentiApi {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(APPRENTI_URL))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 

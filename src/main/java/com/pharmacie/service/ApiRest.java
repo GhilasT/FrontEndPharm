@@ -66,6 +66,7 @@ public class ApiRest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
                 .timeout(Duration.ofSeconds(15))
                 .GET()
                 .build();
@@ -99,6 +100,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .GET()
                     .build();
@@ -157,6 +159,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(800))
                     .GET()
                     .build();
@@ -204,6 +207,7 @@ public class ApiRest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(finalUrl))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
                 .timeout(Duration.ofSeconds(15))
                 .GET()
                 .build();
@@ -246,6 +250,7 @@ public class ApiRest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(finalUrl))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
                 .timeout(Duration.ofSeconds(15))
                 .GET()
                 .build();
@@ -283,6 +288,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .GET()
                     .build();
@@ -320,6 +326,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .GET()
                     .build();
@@ -350,6 +357,7 @@ public class ApiRest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
                 .timeout(Duration.ofSeconds(15))
                 .GET()
                 .build();
@@ -399,6 +407,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .GET()
                     .build();
@@ -503,6 +512,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .DELETE()
                     .build();
@@ -575,6 +585,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(80))
                     .GET()
                     .build();
@@ -834,6 +845,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .GET()
                     .build();
@@ -869,6 +881,7 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .GET()
                     .build();
@@ -894,6 +907,7 @@ public class ApiRest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
                 .timeout(Duration.ofSeconds(15))
                 .GET()
                 .build();
@@ -1025,6 +1039,7 @@ public class ApiRest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
                 .GET()
                 .build();
 
@@ -1047,8 +1062,10 @@ public class ApiRest {
      */
     public static Dashboard getDashboardRequest() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_BASE_URL + "/dashboard"))
+                .uri(URI.create(API_BASE_URL + "/" +
+                        "dashboard"))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
                 .GET()
                 .build();
 
