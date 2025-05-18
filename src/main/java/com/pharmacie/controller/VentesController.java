@@ -119,8 +119,17 @@ public class VentesController {
             private final Button btnDetails = new Button("Détails");
             private final Button btnClient = new Button("Ventes Client");
             private final Button btnPharmacien = new Button("Ventes Pharmacien");
-            private final HBox pane = new HBox(5, btnDetails, btnModifier, btnSupprimer, btnClient, btnPharmacien);
+            private final HBox pane = new HBox(10, btnDetails, btnModifier, btnSupprimer, btnClient, btnPharmacien);
             {
+                pane.setAlignment(Pos.CENTER);
+                pane.setPadding(new Insets(0, 8, 0, 8));
+
+
+                btnDetails   .setMinWidth( 70);
+                btnModifier  .setMinWidth( 80);
+                btnSupprimer .setMinWidth( 90);
+                btnClient    .setMinWidth(120);
+                btnPharmacien.setMinWidth(140);
                 // Style des boutons
                 btnSupprimer.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white;");
                 btnModifier.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white;");
