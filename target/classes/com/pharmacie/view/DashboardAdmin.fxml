@@ -19,15 +19,40 @@
       <HBox prefHeight="90.0" prefWidth="1300.0" style="-fx-background-color: #007B3D;"
          alignment="CENTER_LEFT">
          <children>
-            <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnLogoutAdmin" mnemonicParsing="false" text="Déconnexion"
-               textFill="WHITE">
-               <font>
-                  <Font name="Open Sans Semibold" size="18.0" />
-               </font>
-            </Button>
             <Label text="Tableau de bord Admin"
                style="-fx-text-fill: white; -fx-font-size: 24; -fx-padding: 0 0 0 20;" />
+            <Region HBox.hgrow="ALWAYS" />
+            
+            <!-- Bouton pour basculer vers l'interface Pharmacien - Repositionné et stylisé -->
+            <Button fx:id="btnSwitchToPharmacien" mnemonicParsing="false"
+               style="-fx-background-color: #1F82F2; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);"
+               text="Mode Pharmacien" textFill="WHITE">
+               <font>
+                  <Font name="Open Sans Semibold" size="14.0"/>
+               </font>
+               <graphic>
+                  <javafx.scene.shape.SVGPath content="M12,21L15.6,16.2C14.6,15.45 13.35,15 12,15C10.65,15 9.4,15.45 8.4,16.2L12,21M12,3C7.95,3 4.21,4.34 1.2,6.6L3,9C5.5,7.12 8.62,6 12,6C15.38,6 18.5,7.12 21,9L22.8,6.6C19.79,4.34 16.05,3 12,3M12,9C9.3,9 6.81,9.89 4.8,11.4L6.6,13.8C8.1,12.67 9.97,12 12,12C14.03,12 15.9,12.67 17.4,13.8L19.2,11.4C17.19,9.89 14.7,9 12,9Z" 
+                        scaleX="0.6" scaleY="0.6" 
+                        fill="WHITE"/>
+               </graphic>
+            </Button>
+            
+            <Region minWidth="20" />
+            
+            <Button fx:id="btnLogoutAdmin" mnemonicParsing="false"
+               style="-fx-background-color: #E74C3C; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);"
+               text="Déconnexion" textFill="WHITE">
+               <font>
+                  <Font name="Open Sans Semibold" size="14.0" />
+               </font>
+               <graphic>
+                  <javafx.scene.shape.SVGPath content="M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z" 
+                        scaleX="0.6" scaleY="0.6" 
+                        fill="WHITE"/>
+               </graphic>
+            </Button>
+            
+            <Region minWidth="20" />
          </children>
       </HBox>
 

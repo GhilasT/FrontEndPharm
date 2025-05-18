@@ -1,5 +1,6 @@
 package com.pharmacie.controller;
 
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -66,6 +67,8 @@ public class PharmacyDashboard extends StackPane {
     @FXML
     private Button btnLogout;
     @FXML
+    private Button btnSwitchToAdmin; // New button for switching to admin mode
+    @FXML
     private HBox topBar; // Ajout de la référence à la barre supérieure
     
     // Nouvelle propriété pour garantir un espacement adéquat
@@ -106,6 +109,10 @@ public class PharmacyDashboard extends StackPane {
         setupMenuActions();
         btnLogout.setOnAction(event -> handleLogout());
         configureMenuButton(btnLogout, "logout.png", "Déconnexion");
+        
+        // Configure the Admin Mode button
+        configureAdminButton();
+        
         loadDashboard();
         userLabel.setText(LoggedSeller.getInstance().getNomComplet());
 
@@ -118,6 +125,68 @@ public class PharmacyDashboard extends StackPane {
         
         // Configurer le menu comme une couche indépendante
         setupIndependentMenu();
+    }
+
+    /**
+     * Configure the Admin Mode button visibility and action
+     */
+    private void configureAdminButton() {
+        btnSwitchToAdmin.setVisible(true);
+        
+        // Set the button action based on user role
+        boolean isAdmin = "ADMINISTRATEUR".equals(LoggedSeller.getInstance().getRole());
+        
+        // Add hover effect 
+        setupButtonHoverEffect(btnSwitchToAdmin, "#007B3D", "#009E4F");
+        
+        btnSwitchToAdmin.setOnAction(event -> {
+            if (isAdmin) {
+                // Admin user can access admin dashboard
+                handleSwitchToAdmin();
+            } else {
+                // Non-admin users see an error message
+                showAlert(Alert.AlertType.WARNING,
+                        "Accès restreint",
+                        "Autorisation requise",
+                        "Vous devez avoir le rôle Administrateur pour accéder à cette page.");
+            }
+        });
+    }
+    
+    /**
+     * Handles switching to the Admin dashboard
+     */
+    private void handleSwitchToAdmin() {
+        try {
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(300), this);
+            fadeOut.setFromValue(1.0);
+            fadeOut.setToValue(0.0);
+            
+            fadeOut.setOnFinished(event -> {
+                try {
+                    // Load the Admin dashboard
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/DashboardAdmin.fxml"));
+                    Parent adminView = loader.load();
+                    
+                    Scene newScene = new Scene(adminView);
+                    Stage stage = (Stage) getScene().getWindow();
+                    stage.setScene(newScene);
+                    stage.setTitle("Dashboard Admin - " + LoggedSeller.getInstance().getNomComplet());
+                    
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de basculer vers l'interface Admin", 
+                              "Détails: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            });
+            
+            fadeOut.play();
+            
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du changement d'interface", 
+                      "Détails: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -174,6 +243,9 @@ public class PharmacyDashboard extends StackPane {
 
     public void refreshUserInfo() {
         userLabel.setText(LoggedSeller.getInstance().getNomComplet());
+        
+        // Refresh admin button visibility when user info changes
+        configureAdminButton();
     }
 
     private void showAccessDenied() {
@@ -698,5 +770,11 @@ public class PharmacyDashboard extends StackPane {
 
         if (menuVisible.get() && getWidth() < MINIMUM_WINDOW_WIDTH)
             toggleMenu();
+    }
+
+    private void setupButtonHoverEffect(Button button, String normalColor, String hoverColor) {
+        button.setStyle("-fx-background-color: " + normalColor + ";");
+        button.setOnMouseEntered(event -> button.setStyle("-fx-background-color: " + hoverColor + ";"));
+        button.setOnMouseExited(event -> button.setStyle("-fx-background-color: " + normalColor + ";"));
     }
 }

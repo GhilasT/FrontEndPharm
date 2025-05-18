@@ -130,7 +130,7 @@ public class GestionFournisseurController {
     @FXML
     private void handleBack() {
         if (parentController != null) {
-            parentController.loadGestionPersonnel();
+            parentController.showDashboard();
         }
     }
 
