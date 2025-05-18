@@ -39,6 +39,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.json.JSONObject;
 
 import javafx.scene.image.ImageView;
+//PARACETAMOL/CODEINE TEVA 500 mg/30 mg, comprimé pelliculé
+//pharmacien.pro@example.com
 
 public class VenteController {
 
@@ -70,7 +72,6 @@ public class VenteController {
     // Modèle du panier
     private final List<MedicamentPanier> panierItems = new ArrayList<>();
 
-    // Garde rowCount interne pour le GridPane, ou calcule-le dans refreshGrid()
     private int rowCount = 1;
     private ObservableList<Medicament> suggestions = FXCollections.observableArrayList();
     private final Logger LOGGER = Logger.getLogger(VenteController.class.getName());
@@ -114,7 +115,7 @@ public class VenteController {
                         "Impossible d'ajouter ce médicament", "Le prix est manquant (null).");
                 return;
             }
-            ajouterMedicament(selected); // utilise la première suggestion
+            ajouterMedicament(selected);
             listView.getItems().clear();
         }
     }
@@ -180,6 +181,11 @@ public class VenteController {
 
             // 3) Vérification du code CIP13
             Medicament med = match.get();
+            if (med.getStock() == 0 ){
+                showAlert(Alert.AlertType.WARNING, "Rupture de stock", "Rupture de stock ! ",
+                        "le médicament est en rupture de stock");
+                return;
+            }
             String codeCip13 = med.getCodeCip13();
             if (codeCip13 == null || codeCip13.isBlank()) {
                 LOGGER.warning("Code CIP13 manquant pour : " + med.getLibelle());
@@ -189,6 +195,8 @@ public class VenteController {
             // 4) Création et peuplement de l'objet métier
             MedicamentPanier mp = new MedicamentPanier(codeCip13, 1, prix);
             mp.setNomMedicament(nom);
+
+            System.out.println("le stock est : "+med.getStock());
 
             // 5) Ajout au modèle
             panierItems.add(mp);
