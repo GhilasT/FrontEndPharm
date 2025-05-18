@@ -3,10 +3,7 @@ package com.pharmacie.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pharmacie.model.*;
-import com.pharmacie.model.dto.MedecinCreateRequest;
-import com.pharmacie.model.dto.MedecinResponse;
-import com.pharmacie.model.dto.OrdonnanceCreateRequest;
-import com.pharmacie.model.dto.PrescriptionCreateRequest;
+import com.pharmacie.model.dto.*;
 import com.pharmacie.util.Global;
 
 import org.json.JSONArray;
@@ -1487,4 +1484,121 @@ public class ApiRest {
             throw new Exception("Erreur de communication avec le serveur: " + e.getMessage(), e);
         }
     }
+
+    // 1) Récupérer tous les clients
+    public static List<Client> getAllClients() throws Exception {
+        String url = API_BASE_URL + "/client";
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 200) {
+            // on suppose que la réponse est un tableau JSON de Client
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(response.body(), new TypeReference<List<Client>>() {});
+        } else {
+            throw new Exception("Erreur HTTP " + response.statusCode() + " : " + response.body());
+        }
+    }
+
+    // 2) Parser une liste de clients
+    private static List<Client> parseClientsArray(String jsonArray) {
+        List<Client> liste = new ArrayList<>();
+        try {
+            JSONArray arr = new JSONArray(jsonArray);
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+                Client c = new Client();
+                if (!o.isNull("idPersonne")) {
+                    c.setId(UUID.fromString(o.getString("idPersonne")));
+                }
+                c.setNom(o.optString("nom", ""));
+                c.setPrenom(o.optString("prenom", ""));
+                c.setTelephone(o.optString("telephone", ""));
+                c.setEmail(o.optString("email", ""));
+                c.setAdresse(o.optString("adresse", ""));
+                liste.add(c);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur parsing JSON clients", e);
+        }
+        return liste;
+    }
+
+    // 3) Récupérer un client par email
+    public static Client getClientByEmail(String email) throws Exception {
+        String url = API_BASE_URL + "/client/email/" + URLEncoder.encode(email, StandardCharsets.UTF_8);
+        LOGGER.log(Level.INFO, "GET client par email à {0}", url);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 200) {
+            return parseClientResponse(response.body());
+        } else if (response.statusCode() == 404) {
+            return null;
+        } else {
+            throw new Exception("Erreur HTTP " + response.statusCode() + " lors de la récupération du client par email");
+        }
+    }
+
+    // 4) Récupérer un client par téléphone
+    public static Client getClientByTelephone(String phone) throws Exception {
+        String url = API_BASE_URL + "/client/telephone/" + URLEncoder.encode(phone, StandardCharsets.UTF_8);
+        LOGGER.log(Level.INFO, "GET client par téléphone à {0}", url);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 200) {
+            return parseClientResponse(response.body());
+        } else if (response.statusCode() == 404) {
+            return null;
+        } else {
+            throw new Exception("Erreur HTTP " + response.statusCode() + " lors de la récupération du client par téléphone");
+        }
+    }
+
+    // 5) Créer un nouveau client
+    public static Client createClient(ClientCreateRequest req) throws Exception {
+        String url = API_BASE_URL + "/client";
+        LOGGER.log(Level.INFO, "Envoi d'une requête POST pour créer un client");
+
+        JSONObject json = new JSONObject();
+        json.put("nom", req.getNom());
+        json.put("prenom", req.getPrenom());
+        json.put("telephone", req.getTelephone());
+        json.put("email", req.getEmail());
+        json.put("adresse", req.getAdresse());
+
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
+                .POST(HttpRequest.BodyPublishers.ofString(json.toString()))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 201) {
+            return parseClientResponse(response.body());
+        } else {
+            throw new Exception("Erreur HTTP " + response.statusCode() + " lors de la création du client: " + response.body());
+        }
+    }
+
+
 }

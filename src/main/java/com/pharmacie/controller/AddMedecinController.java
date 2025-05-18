@@ -35,9 +35,11 @@ public class AddMedecinController {
 
 
 
+    // 1) Nouveau champ pour conserver le médecin créé
+    private MedecinResponse createdMedecin;
+
     @FXML
     private void handleAjouterMedecin(ActionEvent event) {
-        // Récupérer les informations du formulaire
         String rpps = rppsField.getText().trim();
         String civilite = radioBtnMr.isSelected() ? "M." : "Mme";
         String nom = nomField.getText().trim();
@@ -50,7 +52,6 @@ public class AddMedecinController {
         String fonctionActivite = fonctionActiviteField.getText().trim();
         String genreActivite = genreActiviteField.getText().trim();
 
-        // Créer l'objet MedecinCreateRequest
         MedecinCreateRequest request = new MedecinCreateRequest(
                 civilite,
                 nom,
@@ -65,42 +66,53 @@ public class AddMedecinController {
                 genreActivite
         );
 
-        // Appel à l'API pour créer le médecin
-        Task<Void> task = new Task<Void>() {
+        Task<Void> task = new Task<>() {
             @Override
             protected Void call() throws Exception {
                 try {
-                    // Appeler la méthode qui vérifie si le médecin existe déjà
-                    MedecinResponse response = ApiRest.checkMedecinByRpps(rpps);
-
-                    // Si un médecin existe déjà
-                    if (response != null) {
-                        showAlert(Alert.AlertType.ERROR, "Médecin déjà existant",
+                    // 2) Vérifier si le médecin existe
+                    MedecinResponse existing = ApiRest.checkMedecinByRpps(rpps);
+                    if (existing != null) {
+                        showAlert(Alert.AlertType.ERROR,
+                                "Médecin déjà existant",
                                 "Le médecin avec ce numéro RPPS existe déjà",
-                                "Veuillez vérifier le numéro RPPS.");
+                                null);
                     } else {
-                        // Si aucun médecin n'existe, on le crée
-                        ApiRest.createMedecin(request);
-                        showAlert(Alert.AlertType.INFORMATION, "Succès", "Médecin créé",
+                        // 3) Créer le médecin et récupérer la réponse
+                        createdMedecin = ApiRest.createMedecin(request);
+
+                        showAlert(Alert.AlertType.INFORMATION,
+                                "Succès",
+                                "Médecin créé",
                                 "Le médecin a été ajouté avec succès.");
 
-                        // Rafraîchir la liste des médecins dans le contrôleur principal
+                        // 4) Rafraîchir la liste principale
                         if (medecinsController != null) {
-                            medecinsController.refreshMedecinsList(); // Rafraîchit la liste
+                            medecinsController.refreshMedecinsList();
                         }
 
-                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        // 5) Fermer le formulaire
+                        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                         stage.close();
                     }
                 } catch (Exception e) {
-                    showAlert(Alert.AlertType.ERROR, "Erreur", "Problème de connexion",
-                            "Une erreur s'est produite lors de la création du médecin.");
+                    showAlert(Alert.AlertType.ERROR,
+                            "Erreur",
+                            "Problème de connexion",
+                            e.getMessage());
                 }
                 return null;
             }
         };
 
         new Thread(task).start();
+    }
+
+    /**
+     * Exposé pour que MedecinsController sache quel médecin vient d'être créé.
+     */
+    public MedecinResponse getCreatedMedecin() {
+        return createdMedecin;
     }
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {

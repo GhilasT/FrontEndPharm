@@ -34,6 +34,7 @@ public class Client {
         return idPersonne;
     }
 
+
     public void setId(UUID id) {
         this.idPersonne = id;
     }

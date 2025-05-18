@@ -17,9 +17,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.event.ActionEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -75,6 +77,13 @@ public class VenteController {
     private int rowCount = 1;
     private ObservableList<Medicament> suggestions = FXCollections.observableArrayList();
     private final Logger LOGGER = Logger.getLogger(VenteController.class.getName());
+    @FXML private Button btnRetour;
+    private VentesController parentController;
+
+    public void setParentController(VentesController parent) {
+        this.parentController = parent;
+    }
+
 
     @FXML
     public void initialize() {
@@ -101,6 +110,20 @@ public class VenteController {
             }
         });
     }
+
+    @FXML
+    private void handleRetour(ActionEvent event) {
+        if (parentController != null) {
+            parentController.returnToList();
+        } else {
+            showAlert(Alert.AlertType.WARNING,
+                    "Navigation",
+                    "Impossible de revenir en arrière",
+                    "Le contrôleur parent n'a pas été initialisé.");
+        }
+    }
+
+
 
     public void setClientId(UUID clientId) {
         this.clientId = clientId;
@@ -221,11 +244,11 @@ public class VenteController {
      * LOGGER.warning("Format invalide : " + selected);
      * return;
      * }
-     * 
+     *
      * String nom = parts[0].trim();
      * double prix = Double.parseDouble(parts[1].replace("€", "").replace(",",
      * ".").trim());
-     * 
+     *
      * Optional<Medicament> match = suggestions.stream()
      * .filter(m -> {
      * String nomMedoc = (m.getDenomination() != null) ? m.getDenomination() :
@@ -233,12 +256,12 @@ public class VenteController {
      * return selected.startsWith(nomMedoc);
      * })
      * .findFirst();
-     * 
+     *
      * if (match.isEmpty()) {
      * LOGGER.warning("Aucun médicament correspondant trouvé pour : " + nom);
      * return;
      * }
-     * 
+     *
      * Medicament med = match.get();
      * String codeCip13 = med.getCodeCip13();
      * if (codeCip13 == null || codeCip13.isBlank()) {
@@ -246,11 +269,11 @@ public class VenteController {
      * med.getLibelle());
      * return;
      * }
-     * 
+     *
      * Label labelNom = new Label(nom);
      * labelNom.setTextFill(Color.WHITE);
      * labelNom.setUserData(codeCip13);
-     * 
+     *
      * TextField qteField = new TextField("1");
      * qteField.
      * setStyle("-fx-text-fill: white; -fx-control-inner-background: rgba(0,122,255,1);"
@@ -261,34 +284,34 @@ public class VenteController {
      * }
      * majInfosPanier();
      * });
-     * 
+     *
      * Label labelPrix = new Label(String.format("%.2f €", prix));
      * labelPrix.setTextFill(Color.WHITE);
-     * 
+     *
      * gridPanePanier.add(labelNom, 0, rowCount);
      * gridPanePanier.add(qteField, 1, rowCount);
      * gridPanePanier.add(labelPrix, 2, rowCount);
-     * 
+     *
      * rowCount++;
      * barDeRecherche.clear();
      * majInfosPanier();
-     * 
+     *
      * } catch (Exception e) {
      * LOGGER.log(Level.SEVERE, "Erreur lors de l'ajout du médicament", e);
      * }
      * }
-     * 
+     *
      * private void majInfosPanier() {
      * double total = 0.0;
      * int sommeQte = 0;
      * for (int i = 1; i < rowCount; i++) {
      * Node qteNode = gridPanePanier.getChildren().get(i * 3 + 1);
      * Node prixNode = gridPanePanier.getChildren().get(i * 3 + 2);
-     * 
+     *
      * if (qteNode instanceof TextField && prixNode instanceof Label) {
      * TextField qteField = (TextField) qteNode;
      * Label prixLabel = (Label) prixNode;
-     * 
+     *
      * String qteText = qteField.getText().trim();
      * if (!qteText.isEmpty() && qteText.matches("\\d+")) {
      * int qte = Integer.parseInt(qteText);
@@ -302,7 +325,7 @@ public class VenteController {
      * LabelQuantierValue.setText(String.valueOf(sommeQte));
      * LabelPrixValue.setText(String.format("%.2f €", total));
      * }
-     * 
+     *
      */
 
     @FXML
@@ -316,8 +339,8 @@ public class VenteController {
                     + "Client ID: " + clientId + "\n"
                     + "Pharmacien ID: " + pharmacienAdjointId + "\n"
                     + "Médicaments: " + panier.stream()
-                            .map(m -> m.getCodeCip13() + " (x" + m.getQuantite() + ")")
-                            .collect(Collectors.joining(", ")));
+                    .map(m -> m.getCodeCip13() + " (x" + m.getQuantite() + ")")
+                    .collect(Collectors.joining(", ")));
             return;
         }
 
@@ -338,25 +361,15 @@ public class VenteController {
 
             ApiRest.createVente(request);
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Vente créée", "La vente a bien été enregistrée.");
+            // Plutôt que de fermer la fenêtre, on revient à la liste initiale :
+            if (parentController != null) {
+                parentController.returnToList();
+            } else {
+                // En cas de parent non initialisé, on ferme quand même :
+                Stage stage = (Stage) btnPayer.getScene().getWindow();
+                stage.close();
+            }
 
-            // Fermer cette fenêtre
-            Stage currentStage = (Stage) btnPayer.getScene().getWindow();
-            currentStage.close();
-
-            // Fermer toutes les fenêtres parentes qui pourraient être encore ouvertes
-            Window.getWindows().forEach(window -> {
-                if (window instanceof Stage && window != currentStage) {
-                    // Vérifier si c'est une fenêtre modale liée à notre flux de vente
-                    Stage stage = (Stage) window;
-                    if (stage.getTitle() != null &&
-                            (stage.getTitle().contains("Médecin") ||
-                                    stage.getTitle().contains("Ordonnance") ||
-                                    stage.getTitle().contains("Prescription") ||
-                                    stage.getTitle().contains("Client"))) {
-                        stage.close();
-                    }
-                }
-            });
 
         } catch (JsonProcessingException e) {
             LOGGER.log(Level.SEVERE, "Erreur de sérialisation JSON : " + e.getMessage(), e);
@@ -405,7 +418,7 @@ public class VenteController {
 
     /**
      * Récupère les médicaments du panier.
-     * 
+     *
      * @return Liste des médicaments ajoutés au panier sous forme de
      *         MedicamentPanier
      */
@@ -417,26 +430,40 @@ public class VenteController {
     @FXML
     private void handleAjouterOrdonnance(ActionEvent event) {
         try {
-            // Créer et charger la nouvelle fenêtre de médecins
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/MedecinsPage.fxml"));
-            Parent root = loader.load();
+            // 1) Charger la vue de sélection du médecin
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/pharmacie/view/MedecinsPage.fxml"));
+            Parent medecinRoot = loader.load();
 
-            // Créer une nouvelle scène
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Page des Médecins");
+            // 2) Créer un Stage modal UNIQUE
+            Stage modal = new Stage();
+            modal.initModality(Modality.APPLICATION_MODAL);
+            modal.setTitle("Sélection du Médecin");
+            modal.setScene(new Scene(medecinRoot));
 
-            // Récupérer le contrôleur de la fenêtre et passer les informations si
-            // nécessaire
-            MedecinsController medecinsController = loader.getController();
-            // Passer l'instance de VenteController au MedecinsController
-            medecinsController.setVenteController(this);
+            // 3) Passer au contrôleur de la modale :
+            MedecinsController mc = loader.getController();
+            mc.setVenteController(this);
+            mc.setModalStage(modal);
 
-            // Afficher la nouvelle fenêtre
-            stage.show();
+            // 4) Afficher ce modal
+            modal.show();
+
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page des médecins", e.getMessage());
+            showAlert(Alert.AlertType.ERROR,
+                    "Erreur",
+                    "Impossible d'ouvrir la fenêtre de sélection du médecin",
+                    e.getMessage());
         }
+    }
+
+    /**
+     * Sera appelé par OrdonnanceController lorsque l'ordonnance est validée.
+     */
+    public void onOrdonnanceAjoutee(UUID medecinId) {
+        this.pharmacienAdjointId = medecinId;
+        this.ordonnanceAjoutee = true;
+        // Vous pouvez aussi rafraîchir un label, etc.
     }
 
     private void majInfosPanier() {
@@ -470,11 +497,11 @@ public class VenteController {
         for (MedicamentPanier mp : panierItems) {
             // Nom
             Label labelNom = new Label(mp.getNomMedicament());
-            labelNom.setTextFill(Color.WHITE);
+            labelNom.setTextFill(Color.BLACK);
 
             // Quantité
             TextField qteField = new TextField(String.valueOf(mp.getQuantite()));
-            qteField.setStyle("-fx-text-fill: white; -fx-control-inner-background: rgba(0,122,255,1);");
+            qteField.setStyle("-fx-text-fill: Black; -fx-control-inner-background: rgba(0,122,255,1);");
             qteField.textProperty().addListener((obs, oldVal, newVal) -> {
                 if (!newVal.matches("\\d*")) {
                     qteField.setText(newVal.replaceAll("[^\\d]", ""));
@@ -493,7 +520,7 @@ public class VenteController {
 
             // Prix unitaire
             Label labelPrix = new Label(String.format("%.2f €", mp.getPrixUnitaire()));
-            labelPrix.setTextFill(Color.WHITE);
+            labelPrix.setTextFill(Color.BLACK);
 
             // Ajout des nœuds à la ligne `row`
             gridPanePanier.add(labelNom, 0, row);

@@ -16,14 +16,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -72,9 +69,17 @@ public class VentesController {
     @FXML
     private Button btnToggleVentes;
     private boolean showMySales = false;
+    @FXML private BorderPane rootPane;
+    private Node listeInitiale;
+
+    private UUID clientId;
+    public void setClientId(UUID id) {
+        this.clientId = id;
+    }
 
     @FXML
     public void initialize() {
+        listeInitiale = rootPane.getCenter();
         configureTableColumns();
         loadVentes();
     }
@@ -175,49 +180,42 @@ public class VentesController {
     @FXML
     private void handleEffectuerVente(ActionEvent event) {
         try {
-            // 1) Ouvrir le formulaire client en modal
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/formulaire-client.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/ClientsPage.fxml"));
             Parent root = loader.load();
-            FormulaireClientController controller = loader.getController();
+            ClientsController ctrl = loader.getController();
 
-            Stage stage = new Stage();
-            stage.setTitle("Formulaire Client");
-            stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
+            Stage modal = new Stage();
+            modal.initModality(Modality.APPLICATION_MODAL);
+            modal.setTitle("Sélectionner ou créer un client");
+            modal.setScene(new Scene(root));
 
-            // 2) Récupérer l'ID client depuis le contrôleur
-            UUID clientId = controller.getClientId();
-            if (clientId == null) {
-                System.out.println("pas de id");
+            ctrl.setVenteController(this);
+            ctrl.setModalStage(modal);
+
+            modal.showAndWait();
+
+            if (this.clientId == null) {
+
                 return;
             }
 
-            // 3) Ouvrir la page de vente (panier)
+            // 2) On charge la vue “vente.fxml” DANS LE même rootPane
             FXMLLoader loader2 = new FXMLLoader(getClass().getResource("/com/pharmacie/view/vente.fxml"));
-            Parent root2 = loader2.load();
-            System.out.println("vente.fxml chargé avec succès");
-
+            Parent ventePane = loader2.load();
             VenteController venteCtrl = loader2.getController();
+            venteCtrl.setParentController(this);
             venteCtrl.setClientId(clientId);
+            venteCtrl.setPharmacienAdjointId(LoggedSeller.getInstance().getId());
 
-            LoggedSeller loggedSeller = LoggedSeller.getInstance();
-            venteCtrl.setPharmacienAdjointId(loggedSeller.getId());
-
-            Stage stage2 = new Stage();
-            stage2.setTitle("Nouvelle Vente - Panier");
-            stage2.setScene(new Scene(root2));
-            stage2.initModality(Modality.APPLICATION_MODAL);
-            stage2.showAndWait();
-
-            // 4) Rafraîchir les ventes
-            loadVentes();
+            rootPane.setCenter(ventePane);
 
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de l'ouverture du formulaire de vente", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de l'ouverture du formulaire client",
-                    "Impossible d'ouvrir le formulaire: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d’ouvrir le formulaire client ou la page de vente", e.getMessage());
         }
+    }
+
+    public void returnToList() {
+        rootPane.setCenter(listeInitiale);
     }
 
     private void handleSupprimerVente(Vente vente) {
@@ -283,74 +281,74 @@ public class VentesController {
         });
 
         btnMedicaments.setOnAction(e -> {
-    Stage medicamentStage = new Stage();
-    medicamentStage.initModality(Modality.APPLICATION_MODAL);
-    medicamentStage.setTitle("Médicaments de la vente - " + tronquerUUID(vente.getIdVente()));
+            Stage medicamentStage = new Stage();
+            medicamentStage.initModality(Modality.APPLICATION_MODAL);
+            medicamentStage.setTitle("Médicaments de la vente - " + tronquerUUID(vente.getIdVente()));
 
-    VBox vbox = new VBox(10);
-    vbox.setPadding(new Insets(15));
-    vbox.setStyle("-fx-background-color: #f5f5f5;");
+            VBox vbox = new VBox(10);
+            vbox.setPadding(new Insets(15));
+            vbox.setStyle("-fx-background-color: #f5f5f5;");
 
-    for (Medicament medicament : vente.getMedicaments()) {
-        GridPane grid = new GridPane();
-        grid.setMaxWidth(580);
-        grid.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-radius: 5;");
-        
-        // Configuration des colonnes (3/5 - 1/5 - 1/5)
-        ColumnConstraints col1 = new ColumnConstraints();
-        col1.setPercentWidth(60); // 3/5 de l'espace
-        ColumnConstraints col2 = new ColumnConstraints();
-        col2.setPercentWidth(20); // 1/5
-        ColumnConstraints col3 = new ColumnConstraints();
-        col3.setPercentWidth(20); // 1/5
-        grid.getColumnConstraints().addAll(col1, col2, col3);
+            for (Medicament medicament : vente.getMedicaments()) {
+                GridPane grid = new GridPane();
+                grid.setMaxWidth(580);
+                grid.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-radius: 5;");
 
-        // 1ère colonne: Dénomination
-        String denomination = medicament.getDenomination();
-        int maxLength = 50;
-        if (denomination.length() > maxLength) {
-            denomination = denomination.substring(0, maxLength) + "...";
-        }
-        Label nomLabel = new Label(denomination);
-        nomLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
-        grid.add(nomLabel, 0, 0);
+                // Configuration des colonnes (3/5 - 1/5 - 1/5)
+                ColumnConstraints col1 = new ColumnConstraints();
+                col1.setPercentWidth(60); // 3/5 de l'espace
+                ColumnConstraints col2 = new ColumnConstraints();
+                col2.setPercentWidth(20); // 1/5
+                ColumnConstraints col3 = new ColumnConstraints();
+                col3.setPercentWidth(20); // 1/5
+                grid.getColumnConstraints().addAll(col1, col2, col3);
 
-        // 2ème colonne: Quantité
-        Medicament.Stock stock = !medicament.getStocks().isEmpty() ? 
-            medicament.getStocks().get(0) : null;
-        String quantite = stock != null ? String.valueOf(stock.getQuantite()) : "N/A";
-        Label qteLabel = new Label("• Quantité: " + quantite);
-        qteLabel.setStyle("-fx-text-fill: #666; -fx-alignment: CENTER;");
-        grid.add(qteLabel, 1, 0);
+                // 1ère colonne: Dénomination
+                String denomination = medicament.getDenomination();
+                int maxLength = 50;
+                if (denomination.length() > maxLength) {
+                    denomination = denomination.substring(0, maxLength) + "...";
+                }
+                Label nomLabel = new Label(denomination);
+                nomLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+                grid.add(nomLabel, 0, 0);
 
-        // 3ème colonne: Bouton
-        Button detailsBtn = new Button("Détails");
-        detailsBtn.setMaxWidth(Double.MAX_VALUE);
-        detailsBtn.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-        detailsBtn.setOnAction(event -> {
-            try {
-                Medicament fullMed = ApiRest.getMedicamentByCodeCip13(medicament.getCodeCip13());
-                showMedicamentDetails(fullMed);
-            } catch (Exception ex) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Détails indisponibles", 
-                        ex.getMessage());
+                // 2ème colonne: Quantité
+                Medicament.Stock stock = !medicament.getStocks().isEmpty() ?
+                        medicament.getStocks().get(0) : null;
+                String quantite = stock != null ? String.valueOf(stock.getQuantite()) : "N/A";
+                Label qteLabel = new Label("• Quantité: " + quantite);
+                qteLabel.setStyle("-fx-text-fill: #666; -fx-alignment: CENTER;");
+                grid.add(qteLabel, 1, 0);
+
+                // 3ème colonne: Bouton
+                Button detailsBtn = new Button("Détails");
+                detailsBtn.setMaxWidth(Double.MAX_VALUE);
+                detailsBtn.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+                detailsBtn.setOnAction(event -> {
+                    try {
+                        Medicament fullMed = ApiRest.getMedicamentByCodeCip13(medicament.getCodeCip13());
+                        showMedicamentDetails(fullMed);
+                    } catch (Exception ex) {
+                        showAlert(Alert.AlertType.ERROR, "Erreur", "Détails indisponibles",
+                                ex.getMessage());
+                    }
+                });
+
+                // Alignement du bouton
+                HBox btnContainer = new HBox(detailsBtn);
+                btnContainer.setAlignment(Pos.CENTER_RIGHT);
+                grid.add(btnContainer, 2, 0);
+
+                vbox.getChildren().add(grid);
             }
+
+            ScrollPane scrollPane = new ScrollPane(vbox);
+            scrollPane.setFitToWidth(true);
+            medicamentStage.setScene(new Scene(scrollPane, 600, 400));
+            medicamentStage.showAndWait();
         });
-        
-        // Alignement du bouton
-        HBox btnContainer = new HBox(detailsBtn);
-        btnContainer.setAlignment(Pos.CENTER_RIGHT);
-        grid.add(btnContainer, 2, 0);
 
-        vbox.getChildren().add(grid);
-    }
-
-    ScrollPane scrollPane = new ScrollPane(vbox);
-    scrollPane.setFitToWidth(true);
-    medicamentStage.setScene(new Scene(scrollPane, 600, 400));
-    medicamentStage.showAndWait();
-});
-        
         VBox layout = new VBox(15);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(20));
@@ -403,7 +401,7 @@ public class VentesController {
     }
 
     private void addStyledRow(GridPane grid, int row, String labelText, String value, String labelStyle,
-            String valueStyle) {
+                              String valueStyle) {
         Label label = new Label(labelText);
         label.setStyle(labelStyle);
 

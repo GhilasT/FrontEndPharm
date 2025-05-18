@@ -91,6 +91,10 @@ public class PrescriptionController {
         prescriptionTable.setEditable(true);
     }
 
+    public void setVenteController(VenteController vc) {
+        this.venteController = vc;
+    }
+
 
     public void  setClientId(UUID clientId){
         this.clientId = clientId;
@@ -133,6 +137,7 @@ public class PrescriptionController {
                 dtoPrescriptions // prescriptions
         );
 
+        ((Node)event.getSource()).setDisable(true);
         // 3) Envoie la requête HTTP comme avant…
         Task<UUID> task = new Task<>() {
             @Override
@@ -149,14 +154,17 @@ public class PrescriptionController {
                     if (venteController != null) {
                         venteController.setOrdonnanceAjoutee(true);
                     }
-            ((Stage) btnValider.getScene().getWindow()).close();
+                    Stage stage = (Stage) btnValider.getScene().getWindow();
+                    stage.close();
         });
+
         task.setOnFailed(e -> {
             showAlert(Alert.AlertType.ERROR,
                     "Erreur",
                     "Impossible de créer l’ordonnance",
                     task.getException().getMessage());
         });
+
         new Thread(task).start();
     }
 

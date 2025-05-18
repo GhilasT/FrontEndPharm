@@ -2,32 +2,30 @@ package com.pharmacie.controller;
 
 import com.pharmacie.model.Medecin;
 import com.pharmacie.model.MedicamentPanier;
+import com.pharmacie.model.PageResponse;
 import com.pharmacie.service.ApiRest;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.concurrent.Task;
-import com.pharmacie.model.PageResponse;
+import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import static com.pharmacie.controller.TestUtils.showAlert;
-import static com.pharmacie.service.ApiRest.LOGGER;
-
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-
+import static com.pharmacie.controller.TestUtils.showAlert;
 
 public class MedecinsController {
+    private static final Logger LOGGER = Logger.getLogger(MedecinsController.class.getName());
 
     @FXML private TableView<Medecin> medecinsTable;
     @FXML private TableColumn<Medecin, String> colCivilite;
@@ -52,6 +50,7 @@ public class MedecinsController {
 
     private final ObservableList<Medecin> medecins = FXCollections.observableArrayList();
     private VenteController venteController;
+    private Stage modalStage;
 
     private int currentPage = 0;
     private int totalPages = 1;
@@ -65,21 +64,21 @@ public class MedecinsController {
         configurePagination();
         configureButtons();
         configureDeleteButtonColumn();
-        loadMedecins(0);
+        loadMedecins(0, searchFieldMedecin.getText());
 
         // Désactive le bouton de recherche si le champ est vide
-        searchFieldMedecin.textProperty().addListener((obs, o, n) ->
-                btnSearch.setDisable(n.trim().isEmpty())
+        btnSearch.setDisable(true);
+        searchFieldMedecin.textProperty().addListener((obs, oldVal, newVal) ->
+                btnSearch.setDisable(newVal.trim().isEmpty())
         );
 
-        // ←––– NOUVEAU : ouvrir la page de prescription au clic sur une ligne
+        // Clic sur ligne ouvre Prescription dans le même modal
         medecinsTable.setRowFactory(tv -> {
             TableRow<Medecin> row = new TableRow<>();
             row.setOnMouseClicked(evt -> {
                 if (!row.isEmpty() && evt.getClickCount() == 1) {
-                    Medecin sel = row.getItem();
-                    // Appelle ta méthode qui ouvre Prescription.fxml
-                    openPrescriptionFor(sel.getRppsMedecin());
+                    String rpps = row.getItem().getRppsMedecin();
+                    openPrescriptionFor(rpps);
                 }
             });
             return row;
@@ -87,43 +86,41 @@ public class MedecinsController {
     }
 
     private void configureTableColumns() {
-        colCivilite.setCellValueFactory(cellData -> cellData.getValue().civiliteProperty());
-        colNomExercice.setCellValueFactory(cellData -> cellData.getValue().nomExerciceProperty());
-        colPrenomExercice.setCellValueFactory(cellData -> cellData.getValue().prenomExerciceProperty());
-        colRppsMedecin.setCellValueFactory(cellData -> cellData.getValue().rppsMedecinProperty());
-        colProfession.setCellValueFactory(cellData -> cellData.getValue().professionProperty());
-        colModeExercice.setCellValueFactory(cellData -> cellData.getValue().modeExerciceProperty());
-        colQualifications.setCellValueFactory(cellData -> cellData.getValue().qualificationsProperty());
-        colStructureExercice.setCellValueFactory(cellData -> cellData.getValue().structureExerciceProperty());
-        colFonctionActivite.setCellValueFactory(cellData -> cellData.getValue().fonctionActiviteProperty());
-        colGenreActivite.setCellValueFactory(cellData -> cellData.getValue().genreActiviteProperty());
+        colCivilite.setCellValueFactory(cd -> cd.getValue().civiliteProperty());
+        colNomExercice.setCellValueFactory(cd -> cd.getValue().nomExerciceProperty());
+        colPrenomExercice.setCellValueFactory(cd -> cd.getValue().prenomExerciceProperty());
+        colRppsMedecin.setCellValueFactory(cd -> cd.getValue().rppsMedecinProperty());
+        colProfession.setCellValueFactory(cd -> cd.getValue().professionProperty());
+        colModeExercice.setCellValueFactory(cd -> cd.getValue().modeExerciceProperty());
+        colQualifications.setCellValueFactory(cd -> cd.getValue().qualificationsProperty());
+        colStructureExercice.setCellValueFactory(cd -> cd.getValue().structureExerciceProperty());
+        colFonctionActivite.setCellValueFactory(cd -> cd.getValue().fonctionActiviteProperty());
+        colGenreActivite.setCellValueFactory(cd -> cd.getValue().genreActiviteProperty());
     }
 
     private void configureTableSelection() {
-        medecinsTable.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldSelection, newSelection) -> {
-                    boolean itemSelected = newSelection != null;
-                    btnEditMedecin.setDisable(!itemSelected);
-                    btnDeleteMedecin.setDisable(!itemSelected);
-                    btnDetailsMedecin.setDisable(!itemSelected);
-                }
-        );
+        medecinsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+            boolean sel = newSel != null;
+            btnEditMedecin.setDisable(!sel);
+            btnDeleteMedecin.setDisable(!sel);
+            btnDetailsMedecin.setDisable(!sel);
+        });
     }
 
     private void configureSearch() {
-        searchFieldMedecin.textProperty().addListener((observable, oldValue, newValue) -> {
-            currentPage = 0;  // Reset to first page when search term changes
-            loadMedecins(currentPage, newValue);
+        searchFieldMedecin.textProperty().addListener((obs, oldVal, newVal) -> {
+            currentPage = 0;
+            loadMedecins(currentPage, newVal);
         });
+        btnSearch.setOnAction(e -> loadMedecins(0, searchFieldMedecin.getText()));
     }
 
     private void configurePagination() {
         pagination.setPageCount(1);
         pagination.setCurrentPageIndex(0);
-
-        pagination.currentPageIndexProperty().addListener((obs, oldIndex, newIndex) -> {
-            if (newIndex.intValue() != currentPage) {
-                loadMedecins(newIndex.intValue());
+        pagination.currentPageIndexProperty().addListener((obs, oldIdx, newIdx) -> {
+            if (newIdx.intValue() != currentPage) {
+                loadMedecins(newIdx.intValue(), searchFieldMedecin.getText());
             }
         });
     }
@@ -132,46 +129,31 @@ public class MedecinsController {
         btnAddMedecin.setOnAction(e -> handleAddMedecin());
     }
 
-    private void loadMedecins(int page) {
-        loadMedecins(page, searchFieldMedecin.getText());
-    }
-    // Ajoutez la méthode setVenteController
-    public void setVenteController(VenteController venteController) {
-        this.venteController = venteController;
-    }
-
-    @FXML
     private void loadMedecins(int page, String searchTerm) {
         Task<PageResponse<Medecin>> task = new Task<>() {
-            @Override
-            protected PageResponse<Medecin> call() throws Exception {
-                return ApiRest.getMedecinsPagines(page, searchTerm);  // Recherche avec le terme
+            @Override protected PageResponse<Medecin> call() throws Exception {
+                return ApiRest.getMedecinsPagines(page, searchTerm);
             }
         };
-
         task.setOnSucceeded(e -> {
-            PageResponse<Medecin> pageResponse = task.getValue();
-            List<Medecin> medecinsList = pageResponse.getContent();
-            LOGGER.log(Level.INFO, "Médecins récupérés : " + medecinsList);
-            medecins.setAll(medecinsList);
+            PageResponse<Medecin> pr = task.getValue();
+            List<Medecin> list = pr.getContent();
+            medecins.setAll(list);
             medecinsTable.setItems(medecins);
-            currentPage = pageResponse.getCurrentPage();
-            totalPages = pageResponse.getTotalPages();
-            totalElements = pageResponse.getTotalElements();
-            updatePaginationControls(currentPage, totalPages, totalElements);
+            currentPage = pr.getCurrentPage();
+            totalPages = pr.getTotalPages();
+            totalElements = pr.getTotalElements();
+            updatePaginationControls();
         });
-
-        task.setOnFailed(e -> {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des médecins");
-        });
-
+        task.setOnFailed(e -> LOGGER.log(Level.SEVERE, "Erreur chargement médecins", task.getException()));
         new Thread(task).start();
     }
 
-    private void updatePaginationControls(int currentPage, int totalPages, long totalElements) {
+    private void updatePaginationControls() {
         javafx.application.Platform.runLater(() -> {
             pagination.setPageCount(totalPages);
             pagination.setCurrentPageIndex(currentPage);
+            statusLabel.setText(String.format("Page %d sur %d (total %d)", currentPage+1, totalPages, totalElements));
         });
     }
 
@@ -180,151 +162,82 @@ public class MedecinsController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/AddMedecinForm.fxml"));
             Parent root = loader.load();
-
-            // Passer le contrôleur principal à la fenêtre modale
-            AddMedecinController addMedecinController = loader.getController();
-            addMedecinController.setMedecinsController(this);
+            AddMedecinController ctrl = loader.getController();
+            ctrl.setMedecinsController(this);
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Formulaire d'ajout de médecin");
             stage.setScene(new Scene(root));
             stage.showAndWait();
-
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le formulaire",
-                    "Une erreur s'est produite lors du chargement du formulaire.");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le formulaire", e.getMessage());
         }
     }
 
-    @FXML
-    private void handleEdit() {}
-
-    @FXML
-    private void handleDelete() {}
-
-    @FXML
-    private void handleDetails() {}
-    public void refreshMedecinsList() {
-        loadMedecins(currentPage);
-    }
-
     private void configureDeleteButtonColumn() {
-        // Assurez-vous que vous avez accès à la colonne colSupprimer
-        colSupprimer.setCellFactory(param -> {
-            TableCell<Medecin, String> cell = new TableCell<Medecin, String>() {
-                final Button deleteButton = new Button("Supprimer");
-
-                {
-                    // Ajouter une action au bouton de suppression
-                    deleteButton.setOnAction(event -> {
-                        Medecin selectedMedecin = getTableView().getItems().get(getIndex());
-                        if (selectedMedecin != null) {
-                            // Appeler la méthode de suppression dans le contrôleur
-                            handleDeleteMedecin(event, selectedMedecin);
-                        }
-                    });
-                }
-
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        setGraphic(null); // Ne rien afficher si la cellule est vide
-                    } else {
-                        setGraphic(deleteButton); // Afficher le bouton de suppression
-                    }
-                }
-            };
-            return cell; // Retourne la cellule contenant le bouton
+        colSupprimer.setCellFactory(col -> new TableCell<>() {
+            private final Button deleteBtn = new Button("Supprimer");
+            { deleteBtn.setOnAction(evt -> {
+                Medecin m = getTableView().getItems().get(getIndex());
+                handleDeleteMedecin(evt, m);
+            }); }
+            @Override protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : deleteBtn);
+            }
         });
     }
 
     @FXML
-    private void handleDeleteMedecin(ActionEvent event, Medecin selectedMedecin) {
-        if (selectedMedecin != null) {
-            try {
-                // Extraire le RPPS à partir de la StringProperty
-                String rpps = selectedMedecin.rppsMedecinProperty().get();
-                // Appeler la méthode deleteMedecin d'ApiRest pour supprimer le médecin via le RPPS
-                ApiRest.deleteMedecin(rpps);
-
-                // Rafraîchir la liste des médecins après suppression
-                loadMedecins(currentPage);
-            } catch (Exception e) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de supprimer le médecin",
-                        "Une erreur est survenue lors de la suppression du médecin.");
-            }
-        } else {
-            showAlert(Alert.AlertType.WARNING, "Aucune sélection", "Veuillez sélectionner un médecin",
-                    "Pour supprimer un médecin, sélectionnez d'abord un élément.");
+    private void handleDeleteMedecin(ActionEvent event, Medecin m) {
+        if (m == null) return;
+        try {
+            ApiRest.deleteMedecin(m.getRppsMedecin());
+            loadMedecins(currentPage, searchFieldMedecin.getText());
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de supprimer le médecin", e.getMessage());
         }
     }
 
     @FXML
     private void handleSearchMedecin() {
-        String searchTerm = searchFieldMedecin.getText();  // Récupérer le texte du champ de recherche
-
-        if (searchTerm != null && !searchTerm.isEmpty()) {
-            // Appel à l'API pour récupérer les médecins correspondant au terme de recherche
-            Task<List<Medecin>> task = new Task<>() {
-                @Override
-                protected List<Medecin> call() throws Exception {
-                    return ApiRest.searchMedecins(searchTerm);  // Appel à l'API pour rechercher les médecins
-                }
-            };
-
-            task.setOnSucceeded(e -> {
-                List<Medecin> medecinsList = task.getValue();  // Récupérer les résultats de la recherche
-                medecins.setAll(medecinsList);  // Mettre à jour la liste des médecins dans la table
-                medecinsTable.setItems(medecins);
-            });
-
-            task.setOnFailed(e -> {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la recherche",
-                        "Une erreur est survenue lors de la recherche des médecins.");
-            });
-
-            new Thread(task).start();  // Démarrer la tâche dans un thread séparé
-        }
+        loadMedecins(0, searchFieldMedecin.getText());
     }
 
+    /**
+     * Surcharge de l'étape suivante : Prescription. Remplace le root du même modalStage
+     */
     private void openPrescriptionFor(String rpps) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/pharmacie/view/Prescription.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/Prescription.fxml"));
             Parent root = loader.load();
             PrescriptionController ctrl = loader.getController();
-    
-            // S'assurer que venteController n'est pas null
-            if (venteController != null) {
-                // 1) Passe le clientId récupéré depuis VenteController
-                ctrl.setClientId(venteController.getClientId());
-                
-                // 2) Passe le RPPS
-                ctrl.setMedecinRpps(rpps);
-                
-                // 3) Passe la référence au venteController pour avoir accès aux méthodes
-                ctrl.venteController = venteController;
-                
-                // 4) Passe la liste des MedicamentPanier
-                List<MedicamentPanier> panier = venteController.getMedicamentsPanier();
-                System.out.println("Taille du panier récupéré: " + (panier != null ? panier.size() : 0));
-                ctrl.setMedicamentsPanier(panier);
-            } else {
-                System.err.println("VenteController non initialisé!");
-            }
-    
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Prescription pour RPPS " + rpps);
-            stage.show();
+
+            // Passage des données
+            ctrl.setClientId(venteController.getClientId());
+            ctrl.setMedecinRpps(rpps);
+            ctrl.setMedicamentsPanier(venteController.getMedicamentsPanier());
+            ctrl.setVenteController(venteController);
+
+            // Remplacement du contenu du même modal
+            modalStage.getScene().setRoot(root);
+            modalStage.setTitle("Prescription pour RPPS " + rpps);
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR,
-                    "Erreur", "Impossible d'ouvrir la page de prescription", e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page de prescription", e.getMessage());
         }
     }
 
+    // Setters pour lier VenteController et le Stage modal unique
+    public void setVenteController(VenteController venteController) {
+        this.venteController = venteController;
+    }
+    public void setModalStage(Stage modalStage) {
+        this.modalStage = modalStage;
+    }
 
-
+    /** Permet de rafraîchir la liste après ajout/édition */
+    public void refreshMedecinsList() {
+        loadMedecins(currentPage, searchFieldMedecin.getText());
+    }
 }

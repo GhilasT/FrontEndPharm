@@ -36,7 +36,7 @@
 
     <!-- Boutons Valider / Annuler -->
     <HBox spacing="10">
-        <Button text="Valider" onAction="#handleValiderPrescription"/>
-        <Button text="Annuler" onAction="#handleAnnulerPrescription"/>
+        <Button fx:id="btnValider" text="Valider" onAction="#handleValiderPrescription"/>
+        <Button fx:id="btnAnnuler" text="Annuler" onAction="#handleAnnulerPrescription"/>
     </HBox>
 </VBox>
