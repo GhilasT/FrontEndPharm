@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 /**
  * Service pour interagir avec l'API REST du backend.
@@ -51,7 +52,7 @@ public class ApiRest {
 
     /**
      * Récupère l'URL de base de l'API.
-     * 
+     *
      * @return URL de base de l'API
      */
     public static String getApiBaseUrl() {
@@ -60,7 +61,7 @@ public class ApiRest {
 
     /**
      * Récupère tous les médicaments depuis l'API.
-     * 
+     *
      * @return Liste des médicaments
      * @throws Exception En cas d'erreur lors de la communication avec l'API
      */
@@ -76,7 +77,6 @@ public class ApiRest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + Global.getToken())
                 .timeout(Duration.ofSeconds(15))
                 .GET()
                 .build();
@@ -92,7 +92,7 @@ public class ApiRest {
 
     /**
      * Recherche des médicaments par terme de recherche.
-     * 
+     *
      * @param searchTerm Terme de recherche
      * @return Liste des médicaments correspondant au terme de recherche
      * @throws Exception En cas d'erreur lors de la communication avec l'API
@@ -110,7 +110,6 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .GET()
                     .build();
@@ -137,7 +136,7 @@ public class ApiRest {
 
     /**
      * Récupère une page de médicaments depuis l'API.
-     * 
+     *
      * @param page Numéro de page (commence à 0)
      * @return Réponse paginée contenant les médicaments et les métadonnées de
      *         pagination
@@ -149,7 +148,7 @@ public class ApiRest {
 
     /**
      * Recherche des médicaments par terme de recherche avec pagination.
-     * 
+     *
      * @param page       Numéro de page (commence à 0)
      * @param searchTerm Terme de recherche (optionnel)
      * @return Réponse paginée contenant les médicaments et les métadonnées de
@@ -169,7 +168,6 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(800))
                     .GET()
                     .build();
@@ -199,7 +197,7 @@ public class ApiRest {
 
     /**
      * Récupère une page de médicaments depuis l'API de manière asynchrone.
-     * 
+     *
      * @param page       Numéro de page (commence à 0)
      * @param searchTerm Terme de recherche (optionnel)
      * @return CompletableFuture contenant la réponse paginée
@@ -217,7 +215,6 @@ public class ApiRest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(finalUrl))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + Global.getToken())
                 .timeout(Duration.ofSeconds(15))
                 .GET()
                 .build();
@@ -243,7 +240,7 @@ public class ApiRest {
 
     /**
      * Récupère les médicaments depuis l'API de manière asynchrone.
-     * 
+     *
      * @param searchTerm Terme de recherche (optionnel)
      * @return CompletableFuture contenant la liste des médicaments
      */
@@ -260,7 +257,6 @@ public class ApiRest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(finalUrl))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + Global.getToken())
                 .timeout(Duration.ofSeconds(15))
                 .GET()
                 .build();
@@ -284,7 +280,7 @@ public class ApiRest {
 
     /**
      * Vérifie si un médicament nécessite une ordonnance.
-     * 
+     *
      * @param medicamentId ID du médicament
      * @return true si le médicament nécessite une ordonnance, false sinon
      * @throws Exception En cas d'erreur lors de la communication avec l'API
@@ -298,7 +294,6 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .GET()
                     .build();
@@ -323,7 +318,7 @@ public class ApiRest {
 
     /**
      * Récupère toutes les ventes depuis l'API.
-     * 
+     *
      * @return Liste des ventes
      * @throws Exception En cas d'erreur lors de la communication avec l'API
      */
@@ -336,7 +331,6 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .GET()
                     .build();
@@ -367,7 +361,6 @@ public class ApiRest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + Global.getToken())
                 .timeout(Duration.ofSeconds(15))
                 .GET()
                 .build();
@@ -392,8 +385,11 @@ public class ApiRest {
                 m.setLibelle(medJson.optString("libelle", ""));
                 m.setDenomination(medJson.optString("denomination", ""));
                 String prixTTC = medJson.optString("prixTTC", "0.0");
+                // Récupération du stock réel via un appel dédié
+                m.setStock(fetchStock(m.getCodeCip13()));
                 m.setPrixTTC(new BigDecimal(prixTTC));
                 medicaments.add(m);
+                //System.out.println("!!!! : "+m.getStock());
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Erreur parsing réponse vente", e);
@@ -402,8 +398,23 @@ public class ApiRest {
     }
 
     /**
+     * Récupère et calcule la quantité totale en stock pour un médicament via son code CIP13.
+     */
+    private static int fetchStock(String codeCip13) {
+        try {
+            Medicament detail = getMedicamentByCodeCip13(codeCip13);
+            return detail.getStocks().stream()
+                         .mapToInt(Medicament.Stock::getQuantite)
+                         .sum();
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Impossible de récupérer le stock pour le médicament " + codeCip13, e);
+            return 0;
+        }
+    }
+
+    /**
      * Récupère une vente par son ID depuis l'API.
-     * 
+     *
      * @param id ID de la vente
      * @return Vente correspondant à l'ID
      * @throws Exception En cas d'erreur lors de la communication avec l'API
@@ -417,7 +428,6 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .GET()
                     .build();
@@ -444,7 +454,7 @@ public class ApiRest {
 
     /**
      * Crée une nouvelle vente via l'API.
-     * 
+     *
      * @param request Requête de création de vente
      * @return Vente créée
      * @throws Exception En cas d'erreur lors de la communication avec l'API
@@ -509,7 +519,7 @@ public class ApiRest {
 
     /**
      * Supprime une vente via l'API.
-     * 
+     *
      * @param id ID de la vente à supprimer
      * @throws Exception En cas d'erreur lors de la communication avec l'API
      */
@@ -522,7 +532,6 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .DELETE()
                     .build();
@@ -547,7 +556,7 @@ public class ApiRest {
 
     /**
      * Parse la réponse JSON contenant une liste de médicaments.
-     * 
+     *
      * @param jsonResponse Réponse JSON
      * @return Liste des médicaments
      */
@@ -585,7 +594,7 @@ public class ApiRest {
 
     /**
      * Vérifie si le backend est accessible.
-     * 
+     *
      * @return true si le backend est accessible, false sinon
      */
     public static boolean isBackendAccessible() {
@@ -595,7 +604,6 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(80))
                     .GET()
                     .build();
@@ -610,7 +618,7 @@ public class ApiRest {
 
     /**
      * Parse la réponse JSON contenant une page de médicaments.
-     * 
+     *
      * @param jsonResponse Réponse JSON
      * @return Réponse paginée contenant les médicaments
      */
@@ -741,7 +749,7 @@ public class ApiRest {
 
     /**
      * Parse la réponse JSON contenant une liste de ventes.
-     * 
+     *
      * @param jsonResponse Réponse JSON
      * @return Liste des ventes
      */
@@ -764,7 +772,7 @@ public class ApiRest {
 
     /**
      * Parse la réponse JSON contenant une vente.
-     * 
+     *
      * @param jsonResponse Réponse JSON
      * @return Vente
      */
@@ -780,13 +788,13 @@ public class ApiRest {
 
     /**
      * Parse un objet JSON représentant une vente.
-     * 
+     *
      * @param venteJson Objet JSON
      * @return Vente
      */
     private static Vente parseVenteJson(JSONObject venteJson) {
         Vente vente = new Vente();
-        
+
         try {
             // Parsing des champs principaux
             vente.setIdVente(UUID.fromString(venteJson.getString("idVente")));
@@ -796,14 +804,14 @@ public class ApiRest {
             vente.setMontantRembourse(venteJson.getDouble("montantRembourse"));
             vente.setPharmacienAdjointId(UUID.fromString(venteJson.getString("pharmacienAdjointId")));
             vente.setClientId(UUID.fromString(venteJson.getString("clientId")));
-    
+
             // Parsing des médicaments avec leurs stocks
             List<Medicament> medicaments = new ArrayList<>();
             JSONArray medicamentsArray = venteJson.getJSONArray("medicamentIds");
-            
+
             for (int j = 0; j < medicamentsArray.length(); j++) {
                 JSONObject medicamentJson = medicamentsArray.getJSONObject(j);
-                
+
                 Medicament medicament = new Medicament();
                 Medicament.Stock stock = new Medicament.Stock(); // Création d'un stock
                 medicament.setDenomination(medicamentJson.optString("denomination", "Nom inconnu"));
@@ -818,30 +826,31 @@ public class ApiRest {
                 stock.setDatePeremption(medicamentJson.optString("datePeremption", "N/A"));
                 stock.setEmplacement(medicamentJson.optString("emplacement", "N/A"));
                 stock.setSeuilAlerte(medicamentJson.optInt("seuilAlerte", 0));
-                
-                
+
+
                 // Ajout du stock à la liste
                 medicament.getStocks().add(stock);
-                
+                //System.out.println("le stock !!! : "+ stock.getQuantite());
+
                 // Quantité vendue
-                medicament.setQuantite(stock.getQuantite()); 
-                
+                medicament.setQuantite(stock.getQuantite());
+
                 medicaments.add(medicament);
             }
-            
+
             vente.setMedicaments(medicaments);
-            
+
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Échec du parsing pour la vente ID: " 
+            LOGGER.log(Level.SEVERE, "Échec du parsing pour la vente ID: "
                 + venteJson.optString("idVente", "inconnu"), e);
         }
-        
+
         return vente;
     }
 
     /**
      * Récupère un client par son ID depuis l'API.
-     * 
+     *
      * @param id ID du client
      * @return Client correspondant à l'ID
      * @throws Exception En cas d'erreur lors de la communication avec l'API
@@ -855,7 +864,6 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .GET()
                     .build();
@@ -877,7 +885,7 @@ public class ApiRest {
 
     /**
      * Récupère un pharmacien adjoint par son ID depuis l'API.
-     * 
+     *
      * @param id ID du pharmacien
      * @return PharmacienAdjoint correspondant à l'ID
      * @throws Exception En cas d'erreur lors de la communication avec l'API
@@ -891,7 +899,6 @@ public class ApiRest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + Global.getToken())
                     .timeout(Duration.ofSeconds(15))
                     .GET()
                     .build();
@@ -917,7 +924,6 @@ public class ApiRest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + Global.getToken())
                 .timeout(Duration.ofSeconds(15))
                 .GET()
                 .build();
@@ -942,7 +948,7 @@ public class ApiRest {
             medicament.setPrixHT(new BigDecimal(json.optString("prixHT", "0.00")));
             medicament.setPrixTTC(new BigDecimal(json.optString("prixTTC", "0.00")));
             medicament.setTaxe(new BigDecimal(json.optString("taxe", "0.00")));
-    
+
             // Peuplement de la liste des stocks
             JSONArray stocks = json.optJSONArray("stocks");
             if (stocks != null && !stocks.isEmpty()) {
@@ -965,12 +971,12 @@ public class ApiRest {
     private static Client parseClientResponse(String jsonResponse) {
         JSONObject json = new JSONObject(jsonResponse);
         Client client = new Client();
-    
+
         // Champs obligatoires
         client.setNom(json.getString("nom"));
         client.setPrenom(json.getString("prenom"));
         client.setTelephone(json.getString("telephone"));
-    
+
         // Champs optionnels
         if (json.has("idPersonne") && !json.isNull("idPersonne")) {
             client.setId(UUID.fromString(json.getString("idPersonne")));
@@ -987,10 +993,10 @@ public class ApiRest {
         if (json.has("mutuelle") && !json.isNull("mutuelle")) {
             client.setMutuelle(json.getString("mutuelle"));
         }
-    
+
         return client;
     }
-    
+
 
     private static PharmacienAdjoint parsePharmacienResponse(String jsonResponse) {
         JSONObject json = new JSONObject(jsonResponse);
@@ -1057,7 +1063,6 @@ public class ApiRest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + Global.getToken())
                 .GET()
                 .build();
 
@@ -1080,10 +1085,8 @@ public class ApiRest {
      */
     public static Dashboard getDashboardRequest() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_BASE_URL + "/" +
-                        "dashboard"))
+                .uri(URI.create(API_BASE_URL + "/dashboard"))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + Global.getToken())
                 .GET()
                 .build();
 
