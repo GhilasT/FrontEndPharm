@@ -13,11 +13,20 @@ public class Global {
         return BASE_URL;
     }
     private static String token = "";
+    
+    // Improved token getter with null check
     public static String getToken() {
-        return token;
+        return token != null ? token : "";
     }
-    public static void setToken(String token) {
-        Global.token = token;
+    
+    public static void setToken(String newToken) {
+        if (newToken != null) {
+            token = newToken;
+            System.out.println("Token set successfully: " + token.substring(0, Math.min(10, token.length())) + "...");
+        } else {
+            token = "";
+            System.out.println("Warning: Null token received");
+        }
     }
 
     public static UUID getClientId() {

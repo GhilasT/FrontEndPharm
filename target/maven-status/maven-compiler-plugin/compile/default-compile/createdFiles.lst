@@ -113,7 +113,6 @@ com\pharmacie\controller\AddMedecinController.class
 com\pharmacie\model\Personne.class
 com\pharmacie\controller\RechercheMedicamentsController$2.class
 com\pharmacie\model\Medicament.class
-com\pharmacie\controller\MedicamentsController.class
 com\pharmacie\service\LigneCommandeService.class
 com\pharmacie\controller\PrescriptionController.class
 com\pharmacie\controller\MedecinsController.class
