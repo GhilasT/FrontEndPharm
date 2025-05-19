@@ -603,7 +603,36 @@ public class PharmacyDashboard extends StackPane {
                 loadAnalytics();
                 break;
             case "Employés":
-                showNotImplementedAlert("Gestion des employés");
+                if ("ADMINISTRATEUR".equals(LoggedSeller.getInstance().getRole())) {
+                    // If admin, navigate to personnel management
+                    handleSwitchToAdmin();
+                    // Allow time for the transition and then load the personnel page
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(500);
+                            javafx.application.Platform.runLater(() -> {
+                                try {
+                                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionPersonnel.fxml"));
+                                    Parent view = loader.load();
+                                    DashboardAdminController adminController = 
+                                        (DashboardAdminController) ((Scene) view.getScene()).getUserData();
+                                    if (adminController != null) {
+                                        adminController.loadGestionPersonnel();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }).start();
+                } else {
+                    showAlert(Alert.AlertType.WARNING,
+                            "Accès restreint",
+                            "Autorisation requise",
+                            "Vous devez avoir le rôle Administrateur pour accéder à cette page.");
+                }
                 break;
             case "Clients":
                 showNotImplementedAlert("Gestion des clients");
@@ -612,19 +641,12 @@ public class PharmacyDashboard extends StackPane {
                 loadContent("Médecins");
                 break;
             case "Médicaments":
-                loadContent("Médicaments");
-                break;
             case "Médicaments en rupture de stock":
-                loadMedicamentsWithFilter("rupture");
-                break;
             case "Médicaments périmés":
-                loadMedicamentsWithFilter("perimes");
-                break;
             case "Médicaments Stock Faible":
-                loadMedicamentsWithFilter("faible");
-                break;
             case "Médicaments péremption - 1 mois":
-                loadMedicamentsWithFilter("peremption");
+                // All medication cards now lead to the same unfiltered medication page
+                loadContent("Médicaments");
                 break;
             default:
                 // No specific action for unknown cards
@@ -633,19 +655,14 @@ public class PharmacyDashboard extends StackPane {
     }
     
     /**
-     * Load medicaments page with specific filter
+     * Load medicaments page without filters
+     * This method replaces the previous loadMedicamentsWithFilter method
      */
-    private void loadMedicamentsWithFilter(String filterType) {
+    private void loadMedicaments() {
         try {
-            updateHeaderTitle("Médicaments - Filtre: " + filterType);
+            updateHeaderTitle("Médicaments");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/médicaments.fxml"));
             Parent viewContent = loader.load();
-            
-            // Get controller and apply filter if it exists
-            if (loader.getController() != null && loader.getController() instanceof MedicamentsController) {
-                MedicamentsController controller = (MedicamentsController) loader.getController();
-                controller.applyFilter(filterType);
-            }
             
             if (viewContent instanceof Region) {
                 Region region = (Region) viewContent;
@@ -660,7 +677,7 @@ public class PharmacyDashboard extends StackPane {
                     "Détails: " + e.getMessage());
         }
     }
-    
+
     /**
      * Show a dialog for features not yet implemented
      */
