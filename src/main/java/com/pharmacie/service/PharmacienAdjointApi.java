@@ -4,6 +4,7 @@ import com.pharmacie.model.PharmacienAdjoint;
 import com.pharmacie.model.dto.PharmacienAdjointCreateRequest;
 import com.pharmacie.model.dto.PharmacienAdjointUpdateRequest;
 import com.pharmacie.util.Global;
+import com.pharmacie.model.Medecin;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -174,5 +175,66 @@ public class PharmacienAdjointApi {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Cette méthode n'est pas strictement nécessaire dans cette classe, mais ajoutée pour cohérence avec la structure existante.
+     * Elle pourrait être déplacée dans une classe MedecinApi dédiée si cette dernière est créée plus tard.
+     */
+    public List<Medecin> searchMedecins(String query) {
+        try {
+            String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "/medecins/search?term=" + encodedQuery))
+                    .header("Authorization", "Bearer " + Global.getToken())
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                return parseMedecinsFromJson(response.body());
+            } else {
+                System.err.println("Erreur recherche médecins: " + response.statusCode());
+                return new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.err.println("Exception recherche médecins: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    private List<Medecin> parseMedecinsFromJson(String json) throws IOException {
+        List<Medecin> medecins = new ArrayList<>();
+        JsonNode rootNode = objectMapper.readTree(json);
+
+        if (rootNode.isArray()) {
+            for (JsonNode node : rootNode) {
+                String civilite = node.has("civilite") ? node.get("civilite").asText() : "";
+                String nomExercice = node.has("nomExercice") ? node.get("nomExercice").asText() : "";
+                String prenomExercice = node.has("prenomExercice") ? node.get("prenomExercice").asText() : "";
+                String rppsMedecin = node.has("rppsMedecin") ? node.get("rppsMedecin").asText() : "";
+                String profession = node.has("profession") ? node.get("profession").asText() : "";
+                String modeExercice = node.has("modeExercice") ? node.get("modeExercice").asText() : "";
+                String qualifications = node.has("qualifications") ? node.get("qualifications").asText() : "";
+                String structureExercice = node.has("structureExercice") ? node.get("structureExercice").asText() : "";
+                String fonctionActivite = node.has("fonctionActivite") ? node.get("fonctionActivite").asText() : "";
+                String genreActivite = node.has("genreActivite") ? node.get("genreActivite").asText() : "";
+
+                Medecin medecin = new Medecin(
+                    civilite, nomExercice, prenomExercice, rppsMedecin,
+                    profession, modeExercice, qualifications,
+                    structureExercice, fonctionActivite, genreActivite
+                );
+                
+                if (node.has("categorieProfessionnelle")) {
+                    medecin.setCategorieProfessionnelle(node.get("categorieProfessionnelle").asText());
+                }
+                
+                medecins.add(medecin);
+            }
+        }
+        return medecins;
     }
 }

@@ -1245,24 +1245,57 @@ public class ApiRest {
     }
 
     public static List<Medecin> searchMedecins(String searchTerm) throws Exception {
-        String url = API_BASE_URL + "/medecins/search?term=" + searchTerm; // URL de l'API avec le terme de recherche
+        try {
+            String encodedQuery = java.net.URLEncoder.encode(searchTerm, "UTF-8");
+            String url = API_BASE_URL + "/medecins/search?term=" + encodedQuery;
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + Global.getToken())
-                .timeout(Duration.ofSeconds(15))
-                .GET() // Utiliser GET pour récupérer les données
-                .build();
+            LOGGER.log(Level.INFO, "Envoi d'une requête GET de recherche médecin à {0}", url);
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
+                    .timeout(Duration.ofSeconds(15))
+                    .GET()
+                    .build();
 
-        if (response.statusCode() == 200) {
-            // Convertir la réponse JSON en une liste de Medecin
-            return new ObjectMapper().readValue(response.body(), new TypeReference<List<Medecin>>() {
-            });
-        } else {
-            throw new Exception("Erreur de recherche: " + response.statusCode());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                List<Medecin> medecins = new ArrayList<>();
+                JSONArray jsonArray = new JSONArray(response.body());
+                
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    
+                    Medecin medecin = new Medecin(
+                        jsonObject.optString("civilite", ""),
+                        jsonObject.optString("nomExercice", ""),
+                        jsonObject.optString("prenomExercice", ""),
+                        jsonObject.optString("rppsMedecin", ""),
+                        jsonObject.optString("profession", ""),
+                        jsonObject.optString("modeExercice", ""),
+                        jsonObject.optString("qualifications", ""),
+                        jsonObject.optString("structureExercice", ""),
+                        jsonObject.optString("fonctionActivite", ""),
+                        jsonObject.optString("genreActivite", "")
+                    );
+                    
+                    if (jsonObject.has("categorieProfessionnelle")) {
+                        medecin.setCategorieProfessionnelle(jsonObject.getString("categorieProfessionnelle"));
+                    }
+                    
+                    medecins.add(medecin);
+                }
+                
+                LOGGER.log(Level.INFO, "Récupération réussie de {0} médecins", medecins.size());
+                return medecins;
+            } else {
+                throw new Exception("Erreur HTTP " + response.statusCode());
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Exception lors de la recherche des médecins", e);
+            throw new Exception("Erreur de communication avec le serveur: " + e.getMessage(), e);
         }
     }
 

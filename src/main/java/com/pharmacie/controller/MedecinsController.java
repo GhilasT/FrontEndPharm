@@ -140,11 +140,54 @@ public class MedecinsController {
     }
 
     private void configureSearch() {
-        searchField.textProperty().addListener((obs, oldVal, newVal) -> { // Changé de searchFieldMedecin à searchField
-            currentPage = 0;
-            loadMedecins(currentPage, newVal);
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.trim().isEmpty() && newVal.trim().length() >= 3) {
+                searchMedecins(newVal.trim());
+            } else if (newVal == null || newVal.trim().isEmpty()) {
+                currentPage = 0;
+                loadMedecins(currentPage, "");
+            }
         });
-        btnSearch.setOnAction(e -> loadMedecins(0, searchField.getText())); // Changé de searchFieldMedecin à searchField
+        
+        btnSearch.setOnAction(e -> {
+            String searchTerm = searchField.getText().trim();
+            if (!searchTerm.isEmpty()) {
+                searchMedecins(searchTerm);
+            } else {
+                loadMedecins(0, "");
+            }
+        });
+    }
+
+    private void searchMedecins(String searchTerm) {
+        Task<List<Medecin>> searchTask = new Task<>() {
+            @Override 
+            protected List<Medecin> call() throws Exception {
+                return ApiRest.searchMedecins(searchTerm);
+            }
+        };
+        
+        searchTask.setOnSucceeded(e -> {
+            List<Medecin> results = searchTask.getValue();
+            medecins.setAll(results);
+            medecinsTable.setItems(medecins);
+            statusLabel.setText(String.format("Recherche: %d médecin(s) trouvé(s) pour '%s'", 
+                                             results.size(), searchTerm));
+            
+            // Désactiver la pagination pendant la recherche
+            pagination.setDisable(true);
+            pagination.setVisible(false);
+        });
+        
+        searchTask.setOnFailed(e -> {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de médecins", searchTask.getException());
+            showAlert(Alert.AlertType.ERROR, 
+                     "Erreur de recherche", 
+                     "La recherche a échoué", 
+                     "Détails: " + searchTask.getException().getMessage());
+        });
+        
+        new Thread(searchTask).start();
     }
 
     private void configurePagination() {
@@ -262,7 +305,14 @@ public class MedecinsController {
 
     @FXML
     private void handleSearchMedecin() {
-        loadMedecins(0, searchField.getText()); // Changé de searchFieldMedecin à searchField
+        String searchTerm = searchField.getText().trim();
+        if (searchTerm.isEmpty()) {
+            loadMedecins(0, "");
+            pagination.setDisable(false);
+            pagination.setVisible(true);
+        } else {
+            searchMedecins(searchTerm);
+        }
     }
 
     /**
@@ -298,6 +348,8 @@ public class MedecinsController {
 
     /** Permet de rafraîchir la liste après ajout/édition */
     public void refreshMedecinsList() {
-        loadMedecins(currentPage, searchField.getText()); // Changé de searchFieldMedecin à searchField
+        pagination.setDisable(false);
+        pagination.setVisible(true);
+        loadMedecins(currentPage, "");
     }
 }
