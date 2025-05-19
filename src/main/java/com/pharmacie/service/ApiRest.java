@@ -39,10 +39,7 @@ public class ApiRest {
             .build();
     public static final Logger LOGGER = Logger.getLogger(ApiRest.class.getName());
 
-
-
-    public static Boolean OrdonnaceValide=false;
-
+    public static Boolean OrdonnaceValide = false;
 
     // Taille de page par défaut retournée par le backend
     private static final int DEFAULT_PAGE_SIZE = 50;
@@ -394,7 +391,7 @@ public class ApiRest {
                 m.setStock(fetchStock(m.getCodeCip13()));
                 m.setPrixTTC(new BigDecimal(prixTTC));
                 medicaments.add(m);
-                //System.out.println("!!!! : "+m.getStock());
+                // System.out.println("!!!! : "+m.getStock());
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Erreur parsing réponse vente", e);
@@ -409,8 +406,8 @@ public class ApiRest {
         try {
             Medicament detail = getMedicamentByCodeCip13(codeCip13);
             return detail.getStocks().stream()
-                         .mapToInt(Medicament.Stock::getQuantite)
-                         .sum();
+                    .mapToInt(Medicament.Stock::getQuantite)
+                    .sum();
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Impossible de récupérer le stock pour le médicament " + codeCip13, e);
             return 0;
@@ -515,6 +512,70 @@ public class ApiRest {
                 return vente;
             } else {
                 String errorMessage = "Erreur HTTP " + response.statusCode() + " lors de la création de la vente";
+                LOGGER.log(Level.SEVERE, errorMessage);
+                throw new Exception(errorMessage + ": " + response.body());
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Exception lors de la communication avec l'API", e);
+            throw new Exception("Erreur de communication avec le serveur: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Met à jour une vente via l'API.
+     *
+     * @param id ID de la vente à mettre à jour
+     * @param request Requête de mise à jour de vente
+     * @return Vente mise à jour
+     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     */
+    public static Vente updateVente(UUID id, VenteUpdateRequest request) throws Exception {
+        String url = API_BASE_URL + "/ventes/" + id;
+        LOGGER.log(Level.INFO, "Envoi d'une requête PUT pour mettre à jour la vente {0}", id);
+
+        try {
+            JSONObject jsonRequest = new JSONObject();
+            jsonRequest.put("idVente", request.getIdVente().toString());
+
+            SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+            isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            String formattedDate = isoFormat.format(request.getDateVente());
+            jsonRequest.put("dateVente", formattedDate);
+            
+            jsonRequest.put("modePaiement", request.getModePaiement());
+            jsonRequest.put("ordonnanceAjoutee", request.isOrdonnanceAjoutee());
+
+            JSONArray medicamentsArray = new JSONArray();
+            for (MedicamentPanier mp : request.getMedicaments()) {
+                JSONObject medicamentJson = new JSONObject();
+                medicamentJson.put("codeCip13", mp.getCodeCip13());
+                medicamentJson.put("quantite", mp.getQuantite());
+                medicamentsArray.put(medicamentJson);
+            }
+            jsonRequest.put("medicaments", medicamentsArray);
+
+            System.out.println("📤 JSON envoyé à l'API pour mise à jour :\n" + jsonRequest.toString(2));
+
+            HttpRequest httpRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
+                    .timeout(Duration.ofSeconds(70))
+                    .PUT(HttpRequest.BodyPublishers.ofString(jsonRequest.toString()))
+                    .build();
+
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            System.out.println("📨 Code HTTP : " + response.statusCode());
+            System.out.println("📨 Réponse brute : \n" + response.body());
+
+            LOGGER.log(Level.INFO, "Réponse reçue avec le code {0}", response.statusCode());
+
+            if (response.statusCode() == 200) {
+                Vente vente = parseVenteResponse(response.body());
+                LOGGER.log(Level.INFO, "Mise à jour réussie de la vente {0}", vente.getIdVente());
+                return vente;
+            } else {
+                String errorMessage = "Erreur HTTP " + response.statusCode() + " lors de la mise à jour de la vente";
                 LOGGER.log(Level.SEVERE, errorMessage);
                 throw new Exception(errorMessage + ": " + response.body());
             }
@@ -836,10 +897,9 @@ public class ApiRest {
                 stock.setEmplacement(medicamentJson.optString("emplacement", "N/A"));
                 stock.setSeuilAlerte(medicamentJson.optInt("seuilAlerte", 0));
 
-
                 // Ajout du stock à la liste
                 medicament.getStocks().add(stock);
-                //System.out.println("le stock !!! : "+ stock.getQuantite());
+                // System.out.println("le stock !!! : "+ stock.getQuantite());
 
                 // Quantité vendue
                 medicament.setQuantite(stock.getQuantite());
@@ -851,7 +911,7 @@ public class ApiRest {
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Échec du parsing pour la vente ID: "
-                + venteJson.optString("idVente", "inconnu"), e);
+                    + venteJson.optString("idVente", "inconnu"), e);
         }
 
         return vente;
@@ -1009,7 +1069,6 @@ public class ApiRest {
         return client;
     }
 
-
     private static PharmacienAdjoint parsePharmacienResponse(String jsonResponse) {
         JSONObject json = new JSONObject(jsonResponse);
 
@@ -1088,7 +1147,6 @@ public class ApiRest {
         }
     }
 
-
     /**
      * Récupère les informations du tableau de bord.
      *
@@ -1138,7 +1196,6 @@ public class ApiRest {
             dash.setNbMedicamentsAlerte(stat.getInt("nbMedicamentsAlerte"));
             dash.setNbMedicamentsAlerteBientotPerimee(stat.getInt("nbMedicamentsAlerteBientotPerimee"));
 
-
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Erreur lors du parsing de la réponse JSON des ventes", e);
         }
@@ -1154,7 +1211,7 @@ public class ApiRest {
      * @throws Exception En cas d'erreur lors de la communication avec l'API
      */
     public static void deleteMedecin(String rpps) throws Exception {
-        String url = API_BASE_URL + "/medecins/rpps/" + rpps;  // Utiliser le RPPS pour supprimer le médecin
+        String url = API_BASE_URL + "/medecins/rpps/" + rpps; // Utiliser le RPPS pour supprimer le médecin
 
         LOGGER.log(Level.INFO, "Envoi d'une requête DELETE pour supprimer le médecin avec RPPS: " + rpps);
 
@@ -1187,26 +1244,26 @@ public class ApiRest {
     }
 
     public static List<Medecin> searchMedecins(String searchTerm) throws Exception {
-        String url = API_BASE_URL + "/medecins/search?term=" + searchTerm;  // URL de l'API avec le terme de recherche
+        String url = API_BASE_URL + "/medecins/search?term=" + searchTerm; // URL de l'API avec le terme de recherche
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + Global.getToken())
                 .timeout(Duration.ofSeconds(15))
-                .GET()  // Utiliser GET pour récupérer les données
+                .GET() // Utiliser GET pour récupérer les données
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() == 200) {
             // Convertir la réponse JSON en une liste de Medecin
-            return new ObjectMapper().readValue(response.body(), new TypeReference<List<Medecin>>() {});
+            return new ObjectMapper().readValue(response.body(), new TypeReference<List<Medecin>>() {
+            });
         } else {
             throw new Exception("Erreur de recherche: " + response.statusCode());
         }
     }
-
 
     public static UUID createOrdonnance(OrdonnanceCreateRequest req) throws Exception {
         String url = API_BASE_URL + "/ordonnances";
@@ -1224,7 +1281,6 @@ public class ApiRest {
         System.out.println("2 : " + req.getRppsMedecin());
         json.put("clientId", req.getClientId().toString());
         System.out.println("3 : " + req.getClientId());
-
 
         // Tableau des prescriptions
         JSONArray prescArray = new JSONArray();
@@ -1302,8 +1358,8 @@ public class ApiRest {
             if (response.statusCode() == 200) {
                 PageResponse<Medecin> pageResponse = parsePageResponseMedecins(response.body());
                 LOGGER.log(Level.INFO, "Récupération réussie de la page {0}/{1} avec {2} médecins",
-                        new Object[]{pageResponse.getCurrentPage(), pageResponse.getTotalPages(),
-                                pageResponse.getContent().size()});
+                        new Object[] { pageResponse.getCurrentPage(), pageResponse.getTotalPages(),
+                                pageResponse.getContent().size() });
                 return pageResponse;
             } else {
                 String errorMessage = "Erreur HTTP " + response.statusCode()
@@ -1330,8 +1386,8 @@ public class ApiRest {
 
             // En fonction de votre structure de réponse, il faudrait peut-être aussi prendre les informations de pagination
             // En ajoutant ces informations à votre réponse, par exemple :
-            currentPage = 0;  // A vous de gérer la page courante si vous en avez besoin
-            totalPages = 1;   // Idem, à ajuster selon votre API
+            currentPage = 0; // A vous de gérer la page courante si vous en avez besoin
+            totalPages = 1; // Idem, à ajuster selon votre API
             totalElements = contentArray.length();
 
             // Maintenant, on parse les médecins dans la réponse
@@ -1378,7 +1434,7 @@ public class ApiRest {
 
             // Créer et retourner l'objet MedecinResponse
             return new MedecinResponse(
-                    null,  // L'id du médecin peut être assigné à partir de la réponse API si disponible
+                    null, // L'id du médecin peut être assigné à partir de la réponse API si disponible
                     civilite,
                     nomExercice,
                     prenomExercice,
@@ -1389,8 +1445,7 @@ public class ApiRest {
                     qualifications,
                     structureExercice,
                     fonctionActivite,
-                    genreActivite
-            );
+                    genreActivite);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Erreur lors du parsing de la réponse JSON du médecin", e);
             throw new Exception("Erreur lors de l'analyse de la réponse JSON du médecin: " + e.getMessage(), e);
@@ -1498,7 +1553,8 @@ public class ApiRest {
         if (response.statusCode() == 200) {
             // on suppose que la réponse est un tableau JSON de Client
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(response.body(), new TypeReference<List<Client>>() {});
+            return mapper.readValue(response.body(), new TypeReference<List<Client>>() {
+            });
         } else {
             throw new Exception("Erreur HTTP " + response.statusCode() + " : " + response.body());
         }
@@ -1584,7 +1640,6 @@ public class ApiRest {
         json.put("email", req.getEmail());
         json.put("adresse", req.getAdresse());
 
-
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
@@ -1599,6 +1654,5 @@ public class ApiRest {
             throw new Exception("Erreur HTTP " + response.statusCode() + " lors de la création du client: " + response.body());
         }
     }
-
 
 }

@@ -249,10 +249,31 @@ public class VentesController {
     }
 
     private void handleModifierVente(Vente vente) {
-        // Exemple : fonctionnalité non encore implémentée
-        showAlert(Alert.AlertType.INFORMATION, "Information",
-                "Fonctionnalité non disponible",
-                "La modification de vente n'est pas encore implémentée.");
+        try {
+            // Chargement du formulaire de modification de vente
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/modifier-vente.fxml"));
+            Parent root = loader.load();
+            
+            // Initialisation du contrôleur
+            ModifierVenteController controller = loader.getController();
+            controller.setVente(vente);
+            controller.setVentesController(this);
+            controller.initialize();
+            
+            // Affichage dans une nouvelle fenêtre
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Modifier la vente - " + tronquerUUID(vente.getIdVente()));
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+            
+            // Après la fermeture de la fenêtre, rafraîchir la liste des ventes
+            loadVentes();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du chargement du formulaire de modification", e);
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur d'interface",
+                    "Impossible de charger le formulaire de modification: " + e.getMessage());
+        }
     }
 
     private void handleDetailsVente(Vente vente) {
