@@ -18,14 +18,14 @@
          <children>
             <HBox layoutX="75.0" layoutY="56.0" prefHeight="27.0" prefWidth="710.0" spacing="10.0">
                <children>
-                  <TextField fx:id="textFieldNomMedicament" prefHeight="25.0" prefWidth="386.0" text="Saisir le nom d'un medicament " />
+                  <TextField fx:id="textFieldNomMedicament" prefHeight="25.0" prefWidth="386.0" promptText="Saisir le nom d'un médicament" />
                   <ChoiceBox fx:id="ChoiceBoxFournisseur" prefWidth="150.0" />
                   <Button fx:id="buttonRecherche" mnemonicParsing="false" prefHeight="25.0" prefWidth="152.0" style="-fx-background-color: rgba(0, 123, 61, 1); -fx-text-fill: #ffffff; -fx-background-radius: 15px;" text="Rechercher" />
                </children>
             </HBox>
             <TableView fx:id="tableViewMedicament" layoutX="75.0" layoutY="95.0" prefHeight="429.0" prefWidth="713.0">
               <columns>
-                <TableColumn fx:id="columnLibelle" prefWidth="493.3332977294922" text="Medicament " />
+                <TableColumn fx:id="columnLibelle" prefWidth="493.3332977294922" text="médicament " />
                 <TableColumn fx:id="columnCodeCIS" minWidth="0.0" prefWidth="131.33331298828125" text="Code CIS" />
                 <TableColumn fx:id="columnPrix" prefWidth="86.66668701171875" text="Prix " />
               </columns>
@@ -34,14 +34,14 @@
                <children>
                   <Pane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Label fx:id="labelNomMedicament" layoutX="-10.0" layoutY="7.0" prefHeight="48.0" prefWidth="217.0" text="Nom du medicament selectionner ">
+                        <Label fx:id="labelNomMedicament" layoutX="-10.0" layoutY="7.0" prefHeight="48.0" prefWidth="217.0" text="Nom du médicament sélectionné ">
                            <padding>
                               <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                            </padding>
                         </Label>
                      </children>
                   </Pane>
-                  <TextField fx:id="textFieldQte" prefHeight="25.0" prefWidth="145.0" text="Saisir la quantiter">
+                  <TextField fx:id="textFieldQte" prefHeight="25.0" prefWidth="145.0" promptText="Saisir la quantité">
                      <HBox.margin>
                         <Insets bottom="10.0" top="20.0" />
                      </HBox.margin>
@@ -72,9 +72,9 @@
             </Label>
             <TableView fx:id="tableViewPanier" layoutX="10.0" layoutY="67.0" prefHeight="482.0" prefWidth="427.0">
               <columns>
-                <TableColumn fx:id="columnMedicamentPanier" editable="false" prefWidth="264.00006103515625" resizable="false" text="Medicament" />
-                <TableColumn fx:id="columnQuantitePanier" minWidth="5.333251953125" prefWidth="80.6666259765625" text="Quantité" />
-                <TableColumn fx:id="columnPrixPanier" prefWidth="114.0" text="Prix" />
+                <TableColumn fx:id="columnMedicamentPanier" editable="false" prefWidth="233.99993896484375" resizable="false" text="médicament" />
+                <TableColumn fx:id="columnQuantitePanier" minWidth="5.333251953125" prefWidth="87.333251953125" text="Quantité" />
+                <TableColumn fx:id="columnPrixPanier" prefWidth="104.666748046875" text="Prix" />
               </columns>
             </TableView>
             <Pane layoutX="24.0" layoutY="565.0" prefHeight="64.0" prefWidth="454.0">
