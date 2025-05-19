@@ -57,7 +57,7 @@ public class PharmacyDashboard extends StackPane {
     @FXML
     private Button btnCommandes;
     @FXML
-    private Button btnSuppliers;
+    private Button btnSuppliers; // Changed back to btnSuppliers to match FXML
     @FXML
     private Button btnAnalytics;
     @FXML
@@ -303,7 +303,7 @@ public class PharmacyDashboard extends StackPane {
         configureMenuButton(btnSales, "ventes.png", "Ventes");
         configureMenuButton(btnMedics, "médicaments.png", "Médicaments");
         configureMenuButton(btnCommandes, "gestionCommande.png", "Commandes");
-        configureMenuButton(btnSuppliers, "fournisseurs.png", "Fournisseurs");
+        configureMenuButton(btnSuppliers, "medecins.png", "Médecins"); // Use btnSuppliers but with médecins text
         configureMenuButton(btnAnalytics, "analyseventes.png", "Analyse des ventes");
     }
 
@@ -337,7 +337,7 @@ public class PharmacyDashboard extends StackPane {
 
         btnSuppliers.setOnAction(event -> {
             setActiveButton(btnSuppliers);
-            loadContent("Fournisseurs");
+            loadContent("Médecins"); // Changed from Fournisseurs to Médecins
         });
 
         btnAnalytics.setOnAction(event -> {
@@ -731,7 +731,7 @@ public class PharmacyDashboard extends StackPane {
 
     private void setActiveButton(Button activeButton) {
         Button[] menuButtons = { btnDashboard, btnSales, btnMedics, btnCommandes,
-                btnSuppliers, btnAnalytics };
+                btnSuppliers, btnAnalytics }; // Changed btnMedecins back to btnSuppliers
 
         for (Button btn : menuButtons) {
             if (btn == activeButton) {
@@ -752,9 +752,9 @@ public class PharmacyDashboard extends StackPane {
                 // Chemin ABSOLU depuis les resources
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/médicaments.fxml"));
                 viewContent = loader.load();
-            } else if (title.equals("Fournisseurs")) {
+            } else if (title.equals("Médecins")) { // Changed from Fournisseurs to Médecins
                 // Chemin ABSOLU depuis les resources
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/fournisseurs.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/MedecinsPage.fxml"));
                 viewContent = loader.load();
             } else if (title.equals("Commandes")) {
                 // Chemin ABSOLU depuis les resources

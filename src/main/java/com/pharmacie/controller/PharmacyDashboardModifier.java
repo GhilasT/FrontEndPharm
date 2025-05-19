@@ -5,10 +5,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+import javafx.geometry.Pos;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +39,42 @@ public class PharmacyDashboardModifier {
             btnSalesField.setAccessible(true);
             Button btnSales = (Button) btnSalesField.get(dashboard);
             
-            // Modifier l'action du bouton
+            // Récupérer également le bouton des fournisseurs pour s'assurer qu'il est correctement configuré
+            java.lang.reflect.Field btnSuppliersField = PharmacyDashboard.class.getDeclaredField("btnSuppliers");
+            btnSuppliersField.setAccessible(true);
+            Button btnSuppliers = (Button) btnSuppliersField.get(dashboard);
+            
+            // S'assurer que le bouton fournisseurs a le texte "Médecins" et la bonne icône
+            HBox medecinsContent = new HBox(10);
+            medecinsContent.setAlignment(Pos.CENTER_LEFT);
+            
+            // Essayer de charger l'icône
+            try {
+                InputStream iconStream = PharmacyDashboardModifier.class.getResourceAsStream("/com/pharmacie/images/Icones/medecins.png");
+                if (iconStream != null) {
+                    ImageView icon = new ImageView(new Image(iconStream));
+                    icon.setFitHeight(24);
+                    icon.setFitWidth(24);
+                    icon.setPreserveRatio(true);
+                    medecinsContent.getChildren().add(icon);
+                } else {
+                    medecinsContent.getChildren().add(new Label("•"));
+                }
+            } catch (Exception e) {
+                medecinsContent.getChildren().add(new Label("•"));
+            }
+            
+            Label medecinsLabel = new Label("Médecins");
+            medecinsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+            medecinsLabel.setFont(Font.font("Open Sans Semibold", 20));
+            medecinsLabel.setWrapText(true);
+            
+            medecinsContent.getChildren().add(medecinsLabel);
+            btnSuppliers.setGraphic(medecinsContent);
+            btnSuppliers.setText("");
+            btnSuppliers.setStyle("-fx-background-color: transparent; -fx-padding: 0 0 0 20;");
+            
+            // Modifier l'action du bouton des ventes
             btnSales.setOnAction(event -> {
                 try {
                     // Mettre à jour le titre
@@ -42,7 +85,7 @@ public class PharmacyDashboardModifier {
                     // Récupérer le contentPane
                     java.lang.reflect.Field contentPaneField = PharmacyDashboard.class.getDeclaredField("contentPane");
                     contentPaneField.setAccessible(true);
-                    javafx.scene.layout.StackPane contentPane = (javafx.scene.layout.StackPane) contentPaneField.get(dashboard);
+                    StackPane contentPane = (StackPane) contentPaneField.get(dashboard);
                     
                     // Charger la vue des ventes
                     FXMLLoader loader = new FXMLLoader(PharmacyDashboardModifier.class.getResource("/com/pharmacie/view/ventes.fxml"));
