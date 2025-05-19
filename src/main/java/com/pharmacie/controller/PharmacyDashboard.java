@@ -35,7 +35,12 @@ import com.pharmacie.model.Dashboard;
 import com.pharmacie.service.ApiRest;
 import com.pharmacie.util.LoggedSeller;
 
+/**
+ * Classe JavaFX représentant le tableau de bord principal de la pharmacie.
+ * Gère l'affichage des cartes de statistiques, le menu latéral et la navigation entre les vues.
+ */
 public class PharmacyDashboard extends StackPane {
+    // Constantes de dimensionnement et d'aspect
     private static final int MENU_WIDTH = 300;
     private static final int CARD_WIDTH = 246;
     private static final int CARD_HEIGHT = 150;
@@ -43,7 +48,7 @@ public class PharmacyDashboard extends StackPane {
     private static final double MINIMUM_WINDOW_WIDTH = 800;
 
     @FXML
-    private Button menuButton;
+    private Button menuButton;// Bouton pour afficher/cacher le menu
     @FXML
     private VBox sideMenu;
     @FXML
@@ -57,7 +62,7 @@ public class PharmacyDashboard extends StackPane {
     @FXML
     private Button btnCommandes;
     @FXML
-    private Button btnSuppliers; // Changed back to btnSuppliers to match FXML
+    private Button btnSuppliers; // Rétabli btnSuppliers pour correspondre au FXML
     @FXML
     private Button btnAnalytics;
     @FXML
@@ -67,7 +72,7 @@ public class PharmacyDashboard extends StackPane {
     @FXML
     private Button btnLogout;
     @FXML
-    private Button btnSwitchToAdmin; // New button for switching to admin mode
+    private Button btnSwitchToAdmin; // Bouton pour basculer en mode admin
     @FXML
     private HBox topBar; // Ajout de la référence à la barre supérieure
     
@@ -110,7 +115,7 @@ public class PharmacyDashboard extends StackPane {
         btnLogout.setOnAction(event -> handleLogout());
         configureMenuButton(btnLogout, "logout.png", "Déconnexion");
         
-        // Configure the Admin Mode button
+        // Configure le bouton Mode Administrateur
         configureAdminButton();
         
         loadDashboard();
@@ -128,23 +133,23 @@ public class PharmacyDashboard extends StackPane {
     }
 
     /**
-     * Configure the Admin Mode button visibility and action
+     * Configure la visibilité et l’action du bouton Mode Administrateur
      */
     private void configureAdminButton() {
         btnSwitchToAdmin.setVisible(true);
         
-        // Set the button action based on user role
+        // Définit l’action du bouton selon le rôle de l’utilisateur
         boolean isAdmin = "ADMINISTRATEUR".equals(LoggedSeller.getInstance().getRole());
         
-        // Add hover effect 
+        // Ajoute des effets au survol 
         setupButtonHoverEffect(btnSwitchToAdmin, "#007B3D", "#009E4F");
         
         btnSwitchToAdmin.setOnAction(event -> {
             if (isAdmin) {
-                // Admin user can access admin dashboard
+                // L'utilisateur admin peut accéder au tableau de bord admin
                 handleSwitchToAdmin();
             } else {
-                // Non-admin users see an error message
+                // Les utilisateurs non admin voient un message d’erreur
                 showAlert(Alert.AlertType.WARNING,
                         "Accès restreint",
                         "Autorisation requise",
@@ -154,8 +159,8 @@ public class PharmacyDashboard extends StackPane {
     }
     
     /**
-     * Handles switching to the Admin dashboard
-     */
+    * Gère la bascule vers le tableau de bord administrateur
+    */
     private void handleSwitchToAdmin() {
         try {
             FadeTransition fadeOut = new FadeTransition(Duration.millis(300), this);
@@ -164,7 +169,7 @@ public class PharmacyDashboard extends StackPane {
             
             fadeOut.setOnFinished(event -> {
                 try {
-                    // Load the Admin dashboard
+                    // Charger le tableau de bord Admin
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/DashboardAdmin.fxml"));
                     Parent adminView = loader.load();
                     
@@ -244,7 +249,7 @@ public class PharmacyDashboard extends StackPane {
     public void refreshUserInfo() {
         userLabel.setText(LoggedSeller.getInstance().getNomComplet());
         
-        // Refresh admin button visibility when user info changes
+        // Rafraîchit la visibilité du bouton admin lorsque les infos de l'utilisateur changent
         configureAdminButton();
     }
 
@@ -303,7 +308,7 @@ public class PharmacyDashboard extends StackPane {
         configureMenuButton(btnSales, "ventes.png", "Ventes");
         configureMenuButton(btnMedics, "médicaments.png", "Médicaments");
         configureMenuButton(btnCommandes, "gestionCommande.png", "Commandes");
-        configureMenuButton(btnSuppliers, "medecins.png", "Médecins"); // Use btnSuppliers but with médecins text
+        configureMenuButton(btnSuppliers, "medecins.png", "Médecins"); // Utilise btnSuppliers mais avec le texte Médecins
         configureMenuButton(btnAnalytics, "analyseventes.png", "Analyse des ventes");
     }
 
@@ -337,7 +342,7 @@ public class PharmacyDashboard extends StackPane {
 
         btnSuppliers.setOnAction(event -> {
             setActiveButton(btnSuppliers);
-            loadContent("Médecins"); // Changed from Fournisseurs to Médecins
+            loadContent("Médecins"); // Remplacé Fournisseurs par Médecins
         });
 
         btnAnalytics.setOnAction(event -> {
@@ -466,16 +471,16 @@ public class PharmacyDashboard extends StackPane {
                 + "-fx-border-radius: 10;"
                 + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
                 
-        // Make cards interactive with hover effect
+        // Rend les cartes interactives avec effet de survol
         card.setCursor(javafx.scene.Cursor.HAND);
         
-        // Store original color for hover effect
+        // Enregistre la couleur d'origine pour l'effet de survol
         card.getProperties().put("originalColor", color);
         
-        // Add hover effects
+        // Ajoute des effets au survol
         card.setOnMouseEntered(e -> {
             String originalColor = (String) card.getProperties().get("originalColor");
-            // Create slightly darker color for hover effect
+            // Crée une couleur légèrement plus sombre pour l'effet de survol
             card.setStyle("-fx-background-color: derive(" + originalColor + ", -10%);"
                     + "-fx-background-radius: 10;"
                     + "-fx-border-radius: 10;"
@@ -490,7 +495,7 @@ public class PharmacyDashboard extends StackPane {
                     + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
         });
         
-        // Add click action based on card title
+        // Ajoute une action de clic selon le titre de la carte
         card.setOnMouseClicked(e -> handleCardClick(title, value));
 
         // Configuration des contraintes
@@ -592,10 +597,10 @@ public class PharmacyDashboard extends StackPane {
     }
     
     /**
-     * Handle clicks on dashboard cards
-     * @param title The card title that was clicked
-     * @param value The value displayed on the card
-     */
+    * Gère les clics sur les cartes du tableau de bord
+    * @param title Le titre de la carte cliquée
+    * @param value La valeur affichée sur la carte
+    */
     private void handleCardClick(String title, String value) {
         switch (title) {
             case "CA":
@@ -604,9 +609,9 @@ public class PharmacyDashboard extends StackPane {
                 break;
             case "Employés":
                 if ("ADMINISTRATEUR".equals(LoggedSeller.getInstance().getRole())) {
-                    // If admin, navigate to personnel management
+                    // Si administrateur, accéder à la gestion du personnel
                     handleSwitchToAdmin();
-                    // Allow time for the transition and then load the personnel page
+                    // Laisser le temps pour la transition puis charger la page personnel
                     new Thread(() -> {
                         try {
                             Thread.sleep(500);
@@ -645,19 +650,19 @@ public class PharmacyDashboard extends StackPane {
             case "Médicaments périmés":
             case "Médicaments Stock Faible":
             case "Médicaments péremption - 1 mois":
-                // All medication cards now lead to the same unfiltered medication page
+                // Toutes les cartes sur les médicaments mènent maintenant à la page non filtrée
                 loadContent("Médicaments");
                 break;
             default:
-                // No specific action for unknown cards
+                // Aucun traitement spécifique pour les cartes inconnues
                 System.out.println("Card clicked: " + title + " with value: " + value);
         }
     }
     
     /**
-     * Load medicaments page without filters
-     * This method replaces the previous loadMedicamentsWithFilter method
-     */
+    * Charge la page des médicaments sans filtres
+    * Cette méthode remplace l'ancienne méthode loadMedicamentsWithFilter
+    */
     private void loadMedicaments() {
         try {
             updateHeaderTitle("Médicaments");
@@ -679,8 +684,8 @@ public class PharmacyDashboard extends StackPane {
     }
 
     /**
-     * Show a dialog for features not yet implemented
-     */
+    * Affiche une boîte de dialogue pour les fonctionnalités non encore implémentées
+    */
     private void showNotImplementedAlert(String featureName) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Fonctionnalité à venir");
@@ -769,7 +774,7 @@ public class PharmacyDashboard extends StackPane {
                 // Chemin ABSOLU depuis les resources
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/médicaments.fxml"));
                 viewContent = loader.load();
-            } else if (title.equals("Médecins")) { // Changed from Fournisseurs to Médecins
+            } else if (title.equals("Médecins")) { // Remplacé Fournisseurs par Médecins
                 // Chemin ABSOLU depuis les resources
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/MedecinsPage.fxml"));
                 viewContent = loader.load();

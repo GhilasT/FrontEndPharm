@@ -32,10 +32,10 @@ public class Login extends BorderPane {
         setCenter(rightPane);
         
         // Configuration initiale des proportions
-        leftPane.setPrefWidth(minWidth * 0.55); // 55% de la largeur initiale
-        rightPane.setPrefWidth(minWidth * 0.45); // 45% de la largeur initiale
+        leftPane.setPrefWidth(minWidth * 0.55); // 55 % de la largeur initiale
+        rightPane.setPrefWidth(minWidth * 0.45); // 45 % de la largeur initiale
         
-        // Add listeners for responsive behavior
+        // Ajouter des écouteurs pour un comportement responsive
         widthProperty().addListener((obs, oldVal, newVal) -> {
             handleResize();
         });
@@ -44,7 +44,7 @@ public class Login extends BorderPane {
             handleResize();
         });
         
-        // Set minimum size avec ratio 16:9
+        // Définir une taille minimale avec un ratio 16:9
         setMinSize(minWidth, minHeight);
         setPrefSize(minWidth, minHeight);
     }
@@ -53,7 +53,7 @@ public class Login extends BorderPane {
         double width = getWidth();
         double height = getHeight();
         
-        // If screen gets too small, adjust components
+        // Si l’écran devient trop petit, ajuster les composants
         if (width < 1000) {
             leftPane.setPrefWidth(width * 0.4);
             rightPane.setPrefWidth(width * 0.6);
@@ -62,17 +62,17 @@ public class Login extends BorderPane {
             rightPane.setPrefWidth(width * 0.45);
         }
         
-        // Adjust font sizes based on screen size
+        // Ajuster la taille des polices en fonction de la taille de l’écran
         double fontScale = Math.max(0.7, Math.min(1.0, width / 1280.0));
         
-        // Update label font sizes
+        // Mettre à jour la taille de police des titres
         for (Label label : findLabels(leftPane)) {
             if (label.getText().equals("PharmaPlus")) {
                 label.setFont(Font.font("Open Sans", 90 * fontScale));
             }
         }
         
-        // Also update form title font size
+        // Mettre aussi à jour la taille de la police du titre du formulaire
         for (Label label : findLabels(rightPane)) {
             if (label.getText().equals("Connexion")) {
                 label.setFont(Font.font("Open Sans", 40 * fontScale));
@@ -96,7 +96,7 @@ public class Login extends BorderPane {
         AnchorPane pane = new AnchorPane();
         pane.setStyle("-fx-background-color: #007B3D;");
 
-        // Images with responsive positioning
+        // Images avec positionnement responsive
         ImageView img1 = createImageView("/com/pharmacie/images/MedocBois1.png", 360, 360);
         AnchorPane.setTopAnchor(img1, -91.0);
         AnchorPane.setLeftAnchor(img1, -39.0);
@@ -150,9 +150,9 @@ public class Login extends BorderPane {
         container.setStyle("-fx-background-color: #FFFFFF;");
         container.setPadding(new Insets(50));
         
-        // Center everything inside the right pane
+        // Centrer tout le contenu dans le panneau de droite
         VBox loginContainer = createLoginForm();
-        // Make the login container responsive
+        // Rendre le conteneur de connexion responsive
         loginContainer.prefWidthProperty().bind(container.widthProperty().multiply(0.8));
         loginContainer.maxWidthProperty().bind(container.widthProperty().multiply(0.9));
         

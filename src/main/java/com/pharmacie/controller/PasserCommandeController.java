@@ -1,5 +1,6 @@
 package com.pharmacie.controller;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -27,6 +28,8 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -36,6 +39,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
@@ -70,11 +74,13 @@ public class PasserCommandeController {
     @FXML private TextField textFieldNomMedicament, textFieldQte, textFieldNewQTE;
     @FXML private Label labelNomMedicament, labelPrixTotal;
     @FXML private ChoiceBox<Fournisseur> ChoiceBoxFournisseur;
-    @FXML private Button buttonRecherche, buttonAjouterPanier, buttonValiderCommande, buttonModifierQte;
+    @FXML private Button buttonRecherche, buttonAjouterPanier, buttonValiderCommande, buttonModifierQte, btnRetour;
     @FXML private TableView<PanierItem> tableViewPanier;
     @FXML private TableColumn<PanierItem, String> columnMedicamentPanier, columnPrixPanier;
     @FXML private TableColumn<PanierItem, Integer> columnQuantitePanier;
     @FXML private HBox paginationBar;
+    @FXML private Pane paneParent;
+
     
     // Données
     private LoggedSeller vendeur;
@@ -90,15 +96,33 @@ public class PasserCommandeController {
     private int totalPages = 0;
     private static final int TAILLE_PAGE = 50;
 
+    /**
+     * Initialisation du contrôleur.
+     * Configure les tables, contrôles et charge les données initiales.
+     */
     @FXML
     public void initialize() {
         tableViewPanier.setEditable(true);
+        btnRetour.setOnAction(event -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/pharmacie/view/GestionCommande.fxml")
+                );
+                Parent retourView = loader.load();
+                paneParent.getChildren().setAll(retourView);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
         configurerTables();
         configurerControles();
         chargerDonnees();
         mettreAJourMontantTotal(); // Initialiser le montant total dès le démarrage
     }
 
+    /**
+     * Configure les colonnes et comportements des tables des médicaments et du panier.
+     */
     private void configurerTables() {
         // Table des médicaments
         columnLibelle.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDenomination()));
@@ -143,6 +167,9 @@ public class PasserCommandeController {
         panierItems.addListener((javafx.collections.ListChangeListener<PanierItem>) c -> mettreAJourMontantTotal());
     }
 
+    /**
+     * Configure les actions et écouteurs des contrôles (boutons, choicebox, etc.).
+     */
     private void configurerControles() {
         // Configuration des boutons
         buttonRecherche.setOnAction(this::handleRecherche);
@@ -173,11 +200,18 @@ public class PasserCommandeController {
         ChoiceBoxFournisseur.setItems(fournisseurs);
     }
 
+    /**
+     * Charge les données des fournisseurs et des médicaments.
+     */ 
     private void chargerDonnees() {
         chargerFournisseurs();
         chargerMedicaments();
     }
 
+    /**
+     * Récupère la liste des fournisseurs depuis l'API.
+     * @return Liste de fournisseurs
+     */    
     public static List<Fournisseur> getFournisseurs() {
         List<Fournisseur> fournisseurs = new ArrayList<>();
         try {
@@ -219,6 +253,9 @@ public class PasserCommandeController {
         return fournisseurs;
     }
     
+    /**
+     * Charge les fournisseurs de manière asynchrone et met à jour l'interface.
+     */
     private void chargerFournisseurs() {
         executerTache(new Task<List<Fournisseur>>() {
             @Override protected List<Fournisseur> call() throws Exception {
@@ -250,6 +287,9 @@ public class PasserCommandeController {
         });
     }
 
+    /**
+     * Charge les médicaments paginés de manière asynchrone.
+     */
     private void chargerMedicaments() {
         medicaments.clear();
         executerTache(new Task<List<Medicament>>() {
@@ -287,6 +327,13 @@ public class PasserCommandeController {
         });
     }
 
+    /**
+     * Appel à l'API pour récupérer les médicaments, avec ou sans filtre.
+     * @param terme Terme de recherche
+     * @param page  Numéro de la page
+     * @return Liste de médicaments
+     * @throws Exception En cas d'erreur de communication
+     */
     private List<Medicament> chargerMedicamentsDepuisAPI(String terme, int page) throws Exception {
         List<Medicament> listeMedicaments = new ArrayList<>();
         PageResponse<Medicament> response;
@@ -305,6 +352,11 @@ public class PasserCommandeController {
         return listeMedicaments;
     }
 
+    /**
+     * Recherche un médicament chargé par son nom.
+     * @param nomMedicament Nom à rechercher
+     * @return Objet Medicament ou null
+     */
     private Medicament getMedicamentByName(String nomMedicament) {
         for (Medicament medicament : medicaments) {
             if (medicament.getDenomination().equals(nomMedicament)) {
@@ -314,6 +366,10 @@ public class PasserCommandeController {
         return null;
     }
 
+    /**
+     * Gère l'action de recherche déclenchée par l'utilisateur.
+     * @param event Événement JavaFX
+     */
     @FXML
     private void handleRecherche(ActionEvent event) {
         String nomMedicament = textFieldNomMedicament.getText().trim();
@@ -365,6 +421,11 @@ public class PasserCommandeController {
         });
     }
 
+    /**
+     * Trie les résultats de recherche par ordre de pertinence.
+     * @param resultats Liste de résultats à trier
+     * @param terme     Terme de recherche
+     */
     private void trierResultatsParPertinence(List<Medicament> resultats, String terme) {
         String termeRecherche = terme.toLowerCase();
         
@@ -402,6 +463,10 @@ public class PasserCommandeController {
         });
     }
 
+    /**
+     * Ajoute un médicament sélectionné au panier ou met à jour sa quantité.
+     * @param event Événement JavaFX
+     */
     @FXML
     private void handleAjouterAuPanier(ActionEvent event) {
         Medicament selectedMedicament = tableViewMedicament.getSelectionModel().getSelectedItem();
@@ -440,6 +505,11 @@ public class PasserCommandeController {
         }
     }
 
+    /**
+     * Logique d'ajout ou de mise à jour d'un item dans le panier en fonction de si item est déjà dans le panier.
+     * @param medicament Médicament à ajouter
+     * @param quantite   Quantité souhaitée
+     */
     private void ajouterOuMettreAJourPanier(Medicament medicament, int quantite) {
         String nomMedicament = medicament.getDenomination();
         
@@ -494,6 +564,10 @@ public class PasserCommandeController {
         mettreAJourMontantTotal();
     }
 
+    /**
+     * Supprime ou ajuste la quantité d'un item du panier sélectionné.
+     * @param event Événement JavaFX
+     */
     @FXML
     private void handlesupprimerPanier(ActionEvent event) {
         // Récupérer l'élément sélectionné dans le tableau du panier
@@ -599,6 +673,9 @@ public class PasserCommandeController {
         }
     }
     
+    /**
+     * Réorganise les identifiants des lignes de commande après suppression.
+     */
     private void reorganiserIdsLigneCommande() {
         // Réinitialiser le compteur d'ID
         idLignecommande = 0L;
@@ -607,6 +684,9 @@ public class PasserCommandeController {
         }
     }
 
+    /**
+     * Met à jour l'affichage du montant total du panier.
+     */
     private void mettreAJourMontantTotal() {
         BigDecimal montantTotal = getMontantTotal();
         if (labelPrixTotal != null) { 
@@ -614,6 +694,10 @@ public class PasserCommandeController {
         }
     }
 
+    /**
+     * Gère la validation de la commande, vérifie le panier et lance l'envoi.
+     * @param event Événement JavaFX
+     */
     @FXML
     private void handleValiderCommande(ActionEvent event) {
         if (panierItems.isEmpty()) {
@@ -649,6 +733,9 @@ public class PasserCommandeController {
         envoyerCommande();
     }
 
+    /**
+     * Construit et envoie la requête de commande à l'API.
+     */
     private void envoyerCommande() {
         try {
             Fournisseur fournisseurSelectionne = ChoiceBoxFournisseur.getSelectionModel().getSelectedItem();
@@ -733,6 +820,9 @@ public class PasserCommandeController {
         }
     }
 
+    /**
+     * Réinitialise l'état du panier après validation.
+     */
     private void reinitialiserPanier() {
         panierItems.clear();
         ligneCommandes.clear();
@@ -740,12 +830,23 @@ public class PasserCommandeController {
         mettreAJourMontantTotal(); // Réinitialiser l'affichage du montant total
     }
 
+    /**
+     * Exécute une tâche JavaFX de manière asynchrone.
+     * @param task Tâche à exécuter
+     */
     private void executerTache(Task<?> task) {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }
 
+        /**
+     * Affiche un message d'alerte à l'utilisateur.
+     * @param type    Type d'alerte
+     * @param titre   Titre de la fenêtre
+     * @param entete  Entête du message
+     * @param contenu Contenu détaillé
+     */
     private void afficherMessage(AlertType type, String titre, String entete, String contenu) {
         Alert alert = new Alert(type);
         alert.setTitle(titre);
@@ -754,10 +855,19 @@ public class PasserCommandeController {
         alert.showAndWait();
     }
 
+    /**
+     * Formatte un montant en ajoutant le symbole monétaire.
+     * @param prix Montant à formater
+     * @return Chaîne formatée
+     */
     private String formaterPrix(BigDecimal prix) {
         return prix != null ? prix + CURRENCY_SYMBOL : "";
     }
 
+    /**
+     * Calcule le montant total actuel du panier.
+     * @return Montant total
+     */
     public BigDecimal getMontantTotal() {
         BigDecimal montantTotal = BigDecimal.ZERO;
         for (PanierItem item : panierItems) {
@@ -772,10 +882,18 @@ public class PasserCommandeController {
     }
     
     // Setters
+    /**
+     * Définit le vendeur connecté.
+     * @param vendeur Instance de LoggedSeller
+     */
     public void setVendeur(LoggedSeller vendeur) {
         this.vendeur = vendeur;
     }
     
+    /**
+     * Sélectionne un fournisseur par son identifiant.
+     * @param fournisseurId UUID du fournisseur
+     */
     public void setFournisseurId(UUID fournisseurId) {
         this.fournisseurId = fournisseurId;
         
@@ -791,6 +909,7 @@ public class PasserCommandeController {
             });
         }
     }
+    
     // Classe interne pour les items du panier
     public static class PanierItem {
         private final SimpleStringProperty medicament;
@@ -808,6 +927,9 @@ public class PasserCommandeController {
         public SimpleStringProperty prixFormateProperty() { return prixFormate; }
     }
     
+    /**
+     * Charge la page précédente de médicaments si disponible.
+     */
     @FXML
     private void chargerPagePrecedente() {
         if (pageActuelle > 0) {
@@ -816,6 +938,9 @@ public class PasserCommandeController {
         }
     }
 
+    /**
+     * Charge la page suivante de médicaments si disponible.
+     */
     @FXML
     private void chargerPageSuivante() {
         if (pageActuelle < totalPages - 1) {

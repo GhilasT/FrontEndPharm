@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pharmacie.controller.PasserCommandeController">
+<BorderPane fx:id="paneParent" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pharmacie.controller.PasserCommandeController">
    <left>
       <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="723.0" prefWidth="846.0" BorderPane.alignment="CENTER">
          <children>
@@ -59,6 +59,7 @@
                   <Button onAction="#chargerPageSuivante" prefHeight="25.0" style="-fx-background-color: rgba(0, 123, 61, 1); -fx-background-radius: 15;" text="&gt;" textFill="WHITE" />
                </children>
             </HBox>
+            <Button fx:id="btnRetour" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="56.0" style="-fx-background-color: rgba(0, 123, 61, 1); -fx-text-fill: white;" text="Retour " />
          </children>
       </Pane>
    </left>
