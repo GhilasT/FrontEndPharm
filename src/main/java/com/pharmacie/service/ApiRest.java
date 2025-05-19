@@ -155,7 +155,8 @@ public class ApiRest {
         String url = API_BASE_URL + "/medicaments/" + page;
 
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            url += "?searchTerm=" + searchTerm;
+            // Utiliser "search" comme nom de paramètre, cohérent avec getMedicaments
+            url += "?search=" + java.net.URLEncoder.encode(searchTerm, java.nio.charset.StandardCharsets.UTF_8);
         }
 
         LOGGER.log(Level.INFO, "Envoi d'une requête GET paginée à " + url);

@@ -174,15 +174,30 @@ public class MedicamentsController {
         // Configurer l'action du bouton de recherche
         btnSearch.setOnAction(e -> {
             currentPage = 0; // Réinitialiser à la première page lors d'une nouvelle recherche
-            loadMedicaments(currentPage, searchField.getText().trim());
+            String searchTerm = searchField.getText().trim();
+            statusLabel.setText("Recherche en cours pour: " + searchTerm);
+            loadMedicaments(currentPage, searchTerm);
         });
         
-        // Configurer la recherche en temps réel
+        // Configurer la recherche en temps réel avec un délai (debounce)
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            scheduler.schedule(() -> {
-                currentPage = 0; // Réinitialiser à la première page lors d'une nouvelle recherche
-                loadMedicaments(currentPage, newValue.trim());
-            }, 500, TimeUnit.MILLISECONDS);
+            if (scheduler != null) {
+                scheduler.schedule(() -> {
+                    Platform.runLater(() -> {
+                        currentPage = 0; // Réinitialiser à la première page lors d'une nouvelle recherche
+                        loadMedicaments(currentPage, newValue.trim());
+                    });
+                }, 500, TimeUnit.MILLISECONDS);
+            }
+        });
+        
+        // Configurer l'action pour la touche Entrée dans le champ de recherche
+        searchField.setOnKeyPressed(event -> {
+            if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                currentPage = 0;
+                String searchTerm = searchField.getText().trim();
+                loadMedicaments(currentPage, searchTerm);
+            }
         });
     }
     
@@ -273,9 +288,14 @@ public class MedicamentsController {
             protected PageResponse<Medicament> call() throws Exception {
                 try {
                     // Utilisation du service ApiRest pour récupérer les données paginées depuis le backend
-                    return ApiRest.getMedicamentsPagines(page, searchTerm);
+                    if (searchTerm == null || searchTerm.isEmpty()) {
+                        return ApiRest.getMedicamentsPagines(page);
+                    } else {
+                        // Utiliser la bonne méthode et le bon paramètre de recherche
+                        return ApiRest.getMedicamentsPagines(page, searchTerm);
+                    }
                 } catch (Exception e) {
-                    LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des médicaments", e);
+                    LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des médicaments: {0}", e.getMessage());
                     throw e;
                 }
             }
@@ -287,6 +307,7 @@ public class MedicamentsController {
             // Mettre à jour les données et les contrôles de pagination
             medicaments.setAll(pageResponse.getContent());
             filteredMedicaments = new FilteredList<>(medicaments);
+            medicamentsTable.setItems(filteredMedicaments);
             
             // Mettre à jour les variables de pagination
             currentPage = pageResponse.getCurrentPage();
@@ -303,8 +324,8 @@ public class MedicamentsController {
             totalItemsLabel.setText(String.format("Total: %d médicaments", totalElements));
             statusLabel.setText("Prêt");
             
-            LOGGER.log(Level.INFO, "Page {0}/{1} chargée avec succès, {2} médicaments au total", 
-                    new Object[]{currentPage + 1, totalPages, totalElements});
+            LOGGER.log(Level.INFO, "Page {0}/{1} chargée avec succès, {2} médicaments au total, recherche: {3}", 
+                    new Object[]{currentPage + 1, totalPages, totalElements, searchTerm});
         });
         
         task.setOnFailed(e -> {

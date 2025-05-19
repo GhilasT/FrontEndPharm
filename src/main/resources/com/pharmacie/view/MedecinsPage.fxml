@@ -3,59 +3,45 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
 
-<!--
-  Ici, le VBox tient dans 800×600 px.
-  À l’intérieur, le champ de recherche fait 500px de large,
-  la table 760px, et la pagination/les boutons sont eux aussi contraints.
--->
-<VBox xmlns="http://javafx.com/javafx/8"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.pharmacie.controller.MedecinsController"
-      spacing="10"
-      prefWidth="800" prefHeight="600"
-      style="-fx-padding: 20;">
+<BorderPane xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.pharmacie.controller.MedecinsController"
+            prefHeight="600.0" prefWidth="800.0">
 
-    <!-- Barre de recherche -->
-    <HBox spacing="5" alignment="CENTER_LEFT">
-        <TextField fx:id="searchFieldMedecin"
-                   promptText="Rechercher un médecin..."
-                   prefWidth="500" prefHeight="30"/>
-        <Button fx:id="btnSearch"
-                text="Rechercher"
-                onAction="#handleSearchMedecin"
-                disable="true"/>
-    </HBox>
+    <top>
+        <HBox fx:id="topPane" spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10px;">
+            <TextField fx:id="searchField" promptText="Rechercher un médecin..." HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnSearch" text="Rechercher" />
+            <Button fx:id="btnAddMedecin" text="Ajouter" style="-fx-background-color: #2ecc71; -fx-text-fill: white;" />
+        </HBox>
+    </top>
 
-    <!-- TableView pour afficher la liste des médecins -->
-    <TableView fx:id="medecinsTable"
-               prefWidth="760" prefHeight="350">
-        <columns>
-            <TableColumn fx:id="colCivilite"          text="Civilité"         prefWidth="80"/>
-            <TableColumn fx:id="colNomExercice"       text="Nom"              prefWidth="120"/>
-            <TableColumn fx:id="colPrenomExercice"    text="Prénom"           prefWidth="120"/>
-            <TableColumn fx:id="colRppsMedecin"       text="RPPS"             prefWidth="100"/>
-            <TableColumn fx:id="colProfession"        text="Profession"       prefWidth="120"/>
-            <TableColumn fx:id="colModeExercice"      text="Mode Exercice"    prefWidth="120"/>
-            <TableColumn fx:id="colQualifications"    text="Qualifications"   prefWidth="140"/>
-            <TableColumn fx:id="colStructureExercice" text="Structure"        prefWidth="140"/>
-            <TableColumn fx:id="colFonctionActivite"  text="Fonction"         prefWidth="140"/>
-            <TableColumn fx:id="colGenreActivite"     text="Genre"            prefWidth="100"/>
-            <TableColumn fx:id="colSupprimer"         text="Supprimer"        prefWidth="80"/>
-        </columns>
-    </TableView>
+    <center>
+        <VBox spacing="10" style="-fx-padding: 20;">
+            <!-- TableView pour afficher la liste des médecins -->
+            <TableView fx:id="medecinsTable" prefWidth="760" prefHeight="350">
+                <columns>
+                    <TableColumn fx:id="colCivilite"          text="Civilité"         prefWidth="80"/>
+                    <TableColumn fx:id="colNomExercice"       text="Nom"              prefWidth="120"/>
+                    <TableColumn fx:id="colPrenomExercice"    text="Prénom"           prefWidth="120"/>
+                    <TableColumn fx:id="colRppsMedecin"       text="RPPS"             prefWidth="100"/>
+                    <TableColumn fx:id="colProfession"        text="Profession"       prefWidth="120"/>
+                    <TableColumn fx:id="colModeExercice"      text="Mode Exercice"    prefWidth="120"/>
+                    <TableColumn fx:id="colQualifications"    text="Qualifications"   prefWidth="140"/>
+                    <TableColumn fx:id="colStructureExercice" text="Structure"        prefWidth="140"/>
+                    <TableColumn fx:id="colFonctionActivite"  text="Fonction"         prefWidth="140"/>
+                    <TableColumn fx:id="colGenreActivite"     text="Genre"            prefWidth="100"/>
+                    <TableColumn fx:id="colSupprimer"         text="Supprimer"        prefWidth="80"/>
+                </columns>
+            </TableView>
 
-    <!-- Pagination -->
-    <HBox alignment="CENTER" spacing="10">
-        <Label fx:id="statusLabel" text="Affichage des médecins" />
-        <Pagination fx:id="pagination" />
-    </HBox>
-
-    <!-- Bouton Ajouter -->
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button fx:id="btnAddMedecin"
-                text="Ajouter Médecin"
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-    </HBox>
-
-</VBox>
+            <!-- Pagination -->
+            <HBox alignment="CENTER" spacing="10">
+                <Label fx:id="statusLabel" text="Affichage des médecins" />
+                <Pagination fx:id="pagination" />
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

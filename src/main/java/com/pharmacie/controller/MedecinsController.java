@@ -14,11 +14,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,13 +42,14 @@ public class MedecinsController {
     @FXML private TableColumn<Medecin, String> colGenreActivite;
     @FXML private TableColumn<Medecin, String> colSupprimer;
     @FXML private Pagination pagination;
-    @FXML private TextField searchFieldMedecin;
+    @FXML private TextField searchField; // Changé de searchFieldMedecin à searchField pour correspondre au FXML
     @FXML private Button btnEditMedecin;
     @FXML private Button btnDeleteMedecin;
     @FXML private Button btnDetailsMedecin;
     @FXML private Button btnAddMedecin;
     @FXML private Button btnSearch;
     @FXML private Label statusLabel;
+    @FXML private HBox topPane;
 
     private final ObservableList<Medecin> medecins = FXCollections.observableArrayList();
     private VenteController venteController;
@@ -64,11 +67,11 @@ public class MedecinsController {
         configurePagination();
         configureButtons();
         configureDeleteButtonColumn();
-        loadMedecins(0, searchFieldMedecin.getText());
+        loadMedecins(0, searchField.getText()); // Changé de searchFieldMedecin à searchField
 
         // Désactive le bouton de recherche si le champ est vide
         btnSearch.setDisable(true);
-        searchFieldMedecin.textProperty().addListener((obs, oldVal, newVal) ->
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> // Changé de searchFieldMedecin à searchField
                 btnSearch.setDisable(newVal.trim().isEmpty())
         );
 
@@ -83,6 +86,35 @@ public class MedecinsController {
             });
             return row;
         });
+
+        // Créer un bouton supprimer
+        Button btnDelete = new Button("Supprimer");
+        btnDelete.getStyleClass().add("button-red");
+        btnDelete.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
+        btnDelete.setOnAction(e -> handleDeleteMedecin());
+
+        // Chercher le parent de btnAddMedecin
+        Parent parent = btnAddMedecin.getParent();
+
+        if (parent instanceof HBox) {
+            // Si c'est déjà un HBox, il suffit d'ajouter le bouton
+            ((HBox) parent).getChildren().add(btnDelete);
+        } else if (parent instanceof Pane) {
+            // Sinon, créer un nouveau HBox
+            HBox actionsBox = new HBox(10);
+
+            // Obtenir l'index de btnAdd dans son parent
+            int index = ((Pane) parent).getChildren().indexOf(btnAddMedecin);
+
+            // Retirer btnAdd de son parent
+            ((Pane) parent).getChildren().remove(btnAddMedecin);
+
+            // Ajouter les deux boutons à la HBox
+            actionsBox.getChildren().addAll(btnAddMedecin, btnDelete);
+
+            // Ajouter la HBox au parent à la position de btnAdd
+            ((Pane) parent).getChildren().add(index, actionsBox);
+        }
     }
 
     private void configureTableColumns() {
@@ -108,11 +140,11 @@ public class MedecinsController {
     }
 
     private void configureSearch() {
-        searchFieldMedecin.textProperty().addListener((obs, oldVal, newVal) -> {
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> { // Changé de searchFieldMedecin à searchField
             currentPage = 0;
             loadMedecins(currentPage, newVal);
         });
-        btnSearch.setOnAction(e -> loadMedecins(0, searchFieldMedecin.getText()));
+        btnSearch.setOnAction(e -> loadMedecins(0, searchField.getText())); // Changé de searchFieldMedecin à searchField
     }
 
     private void configurePagination() {
@@ -120,7 +152,7 @@ public class MedecinsController {
         pagination.setCurrentPageIndex(0);
         pagination.currentPageIndexProperty().addListener((obs, oldIdx, newIdx) -> {
             if (newIdx.intValue() != currentPage) {
-                loadMedecins(newIdx.intValue(), searchFieldMedecin.getText());
+                loadMedecins(newIdx.intValue(), searchField.getText()); // Changé de searchFieldMedecin à searchField
             }
         });
     }
@@ -194,15 +226,43 @@ public class MedecinsController {
         if (m == null) return;
         try {
             ApiRest.deleteMedecin(m.getRppsMedecin());
-            loadMedecins(currentPage, searchFieldMedecin.getText());
+            loadMedecins(currentPage, searchField.getText()); // Changé de searchFieldMedecin à searchField
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de supprimer le médecin", e.getMessage());
         }
     }
 
+    private void handleDeleteMedecin() {
+        Medecin selectedMedecin = medecinsTable.getSelectionModel().getSelectedItem();
+
+        if (selectedMedecin == null) {
+            showAlert(Alert.AlertType.WARNING, "Aucune sélection", "Aucun médecin sélectionné",
+                    "Veuillez sélectionner un médecin à supprimer");
+            return;
+        }
+
+        // Confirmation avant suppression
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Confirmer la suppression");
+        confirmDialog.setHeaderText("Vous êtes sur le point de supprimer ce médecin");
+        confirmDialog.setContentText("Êtes-vous sûr de vouloir supprimer le médecin ? ");
+        Optional<ButtonType> result = confirmDialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                ApiRest.deleteMedecin(selectedMedecin.getRppsMedecin());
+                medecins.remove(selectedMedecin);
+                showAlert(Alert.AlertType.INFORMATION, "Suppression réussie", "Médecin supprimé",
+                        "Le médecin a été supprimé avec succès");
+            } catch (Exception ex) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Échec de la suppression",
+                        "Une erreur est survenue lors de la suppression: " + ex.getMessage());
+            }
+        }
+    }
+
     @FXML
     private void handleSearchMedecin() {
-        loadMedecins(0, searchFieldMedecin.getText());
+        loadMedecins(0, searchField.getText()); // Changé de searchFieldMedecin à searchField
     }
 
     /**
@@ -238,6 +298,6 @@ public class MedecinsController {
 
     /** Permet de rafraîchir la liste après ajout/édition */
     public void refreshMedecinsList() {
-        loadMedecins(currentPage, searchFieldMedecin.getText());
+        loadMedecins(currentPage, searchField.getText()); // Changé de searchFieldMedecin à searchField
     }
 }
