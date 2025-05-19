@@ -1,5 +1,6 @@
 package com.pharmacie.controller;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 
@@ -386,6 +388,82 @@ public class MedicamentsController {
         statusLabel.setText("Filtres réinitialisés");
     }
 
+    /**
+     * Applies a predefined filter to the medicaments list.
+     * This method is called from the dashboard when a card is clicked.
+     *
+     * @param filterType The type of filter to apply: "rupture", "perimes", "faible", "peremption"
+     */
+    public void applyFilter(String filterType) {
+        Platform.runLater(() -> {
+            switch (filterType) {
+                case "rupture":
+                    // Filter for out of stock medicaments
+                    if (filterStock != null && filterStock.getItems() != null) {
+                        filterStock.setValue("Rupture");
+                        applyFilters();
+                    }
+                    break;
+                case "perimes":
+                    // We would need to implement this filter in the UI
+                    // For now show a message
+                    statusLabel.setText("Affichage des médicaments périmés");
+                    showAlert(Alert.AlertType.INFORMATION, 
+                              "Information", 
+                              "Filtre médicaments périmés", 
+                              "Ce filtre sera appliqué lors de la prochaine mise à jour.");
+                    break;
+                case "faible":
+                    // Try to set a predefined filter for low stock if available
+                    statusLabel.setText("Affichage des médicaments en stock faible");
+                    fetchMedicamentsWithLowStock();
+                    break;
+                case "peremption":
+                    statusLabel.setText("Affichage des médicaments expirant dans un mois");
+                    showAlert(Alert.AlertType.INFORMATION, 
+                              "Information", 
+                              "Filtre médicaments en péremption proche", 
+                              "Ce filtre sera appliqué lors de la prochaine mise à jour.");
+                    break;
+                default:
+                    // No specific filter
+                    break;
+            }
+        });
+    }
+    
+    /**
+     * Fetch medicaments with stock below alert threshold
+     */
+    private void fetchMedicamentsWithLowStock() {
+        Task<List<Medicament>> task = new Task<>() {
+            @Override
+            protected List<Medicament> call() throws Exception {
+                // In a real implementation, this would call an API endpoint
+                // For now we'll filter the current data
+                return medicaments.stream()
+                    .filter(med -> med.getStock() > 0 && med.getStock() < 5)
+                    .collect(Collectors.toList());
+            }
+        };
+        
+        task.setOnSucceeded(e -> {
+            List<Medicament> lowStock = task.getValue();
+            if (lowStock.isEmpty()) {
+                showAlert(Alert.AlertType.INFORMATION,
+                        "Information",
+                        "Aucun médicament trouvé",
+                        "Aucun médicament avec un stock faible n'a été trouvé.");
+            } else {
+                medicaments.setAll(lowStock);
+                filteredMedicaments = new FilteredList<>(medicaments);
+                medicamentsTable.setItems(filteredMedicaments);
+            }
+        });
+        
+        new Thread(task).start();
+    }
+
     private void showDetailsDialog() {
         Medicament selectedMedicament = medicamentsTable.getSelectionModel().getSelectedItem();
         if (selectedMedicament == null) return;
@@ -707,5 +785,12 @@ public class MedicamentsController {
         });
     }
     
+    private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 
 }

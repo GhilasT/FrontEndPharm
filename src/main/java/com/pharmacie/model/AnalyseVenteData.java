@@ -2,6 +2,9 @@ package com.pharmacie.model;
 
 import java.time.LocalDate;
 
+/**
+ * Modèle de données pour l'analyse des ventes
+ */
 public class AnalyseVenteData {
     private LocalDate date;
     private int ventes;
@@ -47,5 +50,11 @@ public class AnalyseVenteData {
 
     public void setChiffreAffaire(double chiffreAffaire) {
         this.chiffreAffaire = chiffreAffaire;
+    }
+
+    @Override
+    public String toString() {
+        return "AnalyseVenteData [date=" + date + ", ventes=" + ventes + ", commandes=" + commandes + 
+               ", chiffreAffaire=" + String.format("%.2f", chiffreAffaire) + "€]";
     }
 }

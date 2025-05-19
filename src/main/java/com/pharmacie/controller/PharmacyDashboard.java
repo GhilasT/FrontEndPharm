@@ -465,6 +465,33 @@ public class PharmacyDashboard extends StackPane {
                 + "-fx-background-radius: 10;"
                 + "-fx-border-radius: 10;"
                 + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+                
+        // Make cards interactive with hover effect
+        card.setCursor(javafx.scene.Cursor.HAND);
+        
+        // Store original color for hover effect
+        card.getProperties().put("originalColor", color);
+        
+        // Add hover effects
+        card.setOnMouseEntered(e -> {
+            String originalColor = (String) card.getProperties().get("originalColor");
+            // Create slightly darker color for hover effect
+            card.setStyle("-fx-background-color: derive(" + originalColor + ", -10%);"
+                    + "-fx-background-radius: 10;"
+                    + "-fx-border-radius: 10;"
+                    + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 12, 0, 2, 2);");
+        });
+        
+        card.setOnMouseExited(e -> {
+            String originalColor = (String) card.getProperties().get("originalColor");
+            card.setStyle("-fx-background-color: " + originalColor + ";"
+                    + "-fx-background-radius: 10;"
+                    + "-fx-border-radius: 10;"
+                    + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+        });
+        
+        // Add click action based on card title
+        card.setOnMouseClicked(e -> handleCardClick(title, value));
 
         // Configuration des contraintes
         ColumnConstraints column = new ColumnConstraints();
@@ -562,6 +589,87 @@ public class PharmacyDashboard extends StackPane {
         titleLabel.prefWidthProperty().bind(card.widthProperty().subtract(10));
 
         return card;
+    }
+    
+    /**
+     * Handle clicks on dashboard cards
+     * @param title The card title that was clicked
+     * @param value The value displayed on the card
+     */
+    private void handleCardClick(String title, String value) {
+        switch (title) {
+            case "CA":
+            case "Bénéfices":
+                loadAnalytics();
+                break;
+            case "Employés":
+                showNotImplementedAlert("Gestion des employés");
+                break;
+            case "Clients":
+                showNotImplementedAlert("Gestion des clients");
+                break;
+            case "Médecins":
+                loadContent("Médecins");
+                break;
+            case "Médicaments":
+                loadContent("Médicaments");
+                break;
+            case "Médicaments en rupture de stock":
+                loadMedicamentsWithFilter("rupture");
+                break;
+            case "Médicaments périmés":
+                loadMedicamentsWithFilter("perimes");
+                break;
+            case "Médicaments Stock Faible":
+                loadMedicamentsWithFilter("faible");
+                break;
+            case "Médicaments péremption - 1 mois":
+                loadMedicamentsWithFilter("peremption");
+                break;
+            default:
+                // No specific action for unknown cards
+                System.out.println("Card clicked: " + title + " with value: " + value);
+        }
+    }
+    
+    /**
+     * Load medicaments page with specific filter
+     */
+    private void loadMedicamentsWithFilter(String filterType) {
+        try {
+            updateHeaderTitle("Médicaments - Filtre: " + filterType);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/médicaments.fxml"));
+            Parent viewContent = loader.load();
+            
+            // Get controller and apply filter if it exists
+            if (loader.getController() != null && loader.getController() instanceof MedicamentsController) {
+                MedicamentsController controller = (MedicamentsController) loader.getController();
+                controller.applyFilter(filterType);
+            }
+            
+            if (viewContent instanceof Region) {
+                Region region = (Region) viewContent;
+                region.prefWidthProperty().bind(contentPane.widthProperty());
+                region.prefHeightProperty().bind(contentPane.heightProperty());
+            }
+            
+            contentPane.getChildren().setAll(viewContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la vue",
+                    "Détails: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Show a dialog for features not yet implemented
+     */
+    private void showNotImplementedAlert(String featureName) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Fonctionnalité à venir");
+        alert.setHeaderText(featureName);
+        alert.setContentText("Cette fonctionnalité sera disponible dans une prochaine version.");
+        alert.showAndWait();
     }
 
     private void toggleMenu() {

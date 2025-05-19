@@ -58,6 +58,10 @@ public class DashboardAdminController {
         btnSwitchToPharmacien.setOnAction(e -> handleSwitchToPharmacien());
         GestPerso.setOnAction(e -> loadGestionPersonnel());
         GestFournisseurs.setOnAction(e -> loadGestionFournisseurs());
+        GestMedecins.setOnAction(e -> loadGestionMedecins());
+        GestCommandes.setOnAction(e -> loadGestionCommandes());
+        GestVentes.setOnAction(e -> loadGestionVentes());
+        GestMedicaments.setOnAction(e -> loadGestionMedicaments());
     }
 
     private void setupButtonEffects() {
@@ -162,6 +166,50 @@ public class DashboardAdminController {
             contentArea.getChildren().setAll(gestionFournisseurView);
         } catch (IOException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public void loadGestionMedecins() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/MedecinsPage.fxml"));
+            Parent medecinsView = loader.load();
+            
+            contentArea.getChildren().setAll(medecinsView);
+        } catch (IOException ex) {
+            showErrorAlert("Erreur lors du chargement de la gestion des médecins", ex);
+        }
+    }
+    
+    public void loadGestionCommandes() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionCommande.fxml"));
+            Parent commandesView = loader.load();
+            
+            contentArea.getChildren().setAll(commandesView);
+        } catch (IOException ex) {
+            showErrorAlert("Erreur lors du chargement de la gestion des commandes", ex);
+        }
+    }
+    
+    public void loadGestionVentes() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/liste-ventes.fxml"));
+            Parent ventesView = loader.load();
+            
+            contentArea.getChildren().setAll(ventesView);
+        } catch (IOException ex) {
+            showErrorAlert("Erreur lors du chargement de la gestion des ventes", ex);
+        }
+    }
+    
+    public void loadGestionMedicaments() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/médicaments.fxml"));
+            Parent medicamentsView = loader.load();
+            
+            contentArea.getChildren().setAll(medicamentsView);
+        } catch (IOException ex) {
+            showErrorAlert("Erreur lors du chargement de la gestion des médicaments", ex);
         }
     }
 
