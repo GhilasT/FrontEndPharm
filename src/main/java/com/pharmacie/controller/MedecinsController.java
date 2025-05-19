@@ -142,6 +142,7 @@ public class MedecinsController {
     private void configureSearch() {
         searchField.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && !newVal.trim().isEmpty() && newVal.trim().length() >= 3) {
+                currentPage = 0; // Réinitialiser à la première page lors d'une nouvelle recherche
                 searchMedecins(newVal.trim());
             } else if (newVal == null || newVal.trim().isEmpty()) {
                 currentPage = 0;
@@ -152,6 +153,7 @@ public class MedecinsController {
         btnSearch.setOnAction(e -> {
             String searchTerm = searchField.getText().trim();
             if (!searchTerm.isEmpty()) {
+                currentPage = 0; // Réinitialiser à la première page lors d'une recherche via bouton
                 searchMedecins(searchTerm);
             } else {
                 loadMedecins(0, "");
@@ -160,6 +162,7 @@ public class MedecinsController {
     }
 
     private void searchMedecins(String searchTerm) {
+        statusLabel.setText("Recherche en cours...");
         Task<List<Medecin>> searchTask = new Task<>() {
             @Override 
             protected List<Medecin> call() throws Exception {
@@ -169,10 +172,16 @@ public class MedecinsController {
         
         searchTask.setOnSucceeded(e -> {
             List<Medecin> results = searchTask.getValue();
-            medecins.setAll(results);
-            medecinsTable.setItems(medecins);
-            statusLabel.setText(String.format("Recherche: %d médecin(s) trouvé(s) pour '%s'", 
-                                             results.size(), searchTerm));
+            if (results != null) {
+                medecins.clear(); // Vider la liste actuelle
+                medecins.addAll(results); // Ajouter seulement les résultats de la recherche
+                medecinsTable.setItems(medecins);
+                statusLabel.setText(String.format("Recherche: %d médecin(s) trouvé(s) pour '%s'", 
+                                                results.size(), searchTerm));
+            } else {
+                medecins.clear();
+                statusLabel.setText("Aucun résultat trouvé pour '" + searchTerm + "'");
+            }
             
             // Désactiver la pagination pendant la recherche
             pagination.setDisable(true);
@@ -182,12 +191,27 @@ public class MedecinsController {
         searchTask.setOnFailed(e -> {
             LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de médecins", searchTask.getException());
             showAlert(Alert.AlertType.ERROR, 
-                     "Erreur de recherche", 
-                     "La recherche a échoué", 
-                     "Détails: " + searchTask.getException().getMessage());
+                    "Erreur de recherche", 
+                    "La recherche a échoué", 
+                    "Détails: " + searchTask.getException().getMessage());
+            statusLabel.setText("Erreur lors de la recherche");
         });
         
         new Thread(searchTask).start();
+    }
+
+    @FXML
+    private void handleSearchMedecin() {
+        String searchTerm = searchField.getText().trim();
+        if (searchTerm.isEmpty()) {
+            currentPage = 0;
+            loadMedecins(0, "");
+            pagination.setDisable(false);
+            pagination.setVisible(true);
+        } else {
+            currentPage = 0;
+            searchMedecins(searchTerm);
+        }
     }
 
     private void configurePagination() {
@@ -300,18 +324,6 @@ public class MedecinsController {
                 showAlert(Alert.AlertType.ERROR, "Erreur", "Échec de la suppression",
                         "Une erreur est survenue lors de la suppression: " + ex.getMessage());
             }
-        }
-    }
-
-    @FXML
-    private void handleSearchMedecin() {
-        String searchTerm = searchField.getText().trim();
-        if (searchTerm.isEmpty()) {
-            loadMedecins(0, "");
-            pagination.setDisable(false);
-            pagination.setVisible(true);
-        } else {
-            searchMedecins(searchTerm);
         }
     }
 

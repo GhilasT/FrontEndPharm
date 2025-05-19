@@ -17,12 +17,12 @@
             <TableColumn fx:id="columnStatus" maxWidth="1.7976931348623157E308" prefWidth="168.0" text="Statut" />
         </columns>
       </TableView>
-      <Button fx:id="btnInfoCommande" layoutX="1092.0" layoutY="594.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" style="-fx-background-color: rgb(85, 7, 255); -fx-text-fill: white;" text="Détail Commande " />
-      <Button fx:id="btnInfosVendeur" layoutX="960.0" layoutY="594.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" style="-fx-background-color: #1F82F2; -fx-text-fill: WHITE;" text="Détail Responsable" />
-      <Button fx:id="btnInfosFournisseur" layoutX="827.0" layoutY="594.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" style="-fx-background-color: #FFC107; -fx-text-fill: white;" text=" Détail Fournisseur" />
-      <Button fx:id="btnCommandeIncomp" layoutX="691.0" layoutY="594.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" style="-fx-background-color: #F44336; -fx-text-fill: white;" text="Commande Incomplète" />
-      <Button fx:id="btnModifierStatus" layoutX="554.0" layoutY="594.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" style="-fx-background-color: #4CAF50; -fx-text-fill: WHITE;" text="Commande Reçue " />
-      <Button fx:id="btnPasserCommande" layoutX="419.0" layoutY="594.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" style="-fx-background-color: #6A1B9A; -fx-text-fill: WHITE;" text="Passer Commande" />
+      <Button fx:id="btnInfoCommande" layoutX="1070.0" layoutY="594.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: rgb(85, 7, 255); -fx-text-fill: white;" text="Détail Commande" />
+      <Button fx:id="btnInfosVendeur" layoutX="915.0" layoutY="594.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: #1F82F2; -fx-text-fill: WHITE;" text="Détail Responsable" />
+      <Button fx:id="btnInfosFournisseur" layoutX="760.0" layoutY="594.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: #FFC107; -fx-text-fill: white;" text="Détail Fournisseur" />
+      <Button fx:id="btnCommandeIncomp" layoutX="605.0" layoutY="594.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: #F44336; -fx-text-fill: white;" text="Commande Incomplète" />
+      <Button fx:id="btnModifierStatus" layoutX="450.0" layoutY="594.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: #4CAF50; -fx-text-fill: WHITE;" text="Commande Reçue" />
+      <Button fx:id="btnPasserCommande" layoutX="295.0" layoutY="594.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: #6A1B9A; -fx-text-fill: WHITE;" text="Passer Commande" />
       
       
 
