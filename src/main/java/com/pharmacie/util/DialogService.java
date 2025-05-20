@@ -18,8 +18,21 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service utilitaire pour afficher divers types de boîtes de dialogue et popups JavaFX.
+ * Fournit des méthodes pour afficher des messages d'alerte, des informations sur les fournisseurs,
+ * les employés et les détails des commandes.
+ */
 public class DialogService {
 
+    /**
+     * Affiche une boîte de dialogue d'alerte standard.
+     *
+     * @param type Le type d'alerte (par exemple, {@link AlertType#INFORMATION}, {@link AlertType#WARNING}).
+     * @param titre Le titre de la fenêtre de dialogue.
+     * @param entete Le texte d'en-tête de la boîte de dialogue.
+     * @param contenu Le message principal de la boîte de dialogue.
+     */
     public static void afficherMessage(AlertType type, String titre, String entete, String contenu) {
         Alert alert = new Alert(type);
         alert.setTitle(titre);
@@ -28,6 +41,11 @@ public class DialogService {
         alert.showAndWait();
     }
 
+    /**
+     * Affiche une popup avec les informations détaillées d'un fournisseur.
+     *
+     * @param fournisseur L'objet {@link Fournisseur} dont les informations doivent être affichées.
+     */
     public static void afficherPopupFournisseur(Fournisseur fournisseur) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Informations sur le Fournisseur");
@@ -60,6 +78,11 @@ public class DialogService {
         dialog.showAndWait();
     }
 
+    /**
+     * Affiche une popup avec les informations détaillées d'un employé.
+     *
+     * @param employe L'objet {@link Employe} dont les informations doivent être affichées.
+     */
     public static void afficherPopupEmployer(Employe employe) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Informations sur l'employé Responsable");
@@ -93,6 +116,12 @@ public class DialogService {
         dialog.showAndWait();
     }
 
+    /**
+     * Affiche une popup avec les informations détaillées d'une commande, y compris ses lignes de commande.
+     * Si la commande est null, un message d'avertissement est affiché.
+     *
+     * @param commande L'objet {@link Commande} dont les informations doivent être affichées.
+     */
     public static void afficherPopupCommandeInfo(Commande commande) {
         if (commande == null) {
             afficherMessage(AlertType.WARNING, "Avertissement", "Commande non valide",

@@ -8,6 +8,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+/**
+ * Utilitaire pour effectuer des requêtes HTTP, notamment pour interagir avec l'API backend.
+ * Configure un {@link ObjectMapper} pour la sérialisation/désérialisation JSON,
+ * y compris la gestion des mixins pour les classes parentes.
+ */
 public class HttpClientUtil {
     private static final String BASE_URL = Global.getBaseUrl();
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -19,6 +24,13 @@ public class HttpClientUtil {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    /**
+     * Recherche un client par son numéro de téléphone. Si le client n'existe pas, il est créé.
+     *
+     * @param client L'objet {@link Client} contenant au moins le numéro de téléphone pour la recherche ou la création.
+     * @return Le client trouvé ou nouvellement créé.
+     * @throws Exception Si une erreur survient lors de la communication avec l'API ou lors de la (dé)sérialisation.
+     */
     public static Client findOrCreateClient(Client client) throws Exception {
         Client existingClient = getClientByTelephone(client.getTelephone());
         if (existingClient != null) {
@@ -31,6 +43,13 @@ public class HttpClientUtil {
         }
     }
 
+    /**
+     * Récupère un client par son numéro de téléphone en interrogeant l'API.
+     *
+     * @param telephone Le numéro de téléphone du client à rechercher.
+     * @return L'objet {@link Client} correspondant au numéro de téléphone, ou null si non trouvé.
+     * @throws Exception Si une erreur survient lors de la communication avec l'API ou lors de la désérialisation.
+     */
     public static Client getClientByTelephone(String telephone) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/client/telephone/" + telephone))
@@ -53,6 +72,13 @@ public class HttpClientUtil {
         }
     }
 
+    /**
+     * Crée un nouveau client en envoyant ses informations à l'API.
+     *
+     * @param client L'objet {@link Client} à créer.
+     * @return Le client créé, tel que retourné par l'API.
+     * @throws Exception Si une erreur survient lors de la communication avec l'API, de la sérialisation ou de la désérialisation.
+     */
     public static Client createClient(Client client) throws Exception {
         String jsonBody = objectMapper.writeValueAsString(client);
         System.out.println("JSON envoyé pour création: " + jsonBody);
