@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.pharmacie.util.ResourceLoader;
+
 /**
  * Classe utilitaire pour modifier le comportement du {@link PharmacyDashboard}.
  * Permet notamment de redéfinir l'action du bouton "Ventes" et de configurer
@@ -55,9 +57,9 @@ public class PharmacyDashboardModifier {
             
             // Essayer de charger l'icône
             try {
-                InputStream iconStream = PharmacyDashboardModifier.class.getResourceAsStream("/com/pharmacie/images/Icones/medecins.png");
-                if (iconStream != null) {
-                    ImageView icon = new ImageView(new Image(iconStream));
+                Image iconImage = ResourceLoader.loadImage("images/Icones/medecins.png");
+                if (iconImage != null) {
+                    ImageView icon = new ImageView(iconImage);
                     icon.setFitHeight(24);
                     icon.setFitWidth(24);
                     icon.setPreserveRatio(true);

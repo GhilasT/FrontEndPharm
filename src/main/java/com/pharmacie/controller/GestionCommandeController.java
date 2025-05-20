@@ -25,6 +25,7 @@ import com.pharmacie.model.Employe;
 import com.pharmacie.model.LigneCommande;
 import com.pharmacie.util.Global;
 import com.pharmacie.util.DialogService;
+import com.pharmacie.util.LoggedSeller;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -91,16 +92,36 @@ public class GestionCommandeController {
         btnModifierStatus.setOnAction(this::handleChangerStatusRecu);
         btnCommandeIncomp.setOnAction(this::handleCommandeIncomplet);
         btnInfoCommande.setOnAction(this::handleInfoCommande);
-        btnPasserCommande.setOnAction(event -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/passer-commande.fxml"));
-                Parent passerCommandeView = loader.load();
-                paneParent.getChildren().clear(); 
-                paneParent.getChildren().add(passerCommandeView);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        btnPasserCommande.setOnAction(this::handlePasserCommande);
+    }
+    
+    /**
+     * Gère l'action du bouton "Passer Commande".
+     * Vérifie si l'utilisateur est un pharmacien adjoint avant de permettre l'opération.
+     * @param event L'événement d'action.
+     */
+    @FXML
+    private void handlePasserCommande(ActionEvent event) {
+        // Vérifier si l'utilisateur est un pharmacien adjoint
+        String role = LoggedSeller.getInstance().getRole();
+        if (role == null || !role.equalsIgnoreCase("PHARMACIEN_ADJOINT")) {
+            DialogService.afficherMessage(
+                AlertType.WARNING, 
+                "Accès Restreint", 
+                "Opération non autorisée", 
+                "Seul un pharmacien adjoint peut effectuer des opérations d'achat."
+            );
+            return;
+        }
+        
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/passer-commande.fxml"));
+            Parent passerCommandeView = loader.load();
+            paneParent.getChildren().clear(); 
+            paneParent.getChildren().add(passerCommandeView);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

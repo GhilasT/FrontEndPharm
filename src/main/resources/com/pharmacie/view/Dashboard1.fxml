@@ -27,7 +27,7 @@
                      </Button>
                      <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                         <image>
-                           <Image url="@../Images/Icones/icons8-medicament-50.png" />
+                           <Image url="@../images/Icones/icons8-medicament-50.png" />
                         </image>
                      </ImageView>
                      <Label text="PharmaPlus" textFill="WHITE" minWidth="170.0" prefWidth="170.0">
@@ -65,7 +65,7 @@
                      </HBox>
                      <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                         <image>
-                           <Image url="@../Images/Icones/icons8-rappels-de-rendez-vous-40.png" />
+                           <Image url="@../images/Icones/icons8-rappels-de-rendez-vous-40.png" />
                         </image>
                      </ImageView>
                   </children>
@@ -81,7 +81,7 @@
             <children>
                <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                   <image>
-                     <Image url="@../Images/Icones/user.png" />
+                     <Image url="@../images/Icones/user.png" />
                   </image>
                </ImageView>
                <Label fx:id="userLabel" styleClass="user-name" textFill="WHITE">

@@ -26,7 +26,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +33,7 @@ import com.pharmacie.App;
 import com.pharmacie.model.Dashboard;
 import com.pharmacie.service.ApiRest;
 import com.pharmacie.util.LoggedSeller;
+import com.pharmacie.util.ResourceLoader;
 
 /**
  * Contrôleur principal du tableau de bord de la pharmacie.
@@ -309,31 +309,15 @@ public class PharmacyDashboard extends StackPane {
         HBox content = new HBox(10);
         content.setAlignment(Pos.CENTER_LEFT);
 
-        try {
-            // Essayons plusieurs chemins possibles
-            InputStream iconStream = getClass().getResourceAsStream("/Icones/" + iconName);
-            if (iconStream == null) {
-                iconStream = getClass().getResourceAsStream("/images/Icones/" + iconName);
-            }
-            if (iconStream == null) {
-                iconStream = getClass().getResourceAsStream("/com/pharmacie/Icones/" + iconName);
-            }
-            if (iconStream == null) {
-                iconStream = getClass().getResourceAsStream("/com/pharmacie/images/Icones/" + iconName);
-            }
-
-            if (iconStream != null) {
-                ImageView icon = new ImageView(new Image(iconStream));
-                icon.setFitHeight(24);
-                icon.setFitWidth(24);
-                icon.setPreserveRatio(true);
-                content.getChildren().add(icon);
-            } else {
-                System.out.println("Icône non trouvée après plusieurs tentatives: " + iconName);
-                content.getChildren().add(new Label("•"));
-            }
-        } catch (Exception e) {
-            System.out.println("Erreur lors du chargement de l'icône: " + e.getMessage());
+        Image iconImage = ResourceLoader.loadImage("images/Icones/" + iconName);
+        if (iconImage != null) {
+            ImageView icon = new ImageView(iconImage);
+            icon.setFitHeight(24);
+            icon.setFitWidth(24);
+            icon.setPreserveRatio(true);
+            content.getChildren().add(icon);
+        } else {
+            System.out.println("Icône non trouvée: " + iconName);
             content.getChildren().add(new Label("•"));
         }
 
@@ -602,30 +586,11 @@ public class PharmacyDashboard extends StackPane {
 
         // ImageView
         ImageView icon = new ImageView();
-        try {
-            // Essayons plusieurs chemins possibles
-            InputStream iconStream = getClass().getResourceAsStream("/Icones/fournisseurs.png");
-            if (iconStream == null) {
-                iconStream = getClass().getResourceAsStream("/images/Icones/fournisseurs.png");
-            }
-            if (iconStream == null) {
-                iconStream = getClass().getResourceAsStream("/com/pharmacie/Icones/fournisseurs.png");
-            }
-            if (iconStream == null) {
-                iconStream = getClass().getResourceAsStream("/com/pharmacie/images/Icones/fournisseurs.png");
-            }
-            if (iconStream == null) {
-                iconStream = getClass()
-                        .getResourceAsStream("../../../../../resources/com/pharmacie/images/Icones/fournisseurs.png");
-            }
-
-            if (iconStream != null) {
-                icon.setImage(new Image(iconStream));
-            } else {
-                System.out.println("Icône non trouvée après plusieurs tentatives");
-            }
-        } catch (Exception e) {
-            System.out.println("Erreur lors du chargement de l'icône: " + e.getMessage());
+        Image image = ResourceLoader.loadImage("images/Icones/fournisseurs.png");
+        if (image != null) {
+            icon.setImage(image);
+        } else {
+            System.out.println("Icône non trouvée pour la carte");
         }
         icon.setFitHeight(40);
         icon.setFitWidth(40);

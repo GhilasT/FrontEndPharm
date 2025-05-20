@@ -225,6 +225,15 @@ public class VentesController {
      */
     @FXML
     private void handleEffectuerVente(ActionEvent event) {
+        // Vérifier si l'utilisateur est un pharmacien adjoint
+        String role = LoggedSeller.getInstance().getRole();
+        if (role == null || !role.equalsIgnoreCase("PHARMACIEN_ADJOINT")) {
+            showAlert(Alert.AlertType.WARNING, "Accès Restreint", 
+                      "Opération non autorisée", 
+                      "Seul un pharmacien adjoint peut effectuer des opérations de vente.");
+            return;
+        }
+        
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/ClientsPage.fxml"));
             Parent root = loader.load();
@@ -241,11 +250,10 @@ public class VentesController {
             modal.showAndWait();
 
             if (this.clientId == null) {
-
                 return;
             }
 
-            // 2) On charge la vue “vente.fxml” DANS LE même rootPane
+            // 2) On charge la vue "vente.fxml" DANS LE même rootPane
             FXMLLoader loader2 = new FXMLLoader(getClass().getResource("/com/pharmacie/view/vente.fxml"));
             Parent ventePane = loader2.load();
             VenteController venteCtrl = loader2.getController();
@@ -256,7 +264,7 @@ public class VentesController {
             rootPane.setCenter(ventePane);
 
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d’ouvrir le formulaire client ou la page de vente", e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le formulaire client ou la page de vente", e.getMessage());
         }
     }
 

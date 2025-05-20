@@ -22,6 +22,7 @@ import com.pharmacie.controller.PharmacyDashboardModifier;
 import com.pharmacie.model.dto.LoginResponse;
 import com.pharmacie.util.Global;
 import com.pharmacie.util.LoggedSeller;
+import com.pharmacie.util.ResourceLoader;
 
 /**
  * Main application class for the pharmacy management system.
@@ -57,9 +58,6 @@ public class App extends Application {
     /** Dashboard controller for pharmacy users. */
     PharmacyDashboard dashboard = new PharmacyDashboard();
     
-    /** The root node for the admin dashboard UI. */
-    private Parent dashboardAdmin;
-    
     /** The scene for the admin dashboard. */
     Scene adminScene;
 
@@ -79,33 +77,48 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         App.primaryStage = primaryStage;
-        primaryStage.getIcons()
-                .add(new Image(getClass().getResource("/com/pharmacie/images/Icones/logo16.png").toExternalForm()));
-        primaryStage.getIcons()
-                .add(new Image(getClass().getResource("/com/pharmacie/images/Icones/logo32.png").toExternalForm()));
-        primaryStage.getIcons()
-                .add(new Image(getClass().getResource("/com/pharmacie/images/Icones/logo48.png").toExternalForm()));
-        primaryStage.getIcons()
-                .add(new Image(getClass().getResource("/com/pharmacie/images/Icones/logo64.png").toExternalForm()));
+        
+        // Chargement des icônes de l'application avec ResourceLoader
+        addApplicationIcon(primaryStage, "images/Icones/logo16.png");
+        addApplicationIcon(primaryStage, "images/Icones/logo32.png");
+        addApplicationIcon(primaryStage, "images/Icones/logo48.png");
+        addApplicationIcon(primaryStage, "images/Icones/logo64.png");
 
         Login login = new Login();
         loginScene = new Scene(login);
         Scene dashBoardScene = new Scene(dashboard);
-        try {
-            dashboardAdmin = FXMLLoader.load(getClass().getResource("/com/pharmacie/view/DashboardAdmin.fxml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Erreur", "Impossible de charger le tableau de bord administrateur.");
-            return;
-        }
+        
+        // We'll only create the admin scene when needed, not at startup
+
         PharmacyDashboardModifier.modifyDashboard(dashboard);
-        adminScene = new Scene(dashboardAdmin);
 
         primaryStage.setTitle("Pharmacie - Connexion");
         primaryStage.setScene(loginScene);
         primaryStage.show();
 
         login.getLoginButton().setOnAction(e -> handleLogin(login, primaryStage, dashBoardScene));
+    }
+
+    /**
+     * Ajoute une icône à la fenêtre principale de l'application
+     * @param stage La fenêtre qui doit recevoir l'icône
+     * @param path Le chemin vers l'icône
+     */
+    private void addApplicationIcon(Stage stage, String path) {
+        Image iconImage = ResourceLoader.loadImage(path);
+        if (iconImage != null) {
+            stage.getIcons().add(iconImage);
+        }
+    }
+
+    /**
+     * Creates a fresh instance of the admin dashboard scene.
+     * @return A new Scene containing the admin dashboard.
+     * @throws IOException If loading the FXML fails.
+     */
+    private Scene createAdminDashboardScene() throws IOException {
+        Parent dashboardAdmin = FXMLLoader.load(getClass().getResource("/com/pharmacie/view/DashboardAdmin.fxml"));
+        return new Scene(dashboardAdmin);
     }
 
     /**
@@ -193,7 +206,14 @@ public class App extends Application {
                         );
                         
                         if ("ADMINISTRATEUR".equalsIgnoreCase(role)) {
-                            primaryStage.setScene(adminScene);
+                            try {
+                                // Always create a fresh admin dashboard scene
+                                Scene freshAdminScene = createAdminDashboardScene();
+                                primaryStage.setScene(freshAdminScene);
+                            } catch (IOException e) {
+                                showAlert("Erreur", "Impossible de charger le tableau de bord administrateur: " + e.getMessage());
+                                e.printStackTrace();
+                            }
                         } else {
                             dashboard.refreshUserInfo();
                             primaryStage.setScene(dashBoardScene);
@@ -211,6 +231,7 @@ public class App extends Application {
                 }
             } catch (Exception e) {
                 showAlert("Erreur", "Erreur de traitement: " + e.getMessage());
+                e.printStackTrace();
             }
         });
 
