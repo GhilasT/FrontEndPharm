@@ -47,6 +47,12 @@ public class DialogService {
      * @param fournisseur L'objet {@link Fournisseur} dont les informations doivent être affichées.
      */
     public static void afficherPopupFournisseur(Fournisseur fournisseur) {
+        if (fournisseur == null) {
+            afficherMessage(AlertType.WARNING, "Avertissement", "Fournisseur non valide",
+                    "Aucun fournisseur valide fourni.");
+            return;
+        }
+
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Informations sur le Fournisseur");
 
@@ -57,13 +63,13 @@ public class DialogService {
         Label titreLabel = new Label("Détails du Fournisseur");
         titreLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;");
 
-        Label nomSocieteLabel = new Label("Nom Société : " + fournisseur.getNomSociete());
-        Label adresseLabel = new Label("Adresse : " + fournisseur.getAdresse());
-        Label telephoneLabel = new Label("Téléphone : " + fournisseur.getTelephone());
-        Label emailLabel = new Label("Email : " + fournisseur.getEmail());
-        Label sujetFonctionLabel = new Label("Sujet Fonction : " + fournisseur.getSujetFonction());
-        Label faxLabel = new Label("Fax : " + fournisseur.getFax());
-        Label idFournisseurLabel = new Label("ID Fournisseur : " + fournisseur.getIdFournisseur());
+        Label nomSocieteLabel = new Label("Nom Société : " + (fournisseur.getNomSociete() != null ? fournisseur.getNomSociete() : "Non renseigné"));
+        Label adresseLabel = new Label("Adresse : " + (fournisseur.getAdresse() != null ? fournisseur.getAdresse() : "Non renseignée"));
+        Label telephoneLabel = new Label("Téléphone : " + (fournisseur.getTelephone() != null ? fournisseur.getTelephone() : "Non renseigné"));
+        Label emailLabel = new Label("Email : " + (fournisseur.getEmail() != null ? fournisseur.getEmail() : "Non renseigné"));
+        Label sujetFonctionLabel = new Label("Sujet Fonction : " + (fournisseur.getSujetFonction() != null ? fournisseur.getSujetFonction() : "Non renseigné"));
+        Label faxLabel = new Label("Fax : " + (fournisseur.getFax() != null ? fournisseur.getFax() : "Non renseigné"));
+        Label idFournisseurLabel = new Label("ID Fournisseur : " + (fournisseur.getIdFournisseur() != null ? fournisseur.getIdFournisseur() : "Non renseigné"));
 
         for (Label label : new Label[]{nomSocieteLabel, adresseLabel, telephoneLabel, emailLabel, sujetFonctionLabel, faxLabel, idFournisseurLabel}) {
             label.setStyle("-fx-font-size: 14px; -fx-text-fill: #34495E;");

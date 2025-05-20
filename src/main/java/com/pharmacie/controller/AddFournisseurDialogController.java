@@ -35,6 +35,12 @@ public class AddFournisseurDialogController {
             dialog = new Dialog<>();
             dialog.setTitle("Ajouter un fournisseur");
             dialog.setDialogPane(loader.load());
+            
+            // Ajouter les boutons OK et Annuler si nécessaire
+            ButtonType okButtonType = new ButtonType("Ajouter", ButtonBar.ButtonData.OK_DONE);
+            ButtonType cancelButtonType = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+            dialog.getDialogPane().getButtonTypes().addAll(okButtonType, cancelButtonType);
+            
             configureValidation();
         } catch (IOException e) {
             throw new RuntimeException("Erreur chargement dialog", e);
@@ -55,8 +61,9 @@ public class AddFournisseurDialogController {
         if (okButtonType != null) {
             Button okButton = (Button) dialog.getDialogPane().lookupButton(okButtonType);
             okButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
-                if (!validateInputs())
+                if (!validateInputs()) {
                     event.consume();
+                }
             });
         }
     }
@@ -100,13 +107,14 @@ public class AddFournisseurDialogController {
      * @return FournisseurCreateRequest rempli avec les saisies utilisateur
      */
     public FournisseurCreateRequest getCreateRequest() {
-        FournisseurCreateRequest req = new FournisseurCreateRequest();
-        req.setNomSociete(nomSocieteField.getText().trim());
-        req.setEmail(emailField.getText().trim());
-        req.setTelephone(telephoneField.getText().trim());
-        req.setAdresse(adresseField.getText().trim());
-        req.setSujetFonction(sujetFonctionField.getText().trim());
-        req.setFax(faxField.getText().trim());
+        FournisseurCreateRequest req = new FournisseurCreateRequest(
+            nomSocieteField.getText().trim(),
+            emailField.getText().trim(),
+            telephoneField.getText().trim(),
+            adresseField.getText().trim(),
+            sujetFonctionField.getText().trim(),
+            faxField.getText().trim()
+        );
         return req;
     }
 

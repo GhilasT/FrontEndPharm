@@ -161,6 +161,7 @@ public class FournisseurApi {
             HttpRequest httpRequest = HttpRequest.newBuilder()
                     .uri(URI.create(FOURNISSEUR_URL))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 
@@ -186,6 +187,7 @@ public class FournisseurApi {
             HttpRequest httpRequest = HttpRequest.newBuilder()
                     .uri(URI.create(FOURNISSEUR_URL + "/" + id))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + Global.getToken())
                     .PUT(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 
