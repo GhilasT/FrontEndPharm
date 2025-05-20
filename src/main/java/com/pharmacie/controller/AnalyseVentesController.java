@@ -14,6 +14,18 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+/**
+ * Contrôleur pour l'analyse et la visualisation des données de vente.
+ * 
+ * Cette classe permet de :
+ * - Afficher des graphiques d'évolution des ventes et du chiffre d'affaires.
+ * - Filtrer les données selon différentes périodes (semaine, mois, année).
+ * - Personnaliser la période d'analyse.
+ * - Comparer les ventes et commandes sur une même période.
+ * 
+ * Les graphiques permettent de visualiser les tendances de performance de la pharmacie
+ * et d'aider à la prise de décision.
+ */
 public class AnalyseVentesController {
     @FXML
     private LineChart<String, Number> ventesChart;
@@ -22,6 +34,10 @@ public class AnalyseVentesController {
     @FXML
     private Spinner<Integer> nbMoisSpinner;
 
+    /**
+     * Initialise les composants de l'interface utilisateur.
+     * Configure le spinner pour sélectionner le nombre de mois et affiche les données par défaut pour la semaine.
+     */
     @FXML
     public void initialize() {
         nbMoisSpinner.setValueFactory(
@@ -29,6 +45,11 @@ public class AnalyseVentesController {
         handleSemaine(); // Par défaut
     }
 
+    /**
+     * Met à jour les graphiques avec les données fournies.
+     * 
+     * @param data Les données de vente à afficher, organisées par date.
+     */
     private void updateCharts(Map<LocalDate, AnalyseVenteData> data) {
         // Réinitialiser les graphiques
         ventesChart.getData().clear();
@@ -71,6 +92,9 @@ public class AnalyseVentesController {
         caChart.setAnimated(true);
     }
 
+    /**
+     * Affiche les données de vente pour la semaine en cours.
+     */
     @FXML
     private void handleSemaine() {
         try {
@@ -80,6 +104,9 @@ public class AnalyseVentesController {
         }
     }
 
+    /**
+     * Affiche les données de vente pour le mois en cours.
+     */
     @FXML
     private void handleMois() {
         try {
@@ -89,6 +116,9 @@ public class AnalyseVentesController {
         }
     }
 
+    /**
+     * Affiche les données de vente pour les six derniers mois.
+     */
     @FXML
     private void handleSixMois() {
         try {
@@ -98,6 +128,9 @@ public class AnalyseVentesController {
         }
     }
 
+    /**
+     * Affiche les données de vente pour l'année en cours.
+     */
     @FXML
     private void handleAnnee() {
         try {
@@ -107,6 +140,9 @@ public class AnalyseVentesController {
         }
     }
 
+    /**
+     * Affiche les données de vente pour une période personnalisée définie par l'utilisateur.
+     */
     @FXML
     private void handlePersonnalise() {
         int nbMois = nbMoisSpinner.getValue();
@@ -117,6 +153,11 @@ public class AnalyseVentesController {
         }
     }
 
+    /**
+     * Affiche une alerte d'erreur avec le message spécifié.
+     * 
+     * @param message Le message d'erreur à afficher.
+     */
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Erreur");

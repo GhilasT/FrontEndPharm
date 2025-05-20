@@ -9,6 +9,10 @@ import javafx.scene.control.*;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+/**
+ * Contrôleur pour la boîte de dialogue de modification d'un fournisseur.
+ * Gère l'interface utilisateur et la logique de validation pour la mise à jour des informations d'un fournisseur.
+ */
 public class EditFournisseurDialogController {
     @FXML
     private TextField nomSocieteField, sujetFonctionField, faxField, emailField, telephoneField, adresseField;
@@ -19,6 +23,11 @@ public class EditFournisseurDialogController {
     private final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
     private final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
 
+    /**
+     * Constructeur. Charge le fichier FXML de la boîte de dialogue et configure le contrôleur.
+     * Initialise également la validation des champs.
+     * @throws RuntimeException si le chargement du fichier FXML échoue.
+     */
     public EditFournisseurDialogController() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/EditFournisseurDialog.fxml"));
@@ -30,6 +39,10 @@ public class EditFournisseurDialogController {
         }
     }
 
+    /**
+     * Configure la validation des champs du formulaire.
+     * Ajoute un filtre d'événement au bouton "OK" pour exécuter la validation avant de fermer la boîte de dialogue.
+     */
     private void configureValidation() {
         ButtonType okButtonType = dialog.getDialogPane().getButtonTypes()
                 .stream()
@@ -46,6 +59,11 @@ public class EditFournisseurDialogController {
         }
     }
 
+    /**
+     * Valide les champs du formulaire (email et téléphone).
+     * Affiche les messages d'erreur s'il y en a.
+     * @return true si tous les champs sont valides, false sinon.
+     */
     private boolean validate() {
         StringBuilder errors = new StringBuilder();
         
@@ -58,6 +76,10 @@ public class EditFournisseurDialogController {
         return errors.length() == 0;
     }
 
+    /**
+     * Remplit les champs du formulaire avec les informations d'un fournisseur existant.
+     * @param fournisseur Le fournisseur dont les informations doivent être affichées.
+     */
     public void setFournisseur(Fournisseur fournisseur) {
         nomSocieteField.setText(fournisseur.getNomSociete());
         emailField.setText(fournisseur.getEmail());
@@ -67,6 +89,10 @@ public class EditFournisseurDialogController {
         faxField.setText(fournisseur.getFax());
     }
 
+    /**
+     * Récupère les informations mises à jour du fournisseur à partir des champs du formulaire.
+     * @return Un objet {@link FournisseurUpdateRequest} contenant les données mises à jour.
+     */
     public FournisseurUpdateRequest getUpdateRequest() {
         FournisseurUpdateRequest req = new FournisseurUpdateRequest();
         req.setNomSociete(nomSocieteField.getText().trim());
@@ -78,6 +104,10 @@ public class EditFournisseurDialogController {
         return req;
     }
 
+    /**
+     * Affiche la boîte de dialogue et attend que l'utilisateur interagisse avec elle (par exemple, clique sur "OK" ou "Annuler").
+     * @return Un {@link Optional} contenant le {@link ButtonType} sur lequel l'utilisateur a cliqué.
+     */
     public Optional<ButtonType> showAndWait() {
         return dialog.showAndWait();
     }

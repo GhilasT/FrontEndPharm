@@ -15,16 +15,37 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Contrôleur pour l'ajout d'un nouveau médecin.
+ * 
+ * Cette classe permet de :
+ * - Saisir les informations d'un nouveau médecin (RPPS, civilité, nom, etc.).
+ * - Vérifier si un médecin avec le même RPPS existe déjà.
+ * - Envoyer une requête de création au serveur.
+ * - Notifier le contrôleur parent de la création réussie.
+ * 
+ * Le contrôleur effectue les opérations réseau dans un thread séparé pour ne pas
+ * bloquer l'interface utilisateur. Il communique avec le contrôleur principal des
+ * médecins pour rafraîchir la liste après un ajout réussi.
+ */
 public class AddMedecinController {
 
-    @FXML private TextField civiliteField, nomField, prenomField, rppsField, professionField, modeExerciceField,
+    @FXML
+    private TextField civiliteField, nomField, prenomField, rppsField, professionField, modeExerciceField,
             qualificationsField, structureExerciceField, fonctionActiviteField, genreActiviteField;
-    @FXML private TextField categorieProfessionnelleField;
-    @FXML private RadioButton radioBtnMr, radioBtnMme;
-    @FXML private Button btnAjouterMedecin;
+    @FXML
+    private TextField categorieProfessionnelleField;
+    @FXML
+    private RadioButton radioBtnMr, radioBtnMme;
+    @FXML
+    private Button btnAjouterMedecin;
     @FXML
     private MedecinsController medecinsController;
 
+    /**
+     * Initialise les composants de l'interface utilisateur.
+     * Configure les boutons radio pour la civilité.
+     */
     @FXML
     private void initialize() {
         // Créer un ToggleGroup pour la civilité
@@ -33,11 +54,14 @@ public class AddMedecinController {
         radioBtnMme.setToggleGroup(civiliteGroup);
     }
 
-
-
-    // 1) Nouveau champ pour conserver le médecin créé
+    // Nouveau champ pour conserver le médecin créé
     private MedecinResponse createdMedecin;
 
+    /**
+     * Gère l'ajout d'un médecin en validant les données et en envoyant une requête au serveur.
+     * 
+     * @param event L'événement déclenché par le clic sur le bouton "Ajouter".
+     */
     @FXML
     private void handleAjouterMedecin(ActionEvent event) {
         String rpps = rppsField.getText().trim();
@@ -70,7 +94,7 @@ public class AddMedecinController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    // 2) Vérifier si le médecin existe
+                    // Vérifier si le médecin existe
                     MedecinResponse existing = ApiRest.checkMedecinByRpps(rpps);
                     if (existing != null) {
                         showAlert(Alert.AlertType.ERROR,
@@ -78,7 +102,7 @@ public class AddMedecinController {
                                 "Le médecin avec ce numéro RPPS existe déjà",
                                 null);
                     } else {
-                        // 3) Créer le médecin et récupérer la réponse
+                        // Créer le médecin et récupérer la réponse
                         createdMedecin = ApiRest.createMedecin(request);
 
                         showAlert(Alert.AlertType.INFORMATION,
@@ -86,12 +110,12 @@ public class AddMedecinController {
                                 "Médecin créé",
                                 "Le médecin a été ajouté avec succès.");
 
-                        // 4) Rafraîchir la liste principale
+                        // Rafraîchir la liste principale
                         if (medecinsController != null) {
                             medecinsController.refreshMedecinsList();
                         }
 
-                        // 5) Fermer le formulaire
+                        // Fermer le formulaire
                         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                         stage.close();
                     }
@@ -109,12 +133,22 @@ public class AddMedecinController {
     }
 
     /**
-     * Exposé pour que MedecinsController sache quel médecin vient d'être créé.
+     * Retourne le médecin créé après une création réussie.
+     * 
+     * @return Un objet MedecinResponse représentant le médecin créé.
      */
     public MedecinResponse getCreatedMedecin() {
         return createdMedecin;
     }
 
+    /**
+     * Affiche une alerte avec le type, le titre, l'en-tête et le contenu spécifiés.
+     * 
+     * @param type    Le type de l'alerte (INFORMATION, ERREUR, etc.).
+     * @param title   Le titre de l'alerte.
+     * @param header  L'en-tête de l'alerte.
+     * @param content Le contenu de l'alerte.
+     */
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -123,17 +157,23 @@ public class AddMedecinController {
         alert.showAndWait();
     }
 
+    /**
+     * Définit le contrôleur parent pour permettre la communication après l'ajout d'un médecin.
+     * 
+     * @param medecinsController Le contrôleur parent des médecins.
+     */
     public void setMedecinsController(MedecinsController medecinsController) {
         this.medecinsController = medecinsController;
     }
+
+    /**
+     * Gère l'annulation de l'ajout d'un médecin en fermant la fenêtre actuelle.
+     * 
+     * @param event L'événement déclenché par le clic sur le bouton "Annuler".
+     */
     @FXML
     private void handleAnnuler(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
-
     }
-
-
-
-
 }

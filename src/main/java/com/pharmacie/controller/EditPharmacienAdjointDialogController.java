@@ -8,6 +8,11 @@ import javafx.scene.control.*;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+/**
+ * Contrôleur pour la boîte de dialogue de modification d'un pharmacien adjoint.
+ * Gère l'interface utilisateur, l'initialisation des composants et la validation
+ * pour la mise à jour des informations d'un pharmacien adjoint.
+ */
 public class EditPharmacienAdjointDialogController {
     @FXML
     private TextField nomField, prenomField, emailField, telephoneField,
@@ -23,6 +28,11 @@ public class EditPharmacienAdjointDialogController {
     private final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
     private final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
 
+    /**
+     * Constructeur. Charge le fichier FXML de la boîte de dialogue, configure le contrôleur,
+     * initialise les composants et met en place la validation.
+     * @throws RuntimeException si le chargement du fichier FXML échoue.
+     */
     public EditPharmacienAdjointDialogController() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/EditPharmacienAdjointDialog.fxml"));
@@ -35,10 +45,17 @@ public class EditPharmacienAdjointDialogController {
         }
     }
 
+    /**
+     * Initialise les composants du formulaire, comme le ComboBox pour le statut du contrat.
+     */
     private void initialize() {
         statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "ALTERNANCE");
     }
 
+    /**
+     * Configure la validation des champs du formulaire.
+     * Ajoute un filtre d'événement au bouton "OK" pour exécuter la validation avant de fermer la boîte de dialogue.
+     */
     private void setupValidation() {
         ButtonType okButtonType = dialog.getDialogPane().getButtonTypes()
                 .stream()
@@ -55,6 +72,11 @@ public class EditPharmacienAdjointDialogController {
         }
     }
 
+    /**
+     * Valide les champs du formulaire (email et téléphone).
+     * Affiche les messages d'erreur s'il y en a.
+     * @return true si tous les champs sont valides, false sinon.
+     */
     private boolean validate() {
         StringBuilder errors = new StringBuilder();
         if (!EMAIL_PATTERN.matcher(emailField.getText()).matches())
@@ -65,6 +87,10 @@ public class EditPharmacienAdjointDialogController {
         return errors.length() == 0;
     }
 
+    /**
+     * Remplit les champs du formulaire avec les informations d'un pharmacien adjoint existant.
+     * @param pharmacien Le pharmacien adjoint dont les informations doivent être affichées.
+     */
     public void setPharmacienAdjoint(PharmacienAdjoint pharmacien) {
         nomField.setText(pharmacien.getNom());
         prenomField.setText(pharmacien.getPrenom());
@@ -78,6 +104,10 @@ public class EditPharmacienAdjointDialogController {
         dateEmbauchePicker.setValue(pharmacien.getDateEmbauche());
     }
 
+    /**
+     * Récupère les informations mises à jour du pharmacien adjoint à partir des champs du formulaire.
+     * @return Un objet {@link PharmacienAdjointUpdateRequest} contenant les données mises à jour.
+     */
     public PharmacienAdjointUpdateRequest getUpdateRequest() {
         PharmacienAdjointUpdateRequest req = new PharmacienAdjointUpdateRequest();
         req.setNom(nomField.getText());
@@ -93,6 +123,10 @@ public class EditPharmacienAdjointDialogController {
         return req;
     }
 
+    /**
+     * Affiche la boîte de dialogue et attend que l'utilisateur interagisse avec elle.
+     * @return Un {@link Optional} contenant le {@link ButtonType} sur lequel l'utilisateur a cliqué.
+     */
     public Optional<ButtonType> showAndWait() {
         return dialog.showAndWait();
     }

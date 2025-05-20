@@ -20,6 +20,18 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Contrôleur pour la gestion des clients.
+ * 
+ * Cette classe est responsable de:
+ * - Afficher la liste des clients dans un TableView
+ * - Permettre la sélection d'un client pour une vente
+ * - Déclencher l'ajout d'un nouveau client
+ * 
+ * Ce contrôleur est généralement utilisé comme une fenêtre modale depuis
+ * le contrôleur des ventes pour sélectionner un client existant ou en créer
+ * un nouveau lors d'une vente.
+ */
 public class ClientsController {
 
     @FXML private TableView<Client> clientsTable;
@@ -34,6 +46,11 @@ public class ClientsController {
     private VentesController venteController;
     private Stage modalStage;
 
+    /**
+     * Initialise le contrôleur après le chargement de son élément racine.
+     * Configure les colonnes du TableView, charge les clients et définit le comportement
+     * lors d'un clic sur une ligne de la table.
+     */
     @FXML
     public void initialize() {
         // 1) Lier les colonnes à vos getters
@@ -65,6 +82,10 @@ public class ClientsController {
         // **Plus de binding manuel ici** : on utilise handleAddClient()
     }
 
+    /**
+     * Charge la liste des clients de manière asynchrone depuis l'API.
+     * Met à jour le TableView avec les clients récupérés ou affiche une alerte en cas d'erreur.
+     */
     private void loadClients() {
         Task<List<Client>> task = new Task<>() {
             @Override
@@ -87,7 +108,13 @@ public class ClientsController {
         new Thread(task).start();
     }
 
-    /** Bouton “Ajouter Client” déclenché par le FXML */
+    /** 
+     * Gère l'action du bouton "Ajouter Client".
+     * Ouvre une nouvelle fenêtre modale pour le formulaire d'ajout de client.
+     * Si un nouveau client est ajouté, met à jour la liste des clients, le sélectionne
+     * et transmet son ID au contrôleur des ventes, puis ferme la modale.
+     * @param event L'événement d'action déclenché par le clic sur le bouton.
+     */
     @FXML
     private void handleAddClient(ActionEvent event) {
         try {
@@ -127,7 +154,11 @@ public class ClientsController {
         }
     }
 
-    /** Bouton “Fermer” déclenché par le FXML */
+    /** 
+     * Gère l'action du bouton "Fermer".
+     * Ferme la fenêtre modale si elle est ouverte.
+     * @param event L'événement d'action déclenché par le clic sur le bouton.
+     */
     @FXML
     private void handleClose(ActionEvent event) {
         if (modalStage != null) {
@@ -135,11 +166,20 @@ public class ClientsController {
         }
     }
 
-    /** Pour que VentesController reçoive l’UUID choisi */
+    /** 
+     * Définit le contrôleur des ventes ({@link VentesController}) qui utilisera cette fenêtre
+     * pour sélectionner un client.
+     * Permet de renvoyer l'UUID du client sélectionné au {@link VentesController}.
+     * @param vc Le contrôleur des ventes.
+     */
     public void setVenteController(VentesController vc) {
         this.venteController = vc;
     }
-    /** Pour pouvoir fermer cette fenêtre depuis ce contrôleur */
+    /** 
+     * Définit la {@link Stage} de cette fenêtre modale.
+     * Permet à ce contrôleur de fermer sa propre fenêtre.
+     * @param stage La {@link Stage} de la fenêtre modale.
+     */
     public void setModalStage(Stage stage) {
         this.modalStage = stage;
     }

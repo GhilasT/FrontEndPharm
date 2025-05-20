@@ -1,5 +1,10 @@
 package com.pharmacie.controller;
 
+/**
+ * Contrôleur pour la boîte de dialogue de modification d'un administrateur.
+ * Cette classe gère le formulaire permettant de modifier les informations d'un administrateur existant.
+ * Elle effectue également la validation des données saisies avant leur soumission.
+ */
 import com.pharmacie.model.dto.AdminUpdateRequest;
 import com.pharmacie.model.Admin;
 import javafx.fxml.FXML;
@@ -10,6 +15,11 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+/**
+ * Contrôleur pour la boîte de dialogue de modification d'un administrateur.
+ * Gère l'interface utilisateur pour la mise à jour des informations d'un administrateur
+ * et la validation des entrées.
+ */
 public class EditAdminDialogController {
     @FXML private TextField nomField, prenomField, emailField, telephoneField, 
                           adresseField, salaireField, diplomeField, emailProField, roleField;
@@ -21,6 +31,11 @@ public class EditAdminDialogController {
     private final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
     private final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
 
+    /**
+     * Constructeur. Charge le fichier FXML de la boîte de dialogue, configure le contrôleur
+     * et met en place la validation des champs.
+     * @throws RuntimeException si le chargement du fichier FXML échoue.
+     */
     public EditAdminDialogController() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/EditAdminDialog.fxml"));
@@ -35,6 +50,11 @@ public class EditAdminDialogController {
         }
     }
 
+    /**
+     * Configure la validation des champs du formulaire.
+     * Ajoute un filtre d'événement au bouton "OK" pour exécuter la validation
+     * avant de fermer la boîte de dialogue.
+     */
     private void configureValidation() {
         // Récupération du bon ButtonType
         ButtonType okButtonType = dialog.getDialogPane().getButtonTypes()
@@ -59,11 +79,20 @@ public class EditAdminDialogController {
         }
     }
 
+    /**
+     * Initialise les composants du formulaire, notamment le ComboBox pour le statut du contrat.
+     * Cette méthode est appelée automatiquement après le chargement du fichier FXML.
+     */
     @FXML
     private void initialize() {
         statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "ALTERNANCE");
     }
 
+    /**
+     * Valide les champs du formulaire (email et téléphone).
+     * Affiche les messages d'erreur s'il y en a.
+     * @return true si tous les champs sont valides, false sinon.
+     */
     private boolean validateInputs() {
         StringBuilder errors = new StringBuilder();
         
@@ -88,6 +117,10 @@ public class EditAdminDialogController {
         return true;
     }
 
+    /**
+     * Remplit les champs du formulaire avec les informations d'un administrateur existant.
+     * @param admin L'administrateur dont les informations doivent être affichées.
+     */
     public void setAdmin(Admin admin) {
         nomField.setText(admin.getNom());
         prenomField.setText(admin.getPrenom());
@@ -101,10 +134,18 @@ public class EditAdminDialogController {
         roleField.setText(admin.getRole());
     }
 
+    /**
+     * Affiche la boîte de dialogue et attend que l'utilisateur interagisse avec elle.
+     * @return Un {@link Optional} contenant le {@link ButtonType} sur lequel l'utilisateur a cliqué.
+     */
     public Optional<ButtonType> showAndWait() {
         return dialog.showAndWait();
     }
 
+    /**
+     * Récupère les informations mises à jour de l'administrateur à partir des champs du formulaire.
+     * @return Un objet {@link AdminUpdateRequest} contenant les données mises à jour.
+     */
     public AdminUpdateRequest getUpdateRequest() {
         updateRequest.setNom(nomField.getText().trim());
         updateRequest.setPrenom(prenomField.getText().trim());
@@ -119,6 +160,11 @@ public class EditAdminDialogController {
         return updateRequest;
     }
 
+    /**
+     * Convertit une chaîne de caractères en {@link Double}.
+     * @param value La chaîne à convertir.
+     * @return Le {@link Double} correspondant, ou null si la chaîne est vide ou n'est pas un nombre valide.
+     */
     private Double parseDouble(String value) {
         try {
             return value.isEmpty() ? null : Double.parseDouble(value);

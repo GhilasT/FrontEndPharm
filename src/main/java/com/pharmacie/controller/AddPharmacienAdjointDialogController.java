@@ -1,5 +1,21 @@
 package com.pharmacie.controller;
 
+/**
+ * Contrôleur pour la boîte de dialogue d'ajout d'un pharmacien adjoint.
+ * 
+ * Cette classe est responsable de :
+ * - Afficher un formulaire pour saisir les informations d'un nouveau pharmacien adjoint.
+ * - Valider les données saisies (email, téléphone, mot de passe, etc.).
+ * - Créer une requête d'ajout de pharmacien adjoint avec les données validées.
+ * 
+ * Les validations incluent :
+ * - Vérification du format d'email et de téléphone.
+ * - Vérification de la correspondance des mots de passe.
+ * - Validation des champs obligatoires.
+ * - Vérification du format des valeurs numériques comme le salaire.
+ * 
+ * Le contrôleur utilise un modèle de dialogue JavaFX pour l'interaction utilisateur.
+ */
 import com.pharmacie.model.dto.PharmacienAdjointCreateRequest;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,6 +42,9 @@ public class AddPharmacienAdjointDialogController {
     private final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
     private final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
 
+    /**
+     * Constructeur qui initialise la boîte de dialogue et configure les validations.
+     */
     public AddPharmacienAdjointDialogController() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/AddPharmacienAdjointDialog.fxml"));
@@ -40,6 +59,10 @@ public class AddPharmacienAdjointDialogController {
         }
     }
 
+    /**
+     * Initialise les composants de l'interface utilisateur.
+     * Configure les valeurs par défaut pour les champs et les contrôles.
+     */
     private void initialize() {
         statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "ALTERNANCE");
         dateEmbauchePicker.setValue(LocalDate.now());
@@ -50,6 +73,9 @@ public class AddPharmacienAdjointDialogController {
         });
     }
 
+    /**
+     * Configure la validation des champs avant la soumission du formulaire.
+     */
     private void configureValidation() {
         ButtonType okButtonType = dialog.getDialogPane().getButtonTypes()
                 .stream()
@@ -66,6 +92,11 @@ public class AddPharmacienAdjointDialogController {
         }
     }
 
+    /**
+     * Valide les données saisies par l'utilisateur.
+     * 
+     * @return true si toutes les données sont valides, false sinon.
+     */
     private boolean validateInputs() {
         StringBuilder errors = new StringBuilder();
 
@@ -127,6 +158,11 @@ public class AddPharmacienAdjointDialogController {
         return errors.length() == 0;
     }
 
+    /**
+     * Crée une requête pour ajouter un pharmacien adjoint avec les données saisies.
+     * 
+     * @return Un objet PharmacienAdjointCreateRequest contenant les données du formulaire.
+     */
     public PharmacienAdjointCreateRequest getCreateRequest() {
         PharmacienAdjointCreateRequest request = new PharmacienAdjointCreateRequest();
         request.setNom(nomField.getText().trim());
@@ -143,6 +179,11 @@ public class AddPharmacienAdjointDialogController {
         return request;
     }
 
+    /**
+     * Affiche la boîte de dialogue et attend la réponse de l'utilisateur.
+     * 
+     * @return Un Optional contenant le ButtonType cliqué par l'utilisateur.
+     */
     public Optional<ButtonType> showAndWait() {
         return dialog.showAndWait();
     }

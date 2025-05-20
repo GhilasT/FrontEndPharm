@@ -10,8 +10,8 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
- * Controller for the dialog that allows adding a new apprentice (apprenti).
- * Manages form validation and data collection for creating new apprentices in the system.
+ * Contrôleur de la fenêtre permettant d'ajouter un nouvel apprenti.
+ * Gère la validation des formulaires et la collecte des données pour créer de nouveaux apprentis.
  */
 public class AddApprentiDialogController {
     @FXML
@@ -31,10 +31,10 @@ public class AddApprentiDialogController {
     private final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
 
     /**
-     * Initializes the dialog controller, loads the FXML and sets up the dialog.
-     * Sets up form validation and initialization of form components.
+     * Initialise le contrôleur du dialogue, charge le FXML et configure la fenêtre.
+     * Met en place la validation et l'initialisation des composants du formulaire.
      *
-     * @throws RuntimeException if there's an error loading the dialog FXML
+     * @throws RuntimeException si une erreur survient lors du chargement du FXML
      */
     public AddApprentiDialogController() {
         try {
@@ -51,10 +51,10 @@ public class AddApprentiDialogController {
     }
 
     /**
-     * Initializes form components with default values.
-     * - Populates the contract status combo box
-     * - Sets the default hire date to today
-     * - Adds input validation for salary field
+     * Initialise les composants du formulaire avec des valeurs par défaut.
+     * - Remplit la ComboBox des statuts de contrat
+     * - Définit la date d'embauche par défaut à aujourd'hui
+     * - Ajoute une validation des saisies pour le champ salaire
      */
     private void initialize() {
         statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "ALTERNANCE");
@@ -67,8 +67,8 @@ public class AddApprentiDialogController {
     }
 
     /**
-     * Configures validation to run when the OK button is clicked.
-     * Prevents dialog closing if validation fails.
+     * Configure la validation lorsque le bouton OK est cliqué.
+     * Empêche la fermeture du dialogue si la validation échoue.
      */
     private void configureValidation() {
         ButtonType okButtonType = dialog.getDialogPane().getButtonTypes()
@@ -87,10 +87,10 @@ public class AddApprentiDialogController {
     }
 
     /**
-     * Validates all user inputs and displays error messages if validation fails.
-     * Checks required fields, email format, phone format, salary format, matching passwords.
+     * Valide toutes les saisies utilisateur et affiche les messages d'erreur si la validation échoue.
+     * Vérifie les champs obligatoires, les formats d'email et de téléphone, le format du salaire et la correspondance des mots de passe.
      *
-     * @return true if all inputs are valid, false otherwise
+     * @return true si toutes les saisies sont valides, false sinon
      */
     private boolean validateInputs() {
         StringBuilder errors = new StringBuilder();
@@ -156,9 +156,9 @@ public class AddApprentiDialogController {
     }
 
     /**
-     * Creates and returns an apprentice creation request object with the data entered in the form.
+     * Crée et renvoie un objet de requête de création d'apprenti contenant les données du formulaire.
      *
-     * @return ApprentiCreateRequest populated with the user's input
+     * @return ApprentiCreateRequest rempli avec les saisies utilisateur
      */
     public ApprentiCreateRequest getCreateRequest() {
         ApprentiCreateRequest request = new ApprentiCreateRequest();
@@ -178,9 +178,9 @@ public class AddApprentiDialogController {
     }
 
     /**
-     * Displays the dialog and waits for user response.
+     * Affiche le dialogue et attend la réponse de l'utilisateur.
      *
-     * @return an Optional containing the ButtonType clicked by the user
+     * @return un Optional contenant le ButtonType cliqué par l'utilisateur
      */
     public Optional<ButtonType> showAndWait() {
         return dialog.showAndWait();

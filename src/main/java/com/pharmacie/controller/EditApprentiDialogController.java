@@ -8,6 +8,11 @@ import javafx.scene.control.*;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+/**
+ * Contrôleur pour la boîte de dialogue de modification d'un apprenti.
+ * Gère l'interface utilisateur, l'initialisation des composants et la validation
+ * pour la mise à jour des informations d'un apprenti.
+ */
 public class EditApprentiDialogController {
     @FXML
     private TextField nomField, prenomField, emailField, telephoneField,
@@ -21,6 +26,11 @@ public class EditApprentiDialogController {
     private final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
     private final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
 
+    /**
+     * Constructeur. Charge le fichier FXML de la boîte de dialogue, configure le contrôleur,
+     * initialise les composants et met en place la validation.
+     * @throws RuntimeException si le chargement du fichier FXML échoue.
+     */
     public EditApprentiDialogController() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/EditApprentiDialog.fxml"));
@@ -33,10 +43,17 @@ public class EditApprentiDialogController {
         }
     }
 
+    /**
+     * Initialise les composants du formulaire, comme le ComboBox pour le statut du contrat.
+     */
     private void initialize() {
         statutContratCombo.getItems().addAll("Contrat pro", "Alternance", "Stage");
     }
 
+    /**
+     * Configure la validation des champs du formulaire.
+     * Ajoute un filtre d'événement au bouton "OK" pour exécuter la validation avant de fermer la boîte de dialogue.
+     */
     private void setupValidation() {
         ButtonType okButtonType = dialog.getDialogPane().getButtonTypes()
                 .stream()
@@ -53,6 +70,11 @@ public class EditApprentiDialogController {
         }
     }
 
+    /**
+     * Valide les champs du formulaire (email et téléphone).
+     * Affiche les messages d'erreur s'il y en a.
+     * @return true si tous les champs sont valides, false sinon.
+     */
     private boolean validate() {
         StringBuilder errors = new StringBuilder();
         if (!EMAIL_PATTERN.matcher(emailField.getText()).matches())
@@ -63,6 +85,10 @@ public class EditApprentiDialogController {
         return errors.length() == 0;
     }
 
+    /**
+     * Remplit les champs du formulaire avec les informations d'un apprenti existant.
+     * @param apprenti L'apprenti dont les informations doivent être affichées.
+     */
     public void setApprenti(Apprenti apprenti) {
         nomField.setText(apprenti.getNom());
         prenomField.setText(apprenti.getPrenom());
@@ -76,6 +102,10 @@ public class EditApprentiDialogController {
         emailProField.setText(apprenti.getEmailPro());
     }
 
+    /**
+     * Récupère les informations mises à jour de l'apprenti à partir des champs du formulaire.
+     * @return Un objet {@link ApprentiUpdateRequest} contenant les données mises à jour.
+     */
     public ApprentiUpdateRequest getUpdateRequest() {
         ApprentiUpdateRequest req = new ApprentiUpdateRequest();
         req.setNom(nomField.getText());
@@ -91,6 +121,10 @@ public class EditApprentiDialogController {
         return req;
     }
 
+    /**
+     * Affiche la boîte de dialogue et attend que l'utilisateur interagisse avec elle.
+     * @return Un {@link Optional} contenant le {@link ButtonType} sur lequel l'utilisateur a cliqué.
+     */
     public Optional<ButtonType> showAndWait() {
         return dialog.showAndWait();
     }

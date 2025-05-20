@@ -1,5 +1,16 @@
 package com.pharmacie.controller;
 
+/**
+ * Contrôleur principal du tableau de bord administrateur.
+ * 
+ * Cette classe gère l'interface principale de l'administrateur, y compris:
+ * - La navigation entre les différentes sections (Personnel, Fournisseurs, Médecins, etc.)
+ * - Le changement de mode (Admin/Pharmacien)
+ * - La déconnexion
+ * 
+ * Le tableau de bord permet d'accéder à toutes les fonctionnalités d'administration de la pharmacie
+ * à travers une interface utilisateur organisée en modules fonctionnels.
+ */
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +28,11 @@ import java.io.IOException;
 import com.pharmacie.App;
 import com.pharmacie.util.LoggedSeller;
 
+/**
+ * Contrôleur pour le tableau de bord de l'administrateur.
+ * Gère la navigation principale, les actions de l'utilisateur comme la déconnexion,
+ * le changement de rôle et le chargement des différentes vues de gestion.
+ */
 public class DashboardAdminController {
 
     @FXML private StackPane contentArea;
@@ -32,6 +48,10 @@ public class DashboardAdminController {
     @FXML private Button btnLogoutAdmin;
     @FXML private Button btnSwitchToPharmacien;
 
+    /**
+     * Initialise le contrôleur après le chargement de son élément racine.
+     * Configure les infobulles, les gestionnaires d'événements des boutons et les effets visuels.
+     */
     @FXML
     private void initialize() {
         setupTooltips();
@@ -39,6 +59,9 @@ public class DashboardAdminController {
         setupButtonEffects();
     }
 
+    /**
+     * Configure les infobulles pour les boutons principaux du tableau de bord.
+     */
     private void setupTooltips() {
         Tooltip.install(btnSwitchToPharmacien, new Tooltip("Basculer vers l'interface Pharmacien"));
         Tooltip.install(btnLogoutAdmin, new Tooltip("Se déconnecter de l'application"));
@@ -53,6 +76,10 @@ public class DashboardAdminController {
         Tooltip.install(GestMedicaments, new Tooltip("Gérer le catalogue de médicaments"));
     }
 
+    /**
+     * Configure les gestionnaires d'événements pour les actions des boutons.
+     * Associe chaque bouton à sa méthode de gestion correspondante.
+     */
     private void setupButtonHandlers() {
         btnLogoutAdmin.setOnAction(e -> handleLogout());
         btnSwitchToPharmacien.setOnAction(e -> handleSwitchToPharmacien());
@@ -64,6 +91,9 @@ public class DashboardAdminController {
         GestMedicaments.setOnAction(e -> loadGestionMedicaments());
     }
 
+    /**
+     * Configure les effets visuels (par exemple, changement de couleur au survol) pour les boutons.
+     */
     private void setupButtonEffects() {
         setupButtonHoverEffect(btnSwitchToPharmacien, "#1F82F2", "#2196F3");
         setupButtonHoverEffect(btnLogoutAdmin, "#E74C3C", "#C0392B");
@@ -78,6 +108,12 @@ public class DashboardAdminController {
         setupButtonHoverEffect(GestMedicaments, "#1F82F2", "#2196F3");
     }
 
+    /**
+     * Applique un effet de survol à un bouton, changeant sa couleur de fond.
+     * @param button Le bouton auquel appliquer l'effet.
+     * @param defaultColor La couleur de fond par défaut.
+     * @param hoverColor La couleur de fond au survol.
+     */
     private void setupButtonHoverEffect(Button button, String defaultColor, String hoverColor) {
         button.setStyle(button.getStyle() + "; -fx-background-color: " + defaultColor + ";");
         
@@ -90,6 +126,10 @@ public class DashboardAdminController {
         });
     }
 
+    /**
+     * Gère l'action de déconnexion de l'utilisateur.
+     * Efface les informations de l'utilisateur connecté et retourne à l'écran de connexion.
+     */
     private void handleLogout() {
         LoggedSeller.getInstance().clearUser();
         Stage stage = (Stage) contentArea.getScene().getWindow();
@@ -97,6 +137,10 @@ public class DashboardAdminController {
         ((Login) App.getLoginScene().getRoot()).clearFields();
     }
 
+    /**
+     * Gère le passage de l'interface administrateur à l'interface pharmacien.
+     * Charge la vue du tableau de bord pharmacien.
+     */
     private void handleSwitchToPharmacien() {
         try {
             FadeTransition fadeOut = new FadeTransition(Duration.millis(300), contentArea);
@@ -128,6 +172,11 @@ public class DashboardAdminController {
         }
     }
 
+    /**
+     * Affiche une boîte de dialogue d'alerte en cas d'erreur.
+     * @param message Le message principal de l'alerte.
+     * @param e L'exception qui a causé l'erreur (peut être null).
+     */
     private void showErrorAlert(String message, Exception e) {
         e.printStackTrace();
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
@@ -137,10 +186,17 @@ public class DashboardAdminController {
         alert.showAndWait();
     }
 
+    /**
+     * Retourne le conteneur principal (StackPane) où les différentes vues sont chargées.
+     * @return Le StackPane de la zone de contenu.
+     */
     public StackPane getContentArea() {
         return contentArea;
     }
     
+    /**
+     * Charge la vue de gestion du personnel dans la zone de contenu.
+     */
     public void loadGestionPersonnel() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionPersonnel.fxml"));
@@ -155,6 +211,9 @@ public class DashboardAdminController {
         }
     }
 
+    /**
+     * Charge la vue de gestion des fournisseurs dans la zone de contenu.
+     */
     public void loadGestionFournisseurs() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionFournisseur.fxml"));
@@ -169,6 +228,9 @@ public class DashboardAdminController {
         }
     }
 
+    /**
+     * Charge la vue de gestion des médecins dans la zone de contenu.
+     */
     public void loadGestionMedecins() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/MedecinsPage.fxml"));
@@ -180,6 +242,9 @@ public class DashboardAdminController {
         }
     }
     
+    /**
+     * Charge la vue de gestion des commandes dans la zone de contenu.
+     */
     public void loadGestionCommandes() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionCommande.fxml"));
@@ -191,6 +256,9 @@ public class DashboardAdminController {
         }
     }
     
+    /**
+     * Charge la vue de gestion des ventes dans la zone de contenu.
+     */
     public void loadGestionVentes() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/liste-ventes.fxml"));
@@ -202,6 +270,9 @@ public class DashboardAdminController {
         }
     }
     
+    /**
+     * Charge la vue de gestion des médicaments dans la zone de contenu.
+     */
     public void loadGestionMedicaments() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/médicaments.fxml"));
@@ -213,6 +284,10 @@ public class DashboardAdminController {
         }
     }
 
+    /**
+     * Affiche le panneau principal du tableau de bord dans la zone de contenu.
+     * Utilisé pour revenir à la vue d'accueil du tableau de bord.
+     */
     public void showDashboard() {
         contentArea.getChildren().setAll(dashboardPane);
     }

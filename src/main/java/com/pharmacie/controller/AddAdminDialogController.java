@@ -14,9 +14,9 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
- * Controller for the dialog that allows adding a new administrator.
- * Manages form validation and data collection for creating new admin users in the system.
- * Includes validation for personal information, professional details, and account credentials.
+ * Contrôleur pour la boîte de dialogue permettant d'ajouter un nouvel administrateur.
+ * Gère la validation du formulaire et la collecte des données pour la création de nouveaux utilisateurs administrateurs
+ * dans le système. Inclut la validation des informations personnelles, des détails professionnels et des identifiants de compte.
  */
 public class AddAdminDialogController {
     @FXML
@@ -53,10 +53,10 @@ public class AddAdminDialogController {
     private final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
 
     /**
-     * Initializes the dialog controller, loads the FXML and sets up the dialog.
-     * Sets up form validation and initialization of form components.
+     * Initialise le contrôleur de la boîte de dialogue, charge le FXML et configure la boîte de dialogue.
+     * Met en place la validation du formulaire et l'initialisation des composants du formulaire.
      *
-     * @throws RuntimeException if there's an error loading the dialog FXML
+     * @throws RuntimeException s'il y a une erreur lors du chargement du FXML de la boîte de dialogue.
      */
     public AddAdminDialogController() {
         try {
@@ -91,10 +91,10 @@ public class AddAdminDialogController {
     }
 
     /**
-     * Initializes form components with default values.
-     * - Populates the contract status combo box
-     * - Sets the default hire date to today
-     * - Adds input validation for salary field to ensure only numeric values
+     * Initialise les composants du formulaire avec des valeurs par défaut.
+     * - Remplit le ComboBox du statut de contrat.
+     * - Définit la date d'embauche par défaut à aujourd'hui.
+     * - Ajoute une validation d'entrée pour le champ salaire afin de s'assurer qu'il ne contient que des valeurs numériques.
      */
     private void initialize() {
         // Initialisation des valeurs du ComboBox
@@ -112,19 +112,20 @@ public class AddAdminDialogController {
     }
 
     /**
-     * Displays the dialog and waits for user response.
+     * Affiche la boîte de dialogue et attend la réponse de l'utilisateur.
      *
-     * @return an Optional containing the ButtonType clicked by the user
+     * @return un {@link Optional} contenant le {@link ButtonType} cliqué par l'utilisateur.
      */
     public Optional<ButtonType> showAndWait() {
         return dialog.showAndWait();
     }
 
     /**
-     * Validates all user inputs and displays error messages if validation fails.
-     * Checks required fields, email format, phone format, salary format, matching passwords.
+     * Valide toutes les entrées de l'utilisateur et affiche des messages d'erreur si la validation échoue.
+     * Vérifie les champs obligatoires, le format de l'email, le format du téléphone, le format du salaire,
+     * et la correspondance des mots de passe.
      *
-     * @return true if all inputs are valid, false otherwise
+     * @return true si toutes les entrées sont valides, false sinon.
      */
     private boolean validateInputs() {
         StringBuilder errors = new StringBuilder();
@@ -207,10 +208,10 @@ public class AddAdminDialogController {
     }
 
     /**
-     * Creates and returns an administrator creation request object with the data entered in the form.
-     * All form field values are trimmed and converted to appropriate formats.
+     * Crée et retourne un objet de requête de création d'administrateur avec les données saisies dans le formulaire.
+     * Toutes les valeurs des champs du formulaire sont nettoyées (trim) et converties aux formats appropriés.
      *
-     * @return AdministrateurCreateRequest populated with the user's input
+     * @return {@link AdministrateurCreateRequest} rempli avec les entrées de l'utilisateur.
      */
     public AdministrateurCreateRequest getCreateRequest() {
         AdministrateurCreateRequest request = new AdministrateurCreateRequest();

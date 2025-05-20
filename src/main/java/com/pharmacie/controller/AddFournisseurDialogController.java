@@ -9,8 +9,8 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
- * Controller for the dialog that allows adding a new supplier (fournisseur).
- * This class manages the validation and collection of supplier information through a JavaFX dialog.
+ * Contrôleur de la fenêtre permettant d'ajouter un nouveau fournisseur.
+ * Gère la validation et la collecte des informations du fournisseur via un dialogue JavaFX.
  */
 public class AddFournisseurDialogController {
     @FXML
@@ -23,10 +23,10 @@ public class AddFournisseurDialogController {
     private final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
 
     /**
-     * Initializes the dialog controller, loads the FXML and sets up the dialog.
-     * Configures form validation to be triggered when the user attempts to submit the form.
+     * Initialise le contrôleur du dialogue, charge le fichier FXML et configure la fenêtre.
+     * Configure la validation du formulaire lors de la soumission.
      *
-     * @throws RuntimeException if there's an error loading the dialog FXML
+     * @throws RuntimeException si une erreur survient lors du chargement du FXML
      */
     public AddFournisseurDialogController() {
         try {
@@ -42,8 +42,8 @@ public class AddFournisseurDialogController {
     }
 
     /**
-     * Configures validation to run when the OK button is clicked.
-     * Prevents dialog closing if validation fails.
+     * Configure la validation lorsque le bouton OK est cliqué.
+     * Empêche la fermeture du dialogue si la validation échoue.
      */
     private void configureValidation() {
         ButtonType okButtonType = dialog.getDialogPane().getButtonTypes()
@@ -62,10 +62,10 @@ public class AddFournisseurDialogController {
     }
 
     /**
-     * Validates all user inputs and displays error messages if validation fails.
-     * Checks that required fields are filled and that email and phone formats are valid.
+     * Valide toutes les saisies utilisateur et affiche les messages d'erreur si la validation échoue.
+     * Vérifie que les champs obligatoires sont remplis et que les formats d'email et de téléphone sont valides.
      *
-     * @return true if all inputs are valid, false otherwise
+     * @return true si toutes les saisies sont valides, false sinon
      */
     private boolean validateInputs() {
         StringBuilder errors = new StringBuilder();
@@ -95,9 +95,9 @@ public class AddFournisseurDialogController {
     }
 
     /**
-     * Creates and returns a supplier creation request object with the data entered in the form.
+     * Crée et renvoie un objet de requête de création de fournisseur contenant les données du formulaire.
      *
-     * @return FournisseurCreateRequest populated with the user's input
+     * @return FournisseurCreateRequest rempli avec les saisies utilisateur
      */
     public FournisseurCreateRequest getCreateRequest() {
         FournisseurCreateRequest req = new FournisseurCreateRequest();
@@ -111,9 +111,9 @@ public class AddFournisseurDialogController {
     }
 
     /**
-     * Displays the dialog and waits for user response.
+     * Affiche le dialogue et attend la réponse de l'utilisateur.
      *
-     * @return an Optional containing the ButtonType clicked by the user
+     * @return un Optional contenant le ButtonType cliqué par l'utilisateur
      */
     public Optional<ButtonType> showAndWait() {
         return dialog.showAndWait();
