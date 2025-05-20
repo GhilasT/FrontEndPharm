@@ -14,7 +14,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import com.pharmacie.model.dto.EmailCommandeRequest ;
 
-
+/**
+ * Service pour l'envoi d'e-mails, notamment pour les commandes aux fournisseurs.
+ * Interagit avec une API backend pour l'envoi effectif des e-mails.
+ */
 public class EmailService {
 
     private final HttpClient client = HttpClient.newHttpClient();
@@ -24,7 +27,12 @@ public class EmailService {
     private static final String EMAIL_URL = BASE_URL + EMAIL_ENDPOINT;
     private static final String EMAIL_URL_FOURNISSEUR = BASE_URL + EMAIL_TO_FOURNISSEUR_ENDPOINT;
 
-
+    /**
+     * Envoie un e-mail de commande à un fournisseur en utilisant la référence de la commande.
+     * La méthode s'exécute de manière asynchrone et affiche des notifications sur le succès ou l'échec.
+     *
+     * @param reference La référence de la commande à inclure dans l'e-mail.
+     */
     public void envoyerMailFournisseur(String reference) {
         EmailCommandeRequest emailCommandeRequest = new EmailCommandeRequest();
         emailCommandeRequest.setCommandeReference(reference);
@@ -62,10 +70,24 @@ public class EmailService {
         });
     }
 
+    /**
+     * Exécute une tâche {@link Task} dans un nouveau thread.
+     * Utilisé pour effectuer des opérations réseau (comme l'envoi d'e-mails) de manière asynchrone.
+     *
+     * @param task La tâche à exécuter.
+     */
     private void executerTache(Task<HttpResponse<String>> task) {
         new Thread(task).start();
     }
 
+    /**
+     * Affiche une boîte de dialogue d'alerte JavaFX.
+     *
+     * @param type Le type d'alerte (par exemple, INFORMATION, ERROR).
+     * @param titre Le titre de la fenêtre d'alerte.
+     * @param entete Le texte d'en-tête de l'alerte.
+     * @param contenu Le message principal de l'alerte.
+     */
     private void afficherMessage(AlertType type, String titre, String entete, String contenu) {
         Alert alert = new Alert(type);
         alert.setTitle(titre);

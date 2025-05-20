@@ -24,6 +24,7 @@ import javafx.scene.shape.Circle;
  * Service de gestion des notifications pour l'application.
  * Permet d'afficher des notifications à l'utilisateur pour différents événements
  * comme les alertes de stock ou les médicaments périmés.
+ * Cette classe utilise le modèle de conception Singleton.
  */
 public class NotificationService {
     
@@ -39,10 +40,18 @@ public class NotificationService {
     private static final String ERROR_COLOR = "#F44336";
     private static final String SUCCESS_COLOR = "#4CAF50";
     
+    /**
+     * Constructeur privé pour implémenter le pattern Singleton.
+     */
     private NotificationService() {
         // Constructeur privé pour le singleton
     }
     
+    /**
+     * Fournit le point d'accès global à l'instance unique de NotificationService.
+     *
+     * @return L'instance unique de NotificationService.
+     */
     public static NotificationService getInstance() {
         if (instance == null) {
             instance = new NotificationService();
@@ -51,7 +60,9 @@ public class NotificationService {
     }
     
     /**
-     * Démarre le service de vérification périodique pour les notifications
+     * Démarre le service de vérification périodique pour les notifications.
+     * Si un minuteur de vérification existe déjà, il est annulé et un nouveau est créé.
+     * La vérification est effectuée toutes les minutes après un délai initial de 5 secondes.
      */
     public void startNotificationService() {
         if (checkTimer != null) {
@@ -68,7 +79,8 @@ public class NotificationService {
     }
     
     /**
-     * Arrête le service de notifications
+     * Arrête le service de notifications.
+     * Annule le minuteur de vérification s'il est actif.
      */
     public void stopNotificationService() {
         if (checkTimer != null) {
@@ -78,7 +90,9 @@ public class NotificationService {
     }
     
     /**
-     * Vérifie s'il y a de nouvelles notifications à afficher
+     * Vérifie s'il y a de nouvelles notifications à afficher.
+     * Cette méthode est conçue pour être appelée périodiquement.
+     * Actuellement, elle simule la réception de notifications.
      */
     private void checkForNotifications() {
         // Cette méthode pourrait interroger l'API ou une base de données locale
@@ -107,8 +121,11 @@ public class NotificationService {
     }
     
     /**
-     * Ajoute une notification à la liste
-     * @param message Le message de notification
+     * Ajoute une notification à la liste des notifications.
+     * Incrémente également le compteur de notifications.
+     * Cette méthode est synchronisée pour gérer l'accès concurrentiel.
+     *
+     * @param message Le message de la notification à ajouter.
      */
     public void addNotification(String message) {
         synchronized (notifications) {
@@ -118,9 +135,13 @@ public class NotificationService {
     }
     
     /**
-     * Affiche une notification temporaire à l'utilisateur
-     * @param message Le message à afficher
-     * @param type Le type de notification (info, warning, error, success)
+     * Affiche une notification temporaire à l'utilisateur.
+     * La notification est stylisée en fonction de son type (info, warning, error, success)
+     * et s'affiche en haut à droite de l'écran. Elle disparaît automatiquement après un délai.
+     *
+     * @param message Le message à afficher dans la notification.
+     * @param type Le type de notification (par exemple, "info", "warning", "error", "success").
+     *             Détermine la couleur de l'indicateur de la notification.
      */
     public void showNotification(String message, String type) {
         Platform.runLater(() -> {
@@ -222,8 +243,12 @@ public class NotificationService {
     }
     
     /**
-     * Ferme une notification avec animation
-     * @param notificationStage La fenêtre de notification à fermer
+     * Ferme une notification spécifiée avec une animation de fondu.
+     * Si la notification n'est pas affichée, la méthode ne fait rien.
+     * Après la fermeture, la notification est retirée de la liste des notifications actives
+     * et les notifications restantes sont réorganisées.
+     *
+     * @param notificationStage La fenêtre (Stage) de la notification à fermer.
      */
     private void closeNotification(Stage notificationStage) {
         if (!notificationStage.isShowing()) {
@@ -243,7 +268,9 @@ public class NotificationService {
     }
     
     /**
-     * Réorganise les positions des notifications actives après fermeture d'une notification
+     * Réorganise les positions verticales des notifications actives à l'écran.
+     * Cette méthode est typiquement appelée après la fermeture d'une notification
+     * pour éviter les superpositions ou les espaces vides.
      */
     private void reorganizeNotifications() {
         double offsetY = 20;
@@ -255,23 +282,26 @@ public class NotificationService {
     }
     
     /**
-     * Renvoie le nombre de notifications non lues
-     * @return Nombre de notifications
+     * Renvoie le nombre actuel de notifications non lues.
+     *
+     * @return Le nombre de notifications.
      */
     public int getNotificationCount() {
         return notificationCount;
     }
     
     /**
-     * Récupère la liste des notifications
-     * @return Liste des messages de notification
+     * Récupère une copie de la liste des messages de notification.
+     *
+     * @return Une nouvelle liste contenant tous les messages de notification.
      */
     public List<String> getNotifications() {
         return new ArrayList<>(notifications);
     }
     
     /**
-     * Marque toutes les notifications comme lues
+     * Marque toutes les notifications comme lues en réinitialisant le compteur de notifications à zéro.
+     * Cette méthode est synchronisée pour gérer l'accès concurrentiel.
      */
     public void markAllAsRead() {
         synchronized(notifications) {
@@ -280,7 +310,8 @@ public class NotificationService {
     }
     
     /**
-     * Efface toutes les notifications
+     * Efface toutes les notifications de la liste et réinitialise le compteur de notifications.
+     * Cette méthode est synchronisée pour gérer l'accès concurrentiel.
      */
     public void clearAllNotifications() {
         synchronized(notifications) {

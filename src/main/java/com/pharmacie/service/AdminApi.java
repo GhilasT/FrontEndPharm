@@ -22,6 +22,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 
+/**
+ * Classe service pour interagir avec les points de terminaison de l'API
+ * relatifs à la gestion des administrateurs.
+ * Fournit des méthodes pour créer, lire, mettre à jour et supprimer (CRUD)
+ * des entités administrateur, ainsi que pour les rechercher.
+ */
 public class AdminApi {
     private static final String BASE_URL = Global.getBaseUrl();
     private static final String ADMIN_ENDPOINT = "/administrateurs";
@@ -29,6 +35,10 @@ public class AdminApi {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructeur de la classe AdminApi.
+     * Initialise le client HTTP et l'ObjectMapper pour la sérialisation/désérialisation JSON.
+     */
     public AdminApi() {
         this.httpClient = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper()
@@ -36,6 +46,11 @@ public class AdminApi {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    /**
+     * Récupère tous les administrateurs depuis l'API.
+     *
+     * @return Une liste d'objets {@link Admin}. Retourne une liste vide en cas d'erreur.
+     */
     public List<Admin> getAllAdmins() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -59,6 +74,12 @@ public class AdminApi {
         }
     }
 
+    /**
+     * Recherche des administrateurs en fonction d'une requête (terme de recherche).
+     *
+     * @param query Le terme de recherche à utiliser.
+     * @return Une liste d'objets {@link Admin} correspondant à la recherche. Retourne une liste vide en cas d'erreur.
+     */
     public List<Admin> searchAdmins(String query) {
         try {
             String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
@@ -83,6 +104,12 @@ public class AdminApi {
         }
     }
 
+    /**
+     * Supprime un administrateur par son ID (idPersonne).
+     *
+     * @param idPersonne L'UUID de l'administrateur à supprimer.
+     * @return {@code true} si la suppression a réussi (code HTTP 204), {@code false} sinon.
+     */
     public boolean deleteAdmin(UUID idPersonne) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -99,6 +126,13 @@ public class AdminApi {
         }
     }
 
+    /**
+     * Met à jour les informations d'un administrateur existant.
+     *
+     * @param idPersonne    L'UUID de l'administrateur à mettre à jour.
+     * @param updateRequest Un objet {@link AdminUpdateRequest} contenant les informations de mise à jour.
+     * @return {@code true} si la mise à jour a réussi (code HTTP 200), {@code false} sinon.
+     */
     public boolean updateAdmin(UUID idPersonne, AdminUpdateRequest updateRequest) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -127,6 +161,13 @@ public class AdminApi {
         }
     }
 
+    /**
+     * Analyse une chaîne JSON et la convertit en une liste d'objets {@link Admin}.
+     *
+     * @param json La chaîne JSON à analyser, représentant un tableau d'administrateurs.
+     * @return Une liste d'objets {@link Admin}.
+     * @throws IOException Si une erreur survient lors de la lecture ou de l'analyse du JSON.
+     */
     private List<Admin> parseAdminsFromJson(String json) throws IOException {
         List<Admin> admins = new ArrayList<>();
         JsonNode rootNode = objectMapper.readTree(json);
@@ -173,6 +214,12 @@ public class AdminApi {
         return admins;
     }
 
+    /**
+     * Crée un nouvel administrateur via l'API.
+     *
+     * @param createRequest Un objet {@link AdministrateurCreateRequest} contenant les informations du nouvel administrateur.
+     * @return {@code true} si la création a réussi (code HTTP 201), {@code false} sinon.
+     */
     public boolean createAdmin(AdministrateurCreateRequest createRequest) {
         try {
             String requestBody = objectMapper.writeValueAsString(createRequest);

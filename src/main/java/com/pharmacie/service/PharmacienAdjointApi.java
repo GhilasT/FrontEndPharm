@@ -23,6 +23,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 
+/**
+ * Classe API pour gérer les opérations CRUD pour les pharmaciens adjoints.
+ * Interagit avec un service backend via HTTP.
+ * Inclut également des fonctionnalités de recherche pour les médecins.
+ */
 public class PharmacienAdjointApi {
     private static final String BASE_URL = Global.getBaseUrl();
     private static final String PHARMACIEN_ADJOINT_ENDPOINT = "/pharmaciens-adjoints";
@@ -30,6 +35,10 @@ public class PharmacienAdjointApi {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructeur pour PharmacienAdjointApi.
+     * Initialise HttpClient et ObjectMapper.
+     */
     public PharmacienAdjointApi() {
         this.httpClient = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper()
@@ -37,6 +46,11 @@ public class PharmacienAdjointApi {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    /**
+     * Récupère tous les pharmaciens adjoints depuis le service backend.
+     *
+     * @return Une liste de {@link PharmacienAdjoint}, ou une liste vide en cas d'erreur.
+     */
     public List<PharmacienAdjoint> getAllPharmaciensAdjoints() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -60,6 +74,12 @@ public class PharmacienAdjointApi {
         }
     }
 
+    /**
+     * Recherche des pharmaciens adjoints en fonction d'un terme de recherche.
+     *
+     * @param query Le terme de recherche.
+     * @return Une liste de {@link PharmacienAdjoint} correspondant au terme de recherche, ou une liste vide en cas d'erreur.
+     */
     public List<PharmacienAdjoint> searchPharmaciensAdjoints(String query) {
         try {
             String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
@@ -84,6 +104,12 @@ public class PharmacienAdjointApi {
         }
     }
 
+    /**
+     * Supprime un pharmacien adjoint par son ID.
+     *
+     * @param idPersonne L'ID du pharmacien adjoint à supprimer.
+     * @return {@code true} si la suppression a réussi, {@code false} sinon.
+     */
     public boolean deletePharmacienAdjoint(UUID idPersonne) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -100,6 +126,13 @@ public class PharmacienAdjointApi {
         }
     }
 
+    /**
+     * Met à jour un pharmacien adjoint existant.
+     *
+     * @param idPersonne L'ID du pharmacien adjoint à mettre à jour.
+     * @param updateRequest L'objet {@link PharmacienAdjointUpdateRequest} contenant les informations de mise à jour.
+     * @return {@code true} si la mise à jour a réussi, {@code false} sinon.
+     */
     public boolean updatePharmacienAdjoint(UUID idPersonne, PharmacienAdjointUpdateRequest updateRequest) {
         try {
             ObjectMapper requestMapper = new ObjectMapper();
@@ -121,6 +154,13 @@ public class PharmacienAdjointApi {
         }
     }
 
+    /**
+     * Analyse une chaîne JSON et la convertit en une liste d'objets {@link PharmacienAdjoint}.
+     *
+     * @param json La chaîne JSON à analyser.
+     * @return Une liste d'objets {@link PharmacienAdjoint}.
+     * @throws IOException Si une erreur d'entrée/sortie se produit lors de l'analyse.
+     */
     private List<PharmacienAdjoint> parsePharmaciensAdjointsFromJson(String json) throws IOException {
         List<PharmacienAdjoint> pharmaciens = new ArrayList<>();
         JsonNode rootNode = objectMapper.readTree(json);
@@ -157,6 +197,12 @@ public class PharmacienAdjointApi {
         return pharmaciens;
     }
 
+    /**
+     * Crée un nouveau pharmacien adjoint.
+     *
+     * @param createRequest L'objet {@link PharmacienAdjointCreateRequest} contenant les informations du nouveau pharmacien adjoint.
+     * @return {@code true} si la création a réussi (statut 201), {@code false} sinon.
+     */
     public boolean createPharmacienAdjoint(PharmacienAdjointCreateRequest createRequest) {
         try {
             String requestBody = objectMapper.writeValueAsString(createRequest);
@@ -178,8 +224,12 @@ public class PharmacienAdjointApi {
     }
 
     /**
+     * Recherche des médecins en fonction d'un terme de recherche.
      * Cette méthode n'est pas strictement nécessaire dans cette classe, mais ajoutée pour cohérence avec la structure existante.
      * Elle pourrait être déplacée dans une classe MedecinApi dédiée si cette dernière est créée plus tard.
+     *
+     * @param query Le terme de recherche pour les médecins.
+     * @return Une liste de {@link Medecin} correspondant à la recherche, ou une liste vide en cas d'erreur.
      */
     public List<Medecin> searchMedecins(String query) {
         try {
@@ -205,6 +255,13 @@ public class PharmacienAdjointApi {
         }
     }
 
+    /**
+     * Analyse une chaîne JSON et la convertit en une liste d'objets {@link Medecin}.
+     *
+     * @param json La chaîne JSON à analyser.
+     * @return Une liste d'objets {@link Medecin}.
+     * @throws IOException Si une erreur d'entrée/sortie se produit lors de l'analyse.
+     */
     private List<Medecin> parseMedecinsFromJson(String json) throws IOException {
         List<Medecin> medecins = new ArrayList<>();
         JsonNode rootNode = objectMapper.readTree(json);

@@ -17,6 +17,12 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Classe service pour interagir avec les points de terminaison de l'API
+ * relatifs à l'analyse des ventes.
+ * Fournit des méthodes pour récupérer des données agrégées sur les ventes
+ * pour différentes périodes (semaine, mois, historique).
+ */
 public class AnalyseVenteApi {
     private static final Logger LOGGER = Logger.getLogger(AnalyseVenteApi.class.getName());
     private static final String API_BASE_URL = Global.getBaseUrl();
@@ -24,7 +30,10 @@ public class AnalyseVenteApi {
     private static final DateTimeFormatter API_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     /**
-     * Récupère les données de vente pour la semaine en cours
+     * Récupère les données de vente pour la semaine en cours.
+     *
+     * @return Une carte associant chaque {@link LocalDate} de la semaine à ses {@link AnalyseVenteData}.
+     * @throws Exception Si une erreur survient lors de la communication avec l'API.
      */
     public static Map<LocalDate, AnalyseVenteData> getVentesSemaine() throws Exception {
         String endpoint = "/analyse/ventes/semaine";
@@ -32,7 +41,10 @@ public class AnalyseVenteApi {
     }
 
     /**
-     * Récupère les données de vente par jour pour le mois en cours
+     * Récupère les données de vente par jour pour le mois en cours.
+     *
+     * @return Une carte associant chaque {@link LocalDate} du mois à ses {@link AnalyseVenteData}.
+     * @throws Exception Si une erreur survient lors de la communication avec l'API.
      */
     public static Map<LocalDate, AnalyseVenteData> getVentesMoisJour() throws Exception {
         String endpoint = "/analyse/ventes/mois";
@@ -40,7 +52,11 @@ public class AnalyseVenteApi {
     }
 
     /**
-     * Récupère l'historique des ventes pour un nombre de mois spécifié
+     * Récupère l'historique des ventes pour un nombre de mois spécifié.
+     *
+     * @param mois Le nombre de mois pour lequel récupérer l'historique.
+     * @return Une carte associant chaque {@link LocalDate} (représentant un jour ou un mois agrégé selon l'API) à ses {@link AnalyseVenteData}.
+     * @throws Exception Si une erreur survient lors de la communication avec l'API.
      */
     public static Map<LocalDate, AnalyseVenteData> getHistoriqueVentes(int mois) throws Exception {
         String endpoint = "/analyse/ventes/historique/" + mois;
@@ -48,7 +64,12 @@ public class AnalyseVenteApi {
     }
 
     /**
-     * Méthode générique pour récupérer les données d'analyse des ventes
+     * Méthode générique pour récupérer les données d'analyse des ventes depuis un point de terminaison spécifique.
+     * En cas d'échec de la requête API, génère des données de test.
+     *
+     * @param endpoint Le chemin du point de terminaison de l'API (par exemple, "/analyse/ventes/semaine").
+     * @return Une carte associant chaque {@link LocalDate} à ses {@link AnalyseVenteData}.
+     * @throws Exception Si une erreur non gérée survient.
      */
     private static Map<LocalDate, AnalyseVenteData> fetchAnalyseVenteData(String endpoint) throws Exception {
         try {
@@ -78,7 +99,10 @@ public class AnalyseVenteApi {
     }
 
     /**
-     * Parse la réponse JSON contenant les données d'analyse des ventes
+     * Analyse la réponse JSON contenant les données d'analyse des ventes.
+     *
+     * @param jsonResponse La chaîne JSON reçue de l'API.
+     * @return Une carte associant chaque {@link LocalDate} à ses {@link AnalyseVenteData}, triée par date.
      */
     private static Map<LocalDate, AnalyseVenteData> parseAnalyseVenteResponse(String jsonResponse) {
         Map<LocalDate, AnalyseVenteData> resultMap = new TreeMap<>();
@@ -104,7 +128,10 @@ public class AnalyseVenteApi {
     }
 
     /**
-     * Génère des données de test pour le développement et les démonstrations
+     * Génère des données de test pour le développement et les démonstrations.
+     * Utilisé lorsque l'API n'est pas disponible ou que les points de terminaison ne sont pas encore implémentés.
+     *
+     * @return Une carte de données de test associant chaque {@link LocalDate} des 7 derniers jours à des {@link AnalyseVenteData} aléatoires.
      */
     private static Map<LocalDate, AnalyseVenteData> generateTestData() {
         Map<LocalDate, AnalyseVenteData> testData = new TreeMap<>();

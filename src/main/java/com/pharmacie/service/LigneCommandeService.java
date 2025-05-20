@@ -7,9 +7,19 @@ import org.json.JSONObject;
 import com.pharmacie.model.LigneCommande;
 import com.pharmacie.model.Medicament;
 
+/**
+ * Service pour la gestion et l'analyse des objets {@link LigneCommande}.
+ * Fournit des méthodes utilitaires pour parser les données JSON en objets LigneCommande.
+ */
 public class LigneCommandeService {
     
 
+    /**
+     * Analyse un objet JSON pour créer une instance de {@link LigneCommande}.
+     *
+     * @param obj L'objet {@link JSONObject} représentant une ligne de commande.
+     * @return Une instance de {@link LigneCommande} si l'analyse réussit, sinon {@code null}.
+     */
     public static LigneCommande parseLigneCommande(JSONObject obj) {
         if (obj == null) {
             System.out.println("JSONObject null, impossible de parser la ligne de commande");
@@ -58,6 +68,13 @@ public class LigneCommandeService {
     }
 
     
+    /**
+     * Analyse un objet JSON représentant les données d'un médicament (StockMedicamentDTO)
+     * pour créer une instance de {@link Medicament}.
+     *
+     * @param stockMedicamentDTO L'objet {@link JSONObject} contenant les informations du médicament.
+     * @return Une instance de {@link Medicament} si l'analyse réussit, sinon {@code null}.
+     */
     public static Medicament parseMedicament(JSONObject stockMedicamentDTO) {
         if (stockMedicamentDTO == null) {
             System.out.println("JSONObject null, impossible de parser le médicament");

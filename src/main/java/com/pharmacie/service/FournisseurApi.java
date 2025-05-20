@@ -17,6 +17,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+/**
+ * Classe API pour gérer les opérations CRUD pour les fournisseurs.
+ * Interagit avec un service backend via HTTP.
+ */
 public class FournisseurApi {
     private static final String BASE_URL = Global.getBaseUrl();
     private static final String FOURNISSEUR_ENDPOINT = "/fournisseurs";
@@ -24,6 +28,10 @@ public class FournisseurApi {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructeur pour FournisseurApi.
+     * Initialise HttpClient et ObjectMapper.
+     */
     public FournisseurApi() {
         this.httpClient = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper()
@@ -33,6 +41,11 @@ public class FournisseurApi {
 
     // Opération CRUD
 
+    /**
+     * Récupère tous les fournisseurs depuis le service backend.
+     *
+     * @return Une liste de {@link Fournisseur}, ou une liste vide en cas d'erreur.
+     */
     public List<Fournisseur> getAllFournisseurs() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -55,6 +68,12 @@ public class FournisseurApi {
         }
     }
 
+    /**
+     * Récupère un fournisseur par son ID.
+     *
+     * @param id L'ID du fournisseur à récupérer.
+     * @return Un {@link Optional} contenant le {@link Fournisseur} s'il est trouvé, sinon un {@link Optional} vide.
+     */
     public Optional<Fournisseur> getFournisseurById(UUID id) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -75,6 +94,12 @@ public class FournisseurApi {
         }
     }
 
+    /**
+     * Récupère un fournisseur par son adresse e-mail.
+     *
+     * @param email L'adresse e-mail du fournisseur à récupérer.
+     * @return Un {@link Optional} contenant le {@link Fournisseur} s'il est trouvé, sinon un {@link Optional} vide.
+     */
     public Optional<Fournisseur> getFournisseurByEmail(String email) {
         try {
             String encodedEmail = java.net.URLEncoder.encode(email, "UTF-8");
@@ -96,6 +121,12 @@ public class FournisseurApi {
         }
     }
 
+    /**
+     * Récupère un fournisseur par son numéro de téléphone.
+     *
+     * @param telephone Le numéro de téléphone du fournisseur à récupérer.
+     * @return Un {@link Optional} contenant le {@link Fournisseur} s'il est trouvé, sinon un {@link Optional} vide.
+     */
     public Optional<Fournisseur> getFournisseurByTelephone(String telephone) {
         try {
             String encodedTel = java.net.URLEncoder.encode(telephone, "UTF-8");
@@ -117,6 +148,12 @@ public class FournisseurApi {
         }
     }
 
+    /**
+     * Crée un nouveau fournisseur.
+     *
+     * @param request L'objet {@link FournisseurCreateRequest} contenant les informations du nouveau fournisseur.
+     * @return {@code true} si la création a réussi (statut 201), {@code false} sinon.
+     */
     public boolean createFournisseur(FournisseurCreateRequest request) {
         try {
             String requestBody = objectMapper.writeValueAsString(request);
@@ -135,6 +172,13 @@ public class FournisseurApi {
         }
     }
 
+    /**
+     * Met à jour un fournisseur existant.
+     *
+     * @param id L'ID du fournisseur à mettre à jour.
+     * @param request L'objet {@link FournisseurUpdateRequest} contenant les informations de mise à jour.
+     * @return {@code true} si la mise à jour a réussi, {@code false} sinon.
+     */
     public boolean updateFournisseur(UUID id, FournisseurUpdateRequest request) {
         try {
             String requestBody = objectMapper.writeValueAsString(request);
@@ -152,6 +196,13 @@ public class FournisseurApi {
             return false;
         }
     }
+
+    /**
+     * Recherche des fournisseurs en fonction d'un terme de recherche.
+     *
+     * @param query Le terme de recherche.
+     * @return Une liste de {@link Fournisseur} correspondant au terme de recherche, ou une liste vide en cas d'erreur.
+     */
     public List<Fournisseur> searchFournisseurs(String query) {
         try {
             String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
@@ -174,6 +225,13 @@ public class FournisseurApi {
             return Collections.emptyList();
         }
     }
+
+    /**
+     * Supprime un fournisseur par son ID.
+     *
+     * @param id L'ID du fournisseur à supprimer.
+     * @return {@code true} si la suppression a réussi (statut 204), {@code false} sinon.
+     */
     public boolean deleteFournisseur(UUID id) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -192,6 +250,13 @@ public class FournisseurApi {
 
     // Parsing JSON
 
+    /**
+     * Analyse une chaîne JSON et la convertit en une liste d'objets {@link Fournisseur}.
+     *
+     * @param json La chaîne JSON à analyser.
+     * @return Une liste d'objets {@link Fournisseur}.
+     * @throws IOException Si une erreur d'entrée/sortie se produit lors de l'analyse.
+     */
     private List<Fournisseur> parseFournisseursFromJson(String json) throws IOException {
         List<Fournisseur> fournisseurs = new ArrayList<>();
         JsonNode rootNode = objectMapper.readTree(json);
@@ -204,11 +269,24 @@ public class FournisseurApi {
         return fournisseurs;
     }
 
+    /**
+     * Analyse une chaîne JSON et la convertit en un objet {@link Fournisseur}.
+     *
+     * @param json La chaîne JSON à analyser.
+     * @return Un objet {@link Fournisseur}.
+     * @throws IOException Si une erreur d'entrée/sortie se produit lors de l'analyse.
+     */
     private Fournisseur parseFournisseurFromJson(String json) throws IOException {
         JsonNode node = objectMapper.readTree(json);
         return parseFournisseurNode(node);
     }
 
+    /**
+     * Convertit un nœud JSON en un objet {@link Fournisseur}.
+     *
+     * @param node Le {@link JsonNode} à convertir.
+     * @return Un objet {@link Fournisseur}.
+     */
     private Fournisseur parseFournisseurNode(JsonNode node) {
         UUID id = UUID.fromString(node.get("idFournisseur").asText());
         String nomSociete = node.get("nomSociete").asText();

@@ -22,6 +22,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 
+/**
+ * Classe API pour gérer les opérations CRUD pour les préparateurs.
+ * Interagit avec un service backend via HTTP.
+ */
 public class PreparateurApi {
     private static final String BASE_URL = Global.getBaseUrl();
     private static final String PREPARATEUR_ENDPOINT = "/preparateurs";
@@ -29,6 +33,10 @@ public class PreparateurApi {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructeur pour PreparateurApi.
+     * Initialise HttpClient et ObjectMapper.
+     */
     public PreparateurApi() {
         this.httpClient = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper()
@@ -36,6 +44,11 @@ public class PreparateurApi {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    /**
+     * Récupère tous les préparateurs depuis le service backend.
+     *
+     * @return Une liste de {@link Preparateur}, ou une liste vide en cas d'erreur.
+     */
     public List<Preparateur> getAllPreparateurs() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -59,6 +72,12 @@ public class PreparateurApi {
         }
     }
 
+    /**
+     * Recherche des préparateurs en fonction d'un terme de recherche.
+     *
+     * @param query Le terme de recherche.
+     * @return Une liste de {@link Preparateur} correspondant au terme de recherche, ou une liste vide en cas d'erreur.
+     */
     public List<Preparateur> searchPreparateurs(String query) {
         try {
             String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
@@ -83,6 +102,12 @@ public class PreparateurApi {
         }
     }
 
+    /**
+     * Supprime un préparateur par son ID.
+     *
+     * @param idPersonne L'ID du préparateur à supprimer.
+     * @return {@code true} si la suppression a réussi, {@code false} sinon.
+     */
     public boolean deletePreparateur(UUID idPersonne) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -99,6 +124,13 @@ public class PreparateurApi {
         }
     }
 
+    /**
+     * Met à jour un préparateur existant.
+     *
+     * @param idPersonne L'ID du préparateur à mettre à jour.
+     * @param updateRequest L'objet {@link PreparateurUpdateRequest} contenant les informations de mise à jour.
+     * @return {@code true} si la mise à jour a réussi, {@code false} sinon.
+     */
     public boolean updatePreparateur(UUID idPersonne, PreparateurUpdateRequest updateRequest) {
         try {
             ObjectMapper requestMapper = new ObjectMapper();
@@ -120,6 +152,13 @@ public class PreparateurApi {
         }
     }
 
+    /**
+     * Analyse une chaîne JSON et la convertit en une liste d'objets {@link Preparateur}.
+     *
+     * @param json La chaîne JSON à analyser.
+     * @return Une liste d'objets {@link Preparateur}.
+     * @throws IOException Si une erreur d'entrée/sortie se produit lors de l'analyse.
+     */
     private List<Preparateur> parsePreparateursFromJson(String json) throws IOException {
         List<Preparateur> preparateurs = new ArrayList<>();
         JsonNode rootNode = objectMapper.readTree(json);
@@ -156,6 +195,12 @@ public class PreparateurApi {
         return preparateurs;
     }
 
+    /**
+     * Crée un nouveau préparateur.
+     *
+     * @param createRequest L'objet {@link PreparateurCreateRequest} contenant les informations du nouveau préparateur.
+     * @return {@code true} si la création a réussi, {@code false} sinon.
+     */
     public boolean createPreparateur(PreparateurCreateRequest createRequest) {
         try {
             String requestBody = objectMapper.writeValueAsString(createRequest);

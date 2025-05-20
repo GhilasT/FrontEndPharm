@@ -21,6 +21,11 @@ import com.pharmacie.model.LigneCommande;
 import com.pharmacie.model.Medicament;
 import com.pharmacie.util.Global;
 
+/**
+ * Service pour la gestion des commandes.
+ * Permet de récupérer des commandes, de parser les données JSON en objets {@link Commande},
+ * et de mettre à jour le statut des commandes.
+ */
 public class CommandeService {
 
     private static final HttpClient client = HttpClient.newBuilder()
@@ -31,6 +36,12 @@ public class CommandeService {
     private static final String COMMANDES_URL = BASE_URL + "/commandes";
     
 
+    /**
+     * Récupère la liste de toutes les commandes depuis le service backend.
+     *
+     * @return Une liste d'objets {@link Commande}.
+     * @throws Exception Si une erreur survient lors de la requête HTTP ou du parsing JSON.
+     */
     public static List<Commande> getCommandes() throws Exception {
         List<Commande> resultats = new ArrayList<>();
         HttpRequest request = HttpRequest.newBuilder()
@@ -66,6 +77,14 @@ public class CommandeService {
 
 
     
+    /**
+     * Analyse un objet JSON pour créer une instance de {@link Commande}.
+     * Gère différents formats de date et la structure imbriquée des lignes de commande.
+     *
+     * @param obj L'objet {@link JSONObject} représentant une commande.
+     * @return Une instance de {@link Commande} si l'analyse réussit, sinon {@code null}.
+     * @throws ParseException Si une erreur survient lors du parsing des dates.
+     */
     public static Commande parseCommande(JSONObject obj) throws ParseException {
         if (obj == null) {
             System.out.println("JSONObject null, impossible de parser la commande");
@@ -206,6 +225,13 @@ public class CommandeService {
     }
 
 
+    /**
+     * Met à jour le statut d'une commande à "Reçu" dans le service backend.
+     *
+     * @param idCommande L'UUID de la commande à mettre à jour.
+     * @return La {@link HttpResponse} de la requête PUT.
+     * @throws Exception Si une erreur survient lors de la requête HTTP.
+     */
     public static HttpResponse<String> mettreAJourStatutCommandeRecu(UUID idCommande) throws Exception {
         String url = COMMANDES_URL + "/StatusRecu/" + idCommande.toString();
         HttpRequest request = HttpRequest.newBuilder()

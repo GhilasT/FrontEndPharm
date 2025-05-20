@@ -28,8 +28,8 @@ import java.util.stream.IntStream;
 
 /**
  * Service pour interagir avec l'API REST du backend.
- * Permet de récupérer les données des médicaments et des ventes depuis le
- * backend.
+ * Permet de récupérer et de manipuler les données des médicaments, des ventes,
+ * des clients, des pharmaciens, des médecins et des ordonnances depuis le backend.
  */
 public class ApiRest {
     private static final String API_BASE_URL = Global.getBaseUrl();
@@ -47,22 +47,29 @@ public class ApiRest {
     /**
      * Récupère l'URL de base de l'API.
      *
-     * @return URL de base de l'API
+     * @return L'URL de base de l'API.
      */
     public static String getApiBaseUrl() {
         return API_BASE_URL;
     }
 
     /**
-     * Récupère tous les médicaments depuis l'API.
+     * Récupère tous les médicaments depuis l'API, sans terme de recherche.
      *
-     * @return Liste des médicaments
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @return Une liste de tous les médicaments.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
      */
     public static List<Medicament> getMedicaments() throws Exception {
         return getMedicaments("");
     }
 
+    /**
+     * Recherche tous les médicaments correspondant à un terme de recherche.
+     *
+     * @param searchTerm Le terme à utiliser pour la recherche.
+     * @return Une liste de médicaments correspondant au terme de recherche.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
+     */
     public static List<Medicament> getAllMedicaments(String searchTerm) throws Exception {
         String url = API_BASE_URL + "/medicaments/search/all?searchTerm=" + searchTerm;
 
@@ -87,10 +94,11 @@ public class ApiRest {
 
     /**
      * Recherche des médicaments par terme de recherche.
+     * Si aucun terme de recherche n'est fourni, récupère une page par défaut de médicaments.
      *
-     * @param searchTerm Terme de recherche
-     * @return Liste des médicaments correspondant au terme de recherche
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @param searchTerm Le terme de recherche (peut être nul ou vide).
+     * @return Une liste des médicaments correspondant au terme de recherche ou une page par défaut.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
      */
     public static List<Medicament> getMedicaments(String searchTerm) throws Exception {
         String url = API_BASE_URL + "/medicaments/1";
@@ -133,10 +141,9 @@ public class ApiRest {
     /**
      * Récupère une page de médicaments depuis l'API.
      *
-     * @param page Numéro de page (commence à 0)
-     * @return Réponse paginée contenant les médicaments et les métadonnées de
-     *         pagination
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @param page Le numéro de la page à récupérer (commence à 0).
+     * @return Une {@link PageResponse} contenant les médicaments de la page demandée et les métadonnées de pagination.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
      */
     public static PageResponse<Medicament> getMedicamentsPagines(int page) throws Exception {
         return getMedicamentsPagines(page, null);
@@ -145,11 +152,10 @@ public class ApiRest {
     /**
      * Recherche des médicaments par terme de recherche avec pagination.
      *
-     * @param page       Numéro de page (commence à 0)
-     * @param searchTerm Terme de recherche (optionnel)
-     * @return Réponse paginée contenant les médicaments et les métadonnées de
-     *         pagination
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @param page       Le numéro de la page à récupérer (commence à 0).
+     * @param searchTerm Le terme de recherche (optionnel, peut être nul ou vide).
+     * @return Une {@link PageResponse} contenant les médicaments correspondant au terme de recherche pour la page demandée et les métadonnées de pagination.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
      */
     public static PageResponse<Medicament> getMedicamentsPagines(int page, String searchTerm) throws Exception {
         String url = API_BASE_URL + "/medicaments/" + page;
@@ -196,9 +202,9 @@ public class ApiRest {
     /**
      * Récupère une page de médicaments depuis l'API de manière asynchrone.
      *
-     * @param page       Numéro de page (commence à 0)
-     * @param searchTerm Terme de recherche (optionnel)
-     * @return CompletableFuture contenant la réponse paginée
+     * @param page       Le numéro de la page à récupérer (commence à 0).
+     * @param searchTerm Le terme de recherche (optionnel, peut être nul ou vide).
+     * @return Un {@link CompletableFuture} contenant la {@link PageResponse} des médicaments.
      */
     public static CompletableFuture<PageResponse<Medicament>> getMedicamentsPaginesAsync(int page, String searchTerm) {
         String url = API_BASE_URL + "/medicaments/" + page;
@@ -240,8 +246,8 @@ public class ApiRest {
     /**
      * Récupère les médicaments depuis l'API de manière asynchrone.
      *
-     * @param searchTerm Terme de recherche (optionnel)
-     * @return CompletableFuture contenant la liste des médicaments
+     * @param searchTerm Le terme de recherche (optionnel, peut être nul ou vide).
+     * @return Un {@link CompletableFuture} contenant la liste des médicaments.
      */
     public static CompletableFuture<List<Medicament>> getMedicamentsAsync(String searchTerm) {
         String url = API_BASE_URL + "/medicaments/1";
@@ -281,9 +287,9 @@ public class ApiRest {
     /**
      * Vérifie si un médicament nécessite une ordonnance.
      *
-     * @param medicamentId ID du médicament
-     * @return true si le médicament nécessite une ordonnance, false sinon
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @param medicamentId L'ID du médicament à vérifier.
+     * @return {@code true} si le médicament nécessite une ordonnance, {@code false} sinon.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
      */
     public static boolean checkOrdonnanceRequise(Long medicamentId) throws Exception {
         String url = API_BASE_URL + "/medicaments/id/" + medicamentId + "/ordonnance";
@@ -320,8 +326,8 @@ public class ApiRest {
     /**
      * Récupère toutes les ventes depuis l'API.
      *
-     * @return Liste des ventes
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @return Une liste de toutes les ventes.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
      */
     public static List<Vente> getVentes() throws Exception {
         String url = API_BASE_URL + "/ventes";
@@ -356,6 +362,13 @@ public class ApiRest {
         }
     }
 
+    /**
+     * Recherche des médicaments spécifiquement pour une vente, en utilisant un terme de recherche.
+     *
+     * @param searchTerm Le terme à utiliser pour la recherche de médicaments.
+     * @return Une liste de médicaments correspondant au terme de recherche, avec des informations pertinentes pour une vente.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
+     */
     public static List<Medicament> searchForVente(String searchTerm) throws Exception {
         String url = API_BASE_URL + "/medicaments/search/all?searchTerm="
                 + URLEncoder.encode(searchTerm, StandardCharsets.UTF_8);
@@ -377,6 +390,12 @@ public class ApiRest {
         }
     }
 
+    /**
+     * Analyse la réponse JSON d'une recherche de médicaments pour une vente.
+     *
+     * @param jsonResponse La chaîne JSON contenant la réponse de l'API.
+     * @return Une liste de médicaments parsée à partir de la réponse JSON.
+     */
     private static List<Medicament> parseVenteSearchResponse(String jsonResponse) {
         List<Medicament> medicaments = new ArrayList<>();
         try {
@@ -402,6 +421,9 @@ public class ApiRest {
 
     /**
      * Récupère et calcule la quantité totale en stock pour un médicament via son code CIP13.
+     *
+     * @param codeCip13 Le code CIP13 du médicament.
+     * @return La quantité totale en stock pour le médicament. Retourne 0 en cas d'erreur.
      */
     private static int fetchStock(String codeCip13) {
         try {
@@ -418,9 +440,9 @@ public class ApiRest {
     /**
      * Récupère une vente par son ID depuis l'API.
      *
-     * @param id ID de la vente
-     * @return Vente correspondant à l'ID
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @param id L'ID de la vente à récupérer.
+     * @return La {@link Vente} correspondant à l'ID.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
      */
     public static Vente getVenteById(UUID id) throws Exception {
         String url = API_BASE_URL + "/ventes/" + id;
@@ -459,9 +481,9 @@ public class ApiRest {
     /**
      * Crée une nouvelle vente via l'API.
      *
-     * @param request Requête de création de vente
-     * @return Vente créée
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @param request La requête de création de vente contenant les détails de la vente.
+     * @return La {@link Vente} créée.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API ou si la création échoue.
      */
     public static Vente createVente(VenteCreateRequest request) throws Exception {
         String url = API_BASE_URL + "/ventes";
@@ -523,12 +545,12 @@ public class ApiRest {
     }
 
     /**
-     * Met à jour une vente via l'API.
+     * Met à jour une vente existante via l'API.
      *
-     * @param id ID de la vente à mettre à jour
-     * @param request Requête de mise à jour de vente
-     * @return Vente mise à jour
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @param id      L'ID de la vente à mettre à jour.
+     * @param request La requête de mise à jour de vente contenant les nouvelles informations.
+     * @return La {@link Vente} mise à jour.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API ou si la mise à jour échoue.
      */
     public static Vente updateVente(UUID id, VenteUpdateRequest request) throws Exception {
         String url = API_BASE_URL + "/ventes/" + id;
@@ -589,8 +611,8 @@ public class ApiRest {
     /**
      * Supprime une vente via l'API.
      *
-     * @param id ID de la vente à supprimer
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @param id L'ID de la vente à supprimer.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API ou si la suppression échoue.
      */
     public static void deleteVente(UUID id) throws Exception {
         String url = API_BASE_URL + "/ventes/" + id;
@@ -625,10 +647,10 @@ public class ApiRest {
     }
 
     /**
-     * Parse la réponse JSON contenant une liste de médicaments.
+     * Analyse la réponse JSON contenant une liste de médicaments (potentiellement paginée).
      *
-     * @param jsonResponse Réponse JSON
-     * @return Liste des médicaments
+     * @param jsonResponse La chaîne JSON contenant la réponse de l'API.
+     * @return Une liste de {@link Medicament} parsée à partir de la réponse JSON.
      */
     private static List<Medicament> parseMedicamentsResponse(String jsonResponse) {
         List<Medicament> medicaments = new ArrayList<>();
@@ -665,7 +687,7 @@ public class ApiRest {
     /**
      * Vérifie si le backend est accessible.
      *
-     * @return true si le backend est accessible, false sinon
+     * @return {@code true} si le backend est accessible et répond correctement, {@code false} sinon.
      */
     public static boolean isBackendAccessible() {
         try {
@@ -688,10 +710,10 @@ public class ApiRest {
     }
 
     /**
-     * Parse la réponse JSON contenant une page de médicaments.
+     * Analyse la réponse JSON contenant une page de médicaments.
      *
-     * @param jsonResponse Réponse JSON
-     * @return Réponse paginée contenant les médicaments
+     * @param jsonResponse La chaîne JSON de la réponse de l'API.
+     * @return Une {@link PageResponse} contenant les médicaments et les informations de pagination.
      */
     private static PageResponse<Medicament> parsePageResponse(String jsonResponse) {
         List<Medicament> medicaments = new ArrayList<>();
@@ -819,10 +841,10 @@ public class ApiRest {
     }
 
     /**
-     * Parse la réponse JSON contenant une liste de ventes.
+     * Analyse la réponse JSON contenant une liste de ventes.
      *
-     * @param jsonResponse Réponse JSON
-     * @return Liste des ventes
+     * @param jsonResponse La chaîne JSON de la réponse de l'API.
+     * @return Une liste de {@link Vente} parsée à partir de la réponse JSON.
      */
     private static List<Vente> parseVentesResponse(String jsonResponse) {
         List<Vente> ventes = new ArrayList<>();
@@ -842,10 +864,10 @@ public class ApiRest {
     }
 
     /**
-     * Parse la réponse JSON contenant une vente.
+     * Analyse la réponse JSON contenant une seule vente.
      *
-     * @param jsonResponse Réponse JSON
-     * @return Vente
+     * @param jsonResponse La chaîne JSON de la réponse de l'API.
+     * @return La {@link Vente} parsée à partir de la réponse JSON, ou {@code null} en cas d'erreur.
      */
     private static Vente parseVenteResponse(String jsonResponse) {
         try {
@@ -858,10 +880,10 @@ public class ApiRest {
     }
 
     /**
-     * Parse un objet JSON représentant une vente.
+     * Analyse un objet JSON représentant une vente.
      *
-     * @param venteJson Objet JSON
-     * @return Vente
+     * @param venteJson L'objet {@link JSONObject} représentant la vente.
+     * @return La {@link Vente} parsée à partir de l'objet JSON.
      */
     private static Vente parseVenteJson(JSONObject venteJson) {
         Vente vente = new Vente();
@@ -921,9 +943,9 @@ public class ApiRest {
     /**
      * Récupère un client par son ID depuis l'API.
      *
-     * @param id ID du client
-     * @return Client correspondant à l'ID
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @param id L'ID du client à récupérer.
+     * @return Le {@link Client} correspondant à l'ID.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API ou si le client n'est pas trouvé.
      */
     public static Client getClientById(UUID id) throws Exception {
         String url = API_BASE_URL + "/client/" + id;
@@ -957,9 +979,9 @@ public class ApiRest {
     /**
      * Récupère un pharmacien adjoint par son ID depuis l'API.
      *
-     * @param id ID du pharmacien
-     * @return PharmacienAdjoint correspondant à l'ID
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @param id L'ID du pharmacien adjoint à récupérer.
+     * @return Le {@link PharmacienAdjoint} correspondant à l'ID.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API ou si le pharmacien n'est pas trouvé.
      */
     public static PharmacienAdjoint getPharmacienById(UUID id) throws Exception {
         String url = API_BASE_URL + "/pharmaciens-adjoints/" + id;
@@ -990,6 +1012,13 @@ public class ApiRest {
         }
     }
 
+    /**
+     * Récupère un médicament par son code CIP13 depuis l'API.
+     *
+     * @param codeCip13 Le code CIP13 du médicament à récupérer.
+     * @return Le {@link Medicament} correspondant au code CIP13.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API ou si le médicament n'est pas trouvé.
+     */
     public static Medicament getMedicamentByCodeCip13(String codeCip13) throws Exception {
         String url = API_BASE_URL + "/medicaments/code/" + codeCip13;
 
@@ -1010,6 +1039,12 @@ public class ApiRest {
         }
     }
 
+    /**
+     * Analyse la réponse JSON d'un médicament récupéré par son code.
+     *
+     * @param jsonResponse La chaîne JSON de la réponse de l'API.
+     * @return Le {@link Medicament} parsé à partir de la réponse JSON.
+     */
     private static Medicament parseMedicamentByCodeResponse(String jsonResponse) {
         Medicament medicament = new Medicament();
         try {
@@ -1040,7 +1075,12 @@ public class ApiRest {
         return medicament;
     }
 
-    // Méthodes de parsing
+    /**
+     * Analyse la réponse JSON représentant un client.
+     *
+     * @param jsonResponse La chaîne JSON de la réponse de l'API.
+     * @return Le {@link Client} parsé à partir de la réponse JSON.
+     */
     private static Client parseClientResponse(String jsonResponse) {
         JSONObject json = new JSONObject(jsonResponse);
         Client client = new Client();
@@ -1070,6 +1110,12 @@ public class ApiRest {
         return client;
     }
 
+    /**
+     * Analyse la réponse JSON représentant un pharmacien adjoint.
+     *
+     * @param jsonResponse La chaîne JSON de la réponse de l'API.
+     * @return Le {@link PharmacienAdjoint} parsé à partir de la réponse JSON.
+     */
     private static PharmacienAdjoint parsePharmacienResponse(String jsonResponse) {
         JSONObject json = new JSONObject(jsonResponse);
 
@@ -1089,48 +1135,105 @@ public class ApiRest {
                 json.getString("emailPro"));
     }
 
+    /**
+     * Récupère les informations administratives d'un médicament.
+     * (Note: L'implémentation actuelle retourne null)
+     *
+     * @param codeCip13 Le code CIP13 du médicament.
+     * @return Un {@link JSONObject} contenant les informations administratives, ou {@code null}.
+     */
     public static JSONObject getMedicamentInfosAdmin(String codeCip13) {
         // Implémentation: récupérer les infos admin d'un médicament
         // Logique pour récupérer les informations administratives d'un médicament
         return null;
     }
 
+    /**
+     * Récupère les informations de disponibilité d'un médicament.
+     * (Note: L'implémentation actuelle retourne null)
+     *
+     * @param codeCip13 Le code CIP13 du médicament.
+     * @return Un {@link JSONObject} contenant les informations de disponibilité, ou {@code null}.
+     */
     public static JSONObject getMedicamentInfosDispo(String codeCip13) {
         // Implémentation: récupérer les infos de disponibilité d'un médicament
         // Logique pour récupérer les informations de disponibilité d'un médicament
         return null;
     }
 
+    /**
+     * Récupère les informations de prescription d'un médicament.
+     * (Note: L'implémentation actuelle retourne null)
+     *
+     * @param codeCip13 Le code CIP13 du médicament.
+     * @return Un {@link JSONObject} contenant les informations de prescription, ou {@code null}.
+     */
     public static JSONObject getMedicamentInfosPrescription(String codeCip13) {
         // Implémentation: récupérer les infos de prescription d'un médicament
         // Logique pour récupérer les informations de prescription d'un médicament
         return null;
     }
 
+    /**
+     * Récupère les informations des génériques d'un médicament.
+     * (Note: L'implémentation actuelle retourne null)
+     *
+     * @param codeCip13 Le code CIP13 du médicament.
+     * @return Un {@link JSONObject} contenant les informations des génériques, ou {@code null}.
+     */
     public static JSONObject getMedicamentInfosGeneriques(String codeCip13) {
         // Implémentation: récupérer les infos des génériques d'un médicament
         // Logique pour récupérer les informations des génériques d'un médicament
         return null;
     }
 
+    /**
+     * Met à jour le stock d'un médicament.
+     * (Note: L'implémentation actuelle retourne false)
+     *
+     * @param codeCip13 Le code CIP13 du médicament.
+     * @param quantite La nouvelle quantité en stock.
+     * @return {@code true} si la mise à jour a réussi, {@code false} sinon.
+     */
     public static boolean updateMedicamentStock(String codeCip13, Integer quantite) {
         // Implémentation: mettre à jour le stock d'un médicament
         // Logique pour mettre à jour le stock d'un médicament
         return false;
     }
 
+    /**
+     * Récupère toutes les ventes associées à un ID client spécifique.
+     *
+     * @param clientId L'ID du client.
+     * @return Une liste des {@link Vente} effectuées par le client.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
+     */
     public static List<Vente> getVentesByClientId(UUID clientId) throws Exception {
         String url = API_BASE_URL + "/ventes/client/" + clientId;
         LOGGER.log(Level.INFO, "Récupération des ventes pour le client ID: {0}", clientId);
         return sendVentesRequest(url);
     }
 
+    /**
+     * Récupère toutes les ventes associées à un ID pharmacien spécifique.
+     *
+     * @param pharmacienId L'ID du pharmacien.
+     * @return Une liste des {@link Vente} enregistrées par le pharmacien.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
+     */
     public static List<Vente> getVentesByPharmacienId(UUID pharmacienId) throws Exception {
         String url = API_BASE_URL + "/ventes/pharmacien/" + pharmacienId;
         LOGGER.log(Level.INFO, "Récupération des ventes pour le pharmacien ID: {0}", pharmacienId);
         return sendVentesRequest(url);
     }
 
+    /**
+     * Envoie une requête GET à l'URL spécifiée pour récupérer une liste de ventes et la parse.
+     *
+     * @param url L'URL de l'API pour récupérer les ventes.
+     * @return Une liste de {@link Vente} parsée à partir de la réponse.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API ou du parsing.
+     */
     private static List<Vente> sendVentesRequest(String url) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -1149,10 +1252,10 @@ public class ApiRest {
     }
 
     /**
-     * Récupère les informations du tableau de bord.
+     * Récupère les informations du tableau de bord depuis l'API.
      *
-     * @return les statistiques du tableau de bord
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @return Un objet {@link Dashboard} contenant les statistiques du tableau de bord.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
      * @author raphaelcharoze
      */
     public static Dashboard getDashboardRequest() throws Exception {
@@ -1173,10 +1276,10 @@ public class ApiRest {
     }
 
     /**
-     * Parse la réponse JSON du tableau de bord.
+     * Analyse la réponse JSON du tableau de bord.
      *
-     * @param body Réponse JSON
-     * @return Liste des statistiques du tableau de bord
+     * @param body La chaîne JSON de la réponse de l'API.
+     * @return Un objet {@link Dashboard} parsé à partir de la réponse JSON.
      * @author raphaelcharoze
      */
     private static Dashboard parseDashboardResponse(String body) {
@@ -1206,10 +1309,10 @@ public class ApiRest {
     }
 
     /**
-     * Supprime un médecin via l'API en utilisant son RPPS.
+     * Supprime un médecin via l'API en utilisant son numéro RPPS.
      *
-     * @param rpps Le RPPS du médecin à supprimer
-     * @throws Exception En cas d'erreur lors de la communication avec l'API
+     * @param rpps Le numéro RPPS du médecin à supprimer.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API ou si la suppression échoue.
      */
     public static void deleteMedecin(String rpps) throws Exception {
         String url = API_BASE_URL + "/medecins/rpps/" + rpps; // Utiliser le RPPS pour supprimer le médecin
@@ -1244,6 +1347,13 @@ public class ApiRest {
         }
     }
 
+    /**
+     * Recherche des médecins en fonction d'un terme de recherche.
+     *
+     * @param searchTerm Le terme à utiliser pour la recherche (nom, prénom, RPPS, etc.).
+     * @return Une liste de {@link Medecin} correspondant au terme de recherche.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
+     */
     public static List<Medecin> searchMedecins(String searchTerm) throws Exception {
         try {
             String encodedQuery = java.net.URLEncoder.encode(searchTerm, "UTF-8");
@@ -1299,6 +1409,13 @@ public class ApiRest {
         }
     }
 
+    /**
+     * Crée une nouvelle ordonnance via l'API.
+     *
+     * @param req La requête de création d'ordonnance contenant les détails de l'ordonnance et des prescriptions.
+     * @return L'UUID de l'ordonnance créée.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API, si la création échoue, ou en cas de conflit (par exemple, ordonnance déjà existante).
+     */
     public static UUID createOrdonnance(OrdonnanceCreateRequest req) throws Exception {
         String url = API_BASE_URL + "/ordonnances";
         LOGGER.log(Level.INFO, "Envoi d'une requête POST pour créer une ordonnance");
@@ -1363,11 +1480,25 @@ public class ApiRest {
         }
     }
 
-    // Méthodes pour récupérer les médecins avec pagination
+    /**
+     * Récupère une page de médecins depuis l'API.
+     *
+     * @param page Le numéro de la page à récupérer (commence à 0).
+     * @return Une {@link PageResponse} contenant les médecins de la page demandée et les métadonnées de pagination.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
+     */
     public static PageResponse<Medecin> getMedecinsPagines(int page) throws Exception {
         return getMedecinsPagines(page, ""); // Appel avec un terme de recherche vide
     }
 
+    /**
+     * Récupère une page de médecins depuis l'API, avec un terme de recherche optionnel.
+     *
+     * @param page       Le numéro de la page à récupérer (commence à 0).
+     * @param searchTerm Le terme de recherche (optionnel, peut être nul ou vide).
+     * @return Une {@link PageResponse} contenant les médecins correspondant au terme de recherche pour la page demandée et les métadonnées de pagination.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
+     */
     public static PageResponse<Medecin> getMedecinsPagines(int page, String searchTerm) throws Exception {
         String url = API_BASE_URL + "/medecins/page";
         if (searchTerm != null && !searchTerm.isEmpty()) {
@@ -1407,7 +1538,12 @@ public class ApiRest {
         }
     }
 
-    // Méthode pour parser une page JSON des médecins
+    /**
+     * Analyse la réponse JSON contenant une page de médecins.
+     *
+     * @param jsonResponse La chaîne JSON de la réponse de l'API.
+     * @return Une {@link PageResponse} contenant les médecins et les informations de pagination.
+     */
     private static PageResponse<Medecin> parsePageResponseMedecins(String jsonResponse) {
         List<Medecin> medecins = new ArrayList<>();
         int currentPage = 0;
@@ -1448,7 +1584,13 @@ public class ApiRest {
         return new PageResponse<>(medecins, currentPage, totalPages, totalElements);
     }
 
-    // Méthode pour analyser la réponse JSON d'un médecin et la convertir en objet MedecinResponse
+    /**
+     * Analyse la réponse JSON d'un médecin et la convertit en objet {@link MedecinResponse}.
+     *
+     * @param jsonResponse La chaîne JSON de la réponse de l'API.
+     * @return Un objet {@link MedecinResponse} parsé à partir de la réponse JSON.
+     * @throws Exception En cas d'erreur lors du parsing de la réponse JSON.
+     */
     private static MedecinResponse parseMedecinResponse(String jsonResponse) throws Exception {
         try {
             JSONObject jsonObject = new JSONObject(jsonResponse);
@@ -1486,7 +1628,13 @@ public class ApiRest {
         }
     }
 
-    // Méthode pour créer un médecin
+    /**
+     * Crée un nouveau médecin via l'API.
+     *
+     * @param request La requête de création de médecin contenant les détails du médecin.
+     * @return Un objet {@link MedecinResponse} représentant le médecin créé.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API ou si la création échoue.
+     */
     public static MedecinResponse createMedecin(MedecinCreateRequest request) throws Exception {
         String url = API_BASE_URL + "/medecins";
         LOGGER.log(Level.INFO, "Envoi d'une requête POST pour créer un médecin");
@@ -1536,6 +1684,13 @@ public class ApiRest {
         }
     }
 
+    /**
+     * Vérifie l'existence d'un médecin par son numéro RPPS.
+     *
+     * @param rpps Le numéro RPPS du médecin à vérifier.
+     * @return Un objet {@link MedecinResponse} si le médecin existe, {@code null} sinon.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API (autre qu'un statut 404).
+     */
     public static MedecinResponse checkMedecinByRpps(String rpps) throws Exception {
         // Créer l'URL de la requête pour vérifier l'existence du médecin par RPPS
         String url = API_BASE_URL + "/medecins/rpps/" + rpps;
@@ -1574,7 +1729,12 @@ public class ApiRest {
         }
     }
 
-    // 1) Récupérer tous les clients
+    /**
+     * Récupère tous les clients depuis l'API.
+     *
+     * @return Une liste de tous les {@link Client}.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API.
+     */
     public static List<Client> getAllClients() throws Exception {
         String url = API_BASE_URL + "/client";
         HttpRequest request = HttpRequest.newBuilder()
@@ -1594,7 +1754,12 @@ public class ApiRest {
         }
     }
 
-    // 2) Parser une liste de clients
+    /**
+     * Analyse une chaîne JSON représentant un tableau de clients.
+     *
+     * @param jsonArray La chaîne JSON contenant le tableau de clients.
+     * @return Une liste de {@link Client} parsée à partir de la chaîne JSON.
+     */
     private static List<Client> parseClientsArray(String jsonArray) {
         List<Client> liste = new ArrayList<>();
         try {
@@ -1618,7 +1783,13 @@ public class ApiRest {
         return liste;
     }
 
-    // 3) Récupérer un client par email
+    /**
+     * Récupère un client par son adresse e-mail.
+     *
+     * @param email L'adresse e-mail du client à rechercher.
+     * @return Le {@link Client} correspondant à l'e-mail, ou {@code null} s'il n'est pas trouvé.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API (autre qu'un statut 404).
+     */
     public static Client getClientByEmail(String email) throws Exception {
         String url = API_BASE_URL + "/client/email/" + URLEncoder.encode(email, StandardCharsets.UTF_8);
         LOGGER.log(Level.INFO, "GET client par email à {0}", url);
@@ -1640,7 +1811,13 @@ public class ApiRest {
         }
     }
 
-    // 4) Récupérer un client par téléphone
+    /**
+     * Récupère un client par son numéro de téléphone.
+     *
+     * @param phone Le numéro de téléphone du client à rechercher.
+     * @return Le {@link Client} correspondant au numéro de téléphone, ou {@code null} s'il n'est pas trouvé.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API (autre qu'un statut 404).
+     */
     public static Client getClientByTelephone(String phone) throws Exception {
         String url = API_BASE_URL + "/client/telephone/" + URLEncoder.encode(phone, StandardCharsets.UTF_8);
         LOGGER.log(Level.INFO, "GET client par téléphone à {0}", url);
@@ -1662,7 +1839,13 @@ public class ApiRest {
         }
     }
 
-    // 5) Créer un nouveau client
+    /**
+     * Crée un nouveau client via l'API.
+     *
+     * @param req La requête de création de client contenant les détails du client.
+     * @return Le {@link Client} créé.
+     * @throws Exception En cas d'erreur lors de la communication avec l'API ou si la création échoue.
+     */
     public static Client createClient(ClientCreateRequest req) throws Exception {
         String url = API_BASE_URL + "/client";
         LOGGER.log(Level.INFO, "Envoi d'une requête POST pour créer un client");

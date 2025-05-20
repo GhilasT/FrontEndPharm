@@ -22,6 +22,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 
+/**
+ * Classe API pour gérer les opérations CRUD pour les apprentis.
+ * Interagit avec un service backend via HTTP.
+ */
 public class ApprentiApi {
     private static final String BASE_URL = Global.getBaseUrl();
     private static final String APPRENTI_ENDPOINT = "/apprentis";
@@ -29,6 +33,10 @@ public class ApprentiApi {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructeur pour ApprentiApi.
+     * Initialise HttpClient et ObjectMapper.
+     */
     public ApprentiApi() {
         this.httpClient = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper()
@@ -36,6 +44,11 @@ public class ApprentiApi {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    /**
+     * Récupère tous les apprentis depuis le service backend.
+     *
+     * @return Une liste d'objets {@link Apprenti}, ou une liste vide en cas d'erreur.
+     */
     public List<Apprenti> getAllApprentis() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -59,6 +72,12 @@ public class ApprentiApi {
         }
     }
 
+    /**
+     * Recherche des apprentis en fonction d'un terme de recherche.
+     *
+     * @param query Le terme de recherche.
+     * @return Une liste d'{@link Apprenti} correspondant au terme de recherche, ou une liste vide en cas d'erreur.
+     */
     public List<Apprenti> searchApprentis(String query) {
         try {
             String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
@@ -83,6 +102,12 @@ public class ApprentiApi {
         }
     }
 
+    /**
+     * Supprime un apprenti par son ID.
+     *
+     * @param idPersonne L'ID de l'apprenti à supprimer.
+     * @return {@code true} si la suppression a réussi, {@code false} sinon.
+     */
     public boolean deleteApprenti(UUID idPersonne) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -99,6 +124,13 @@ public class ApprentiApi {
         }
     }
 
+    /**
+     * Met à jour un apprenti existant.
+     *
+     * @param idPersonne L'ID de l'apprenti à mettre à jour.
+     * @param updateRequest L'objet {@link ApprentiUpdateRequest} contenant les informations de mise à jour.
+     * @return {@code true} si la mise à jour a réussi, {@code false} sinon.
+     */
     public boolean updateApprenti(UUID idPersonne, ApprentiUpdateRequest updateRequest) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -120,6 +152,13 @@ public class ApprentiApi {
         }
     }
 
+    /**
+     * Analyse une chaîne JSON et la convertit en une liste d'objets {@link Apprenti}.
+     *
+     * @param json La chaîne JSON à analyser.
+     * @return Une liste d'objets {@link Apprenti}.
+     * @throws IOException Si une erreur d'entrée/sortie se produit lors de l'analyse.
+     */
     private List<Apprenti> parseApprentisFromJson(String json) throws IOException {
         List<Apprenti> apprentis = new ArrayList<>();
         JsonNode rootNode = objectMapper.readTree(json);
@@ -157,6 +196,12 @@ public class ApprentiApi {
         return apprentis;
     }
 
+    /**
+     * Crée un nouvel apprenti.
+     *
+     * @param createRequest L'objet {@link ApprentiCreateRequest} contenant les informations du nouvel apprenti.
+     * @return {@code true} si la création a réussi, {@code false} sinon.
+     */
     public boolean createApprenti(ApprentiCreateRequest createRequest) {
         try {
             String requestBody = objectMapper.writeValueAsString(createRequest);
