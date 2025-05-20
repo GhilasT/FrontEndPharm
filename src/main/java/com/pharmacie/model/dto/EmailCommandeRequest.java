@@ -14,6 +14,14 @@ public class EmailCommandeRequest {
     public void setCommandeReference(String commandeReference) {
         this.commandeReference = commandeReference;
     }
+    
+    /**
+     * Obtient la référence de la commande.
+     * @return La référence de la commande.
+     */
+    public String getCommandeReference() {
+        return commandeReference;
+    }
 
     /**
      * Convertit l'objet en une chaîne JSON.

@@ -819,10 +819,19 @@ public class PasserCommandeController {
                     Platform.runLater(() -> {
                         if (response.statusCode() >= 200 && response.statusCode() < 300) {
                             afficherMessage(AlertType.INFORMATION, "Commande validée", "Commande validée avec succès", "Votre commande a été validée avec succès.");
-                            JSONObject jsonObject = new JSONObject(response.body());
-                            // Accéder directement aux éléments du JSON
-                            String reference = jsonObject.getString("reference");
-                            emailService.envoyerMailFournisseur(reference);
+                            try {
+                                JSONObject jsonObject = new JSONObject(response.body());
+                                // Accéder directement aux éléments du JSON
+                                String reference = jsonObject.getString("reference");
+                                System.out.println("Référence de commande reçue: " + reference);
+                                // Tentative d'envoi d'email au fournisseur
+                                emailService.envoyerMailFournisseur(reference);
+                            } catch (Exception e) {
+                                System.err.println("Erreur lors de l'envoi du mail: " + e.getMessage());
+                                afficherMessage(AlertType.WARNING, "Commande validée", 
+                                    "Email non envoyé", 
+                                    "La commande a été créée mais l'email n'a pas pu être envoyé au fournisseur.");
+                            }
                             reinitialiserPanier();
                         } else {
                             afficherMessage(AlertType.ERROR, "Erreur de validation", "Impossible de valider la commande", "Code: " + response.statusCode() + "\nDétails: " + response.body());

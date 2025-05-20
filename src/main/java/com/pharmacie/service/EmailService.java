@@ -22,8 +22,8 @@ public class EmailService {
 
     private final HttpClient client = HttpClient.newHttpClient();
     private static final String BASE_URL = Global.getBaseUrl();
-    private static final String EMAIL_ENDPOINT = "/api/email";
-    private static final String EMAIL_TO_FOURNISSEUR_ENDPOINT = "/sendCommandeAuFournisseur";
+    private static final String EMAIL_ENDPOINT = "/email";
+    private static final String EMAIL_TO_FOURNISSEUR_ENDPOINT = "/email/sendCommandeAuFournisseur";
     private static final String EMAIL_URL = BASE_URL + EMAIL_ENDPOINT;
     private static final String EMAIL_URL_FOURNISSEUR = BASE_URL + EMAIL_TO_FOURNISSEUR_ENDPOINT;
 
@@ -36,6 +36,10 @@ public class EmailService {
     public void envoyerMailFournisseur(String reference) {
         EmailCommandeRequest emailCommandeRequest = new EmailCommandeRequest();
         emailCommandeRequest.setCommandeReference(reference);
+
+        System.out.println("Envoi email pour commande: " + reference);
+        System.out.println("URL utilisée: " + EMAIL_URL_FOURNISSEUR);
+        System.out.println("Contenu: " + emailCommandeRequest.toJson());
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(EMAIL_URL_FOURNISSEUR))
