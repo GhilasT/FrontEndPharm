@@ -40,6 +40,7 @@ public class EmailService {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(EMAIL_URL_FOURNISSEUR))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken()) // Ajout du token d'autorisation
                 .timeout(Duration.ofSeconds(15))
                 .POST(HttpRequest.BodyPublishers.ofString(emailCommandeRequest.toJson()))
                 .build();
