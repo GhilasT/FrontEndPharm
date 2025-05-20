@@ -26,6 +26,12 @@ import java.util.logging.Logger;
 
 import static com.pharmacie.controller.TestUtils.showAlert;
 
+/**
+ * Contrôleur pour la gestion de l'affichage et des interactions avec la liste des médecins.
+ * Permet la recherche, l'ajout, la modification (implicite via détails/prescription),
+ * la suppression et l'affichage des détails des médecins.
+ * Gère également la pagination et l'ouverture de la vue de prescription.
+ */
 public class MedecinsController {
     private static final Logger LOGGER = Logger.getLogger(MedecinsController.class.getName());
 
@@ -59,6 +65,11 @@ public class MedecinsController {
     private int totalPages = 1;
     private long totalElements = 0;
 
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure les colonnes de la table, la sélection, la recherche, la pagination,
+     * les boutons, la colonne de suppression et charge la première page de médecins.
+     */
     @FXML
     public void initialize() {
         configureTableColumns();
@@ -117,6 +128,9 @@ public class MedecinsController {
         }
     }
 
+    /**
+     * Configure les colonnes de la table des médecins avec les propriétés correspondantes des objets Medecin.
+     */
     private void configureTableColumns() {
         colCivilite.setCellValueFactory(cd -> cd.getValue().civiliteProperty());
         colNomExercice.setCellValueFactory(cd -> cd.getValue().nomExerciceProperty());
@@ -130,6 +144,10 @@ public class MedecinsController {
         colGenreActivite.setCellValueFactory(cd -> cd.getValue().genreActiviteProperty());
     }
 
+    /**
+     * Configure la gestion de la sélection dans la table des médecins.
+     * Active ou désactive les boutons d'édition, de suppression et de détails en fonction de la sélection.
+     */
     private void configureTableSelection() {
         medecinsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             boolean sel = newSel != null;
@@ -139,6 +157,10 @@ public class MedecinsController {
         });
     }
 
+    /**
+     * Configure la fonctionnalité de recherche de médecins.
+     * La recherche est déclenchée lors de la saisie (après 3 caractères) ou en cliquant sur le bouton de recherche.
+     */
     private void configureSearch() {
         searchField.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && !newVal.trim().isEmpty() && newVal.trim().length() >= 3) {
@@ -161,6 +183,11 @@ public class MedecinsController {
         });
     }
 
+    /**
+     * Effectue une recherche de médecins en fonction du terme fourni.
+     * Met à jour la table avec les résultats et désactive la pagination.
+     * @param searchTerm Le terme à rechercher.
+     */
     private void searchMedecins(String searchTerm) {
         statusLabel.setText("Recherche en cours...");
         Task<List<Medecin>> searchTask = new Task<>() {
@@ -200,6 +227,11 @@ public class MedecinsController {
         new Thread(searchTask).start();
     }
 
+    /**
+     * Gère l'action du bouton de recherche ou la réinitialisation de la recherche si le champ est vide.
+     * Si le champ de recherche est vide, recharge la liste paginée des médecins.
+     * Sinon, lance une recherche spécifique.
+     */
     @FXML
     private void handleSearchMedecin() {
         String searchTerm = searchField.getText().trim();
@@ -214,6 +246,9 @@ public class MedecinsController {
         }
     }
 
+    /**
+     * Configure le contrôle de pagination pour naviguer entre les pages de médecins.
+     */
     private void configurePagination() {
         pagination.setPageCount(1);
         pagination.setCurrentPageIndex(0);
@@ -224,10 +259,19 @@ public class MedecinsController {
         });
     }
 
+    /**
+     * Configure les actions des boutons, notamment le bouton "Ajouter Médecin".
+     */
     private void configureButtons() {
         btnAddMedecin.setOnAction(e -> handleAddMedecin());
     }
 
+    /**
+     * Charge une page spécifique de médecins, potentiellement filtrée par un terme de recherche.
+     * Met à jour la table et les contrôles de pagination.
+     * @param page Le numéro de la page à charger.
+     * @param searchTerm Le terme de recherche (peut être vide pour charger tous les médecins).
+     */
     private void loadMedecins(int page, String searchTerm) {
         Task<PageResponse<Medecin>> task = new Task<>() {
             @Override protected PageResponse<Medecin> call() throws Exception {
@@ -248,6 +292,9 @@ public class MedecinsController {
         new Thread(task).start();
     }
 
+    /**
+     * Met à jour les contrôles de pagination (nombre de pages, page actuelle) et le label de statut.
+     */
     private void updatePaginationControls() {
         javafx.application.Platform.runLater(() -> {
             pagination.setPageCount(totalPages);
@@ -256,6 +303,10 @@ public class MedecinsController {
         });
     }
 
+    /**
+     * Gère l'action du bouton "Ajouter Médecin".
+     * Ouvre une fenêtre modale pour ajouter un nouveau médecin.
+     */
     @FXML
     private void handleAddMedecin() {
         try {
@@ -274,6 +325,9 @@ public class MedecinsController {
         }
     }
 
+    /**
+     * Configure la colonne "Supprimer" de la table avec un bouton de suppression pour chaque ligne.
+     */
     private void configureDeleteButtonColumn() {
         colSupprimer.setCellFactory(col -> new TableCell<>() {
             private final Button deleteBtn = new Button("Supprimer");
@@ -288,6 +342,11 @@ public class MedecinsController {
         });
     }
 
+    /**
+     * Gère la suppression d'un médecin spécifique, généralement appelée par le bouton dans la ligne de la table.
+     * @param event L'événement d'action.
+     * @param m Le médecin à supprimer.
+     */
     @FXML
     private void handleDeleteMedecin(ActionEvent event, Medecin m) {
         if (m == null) return;
@@ -299,6 +358,10 @@ public class MedecinsController {
         }
     }
 
+    /**
+     * Gère la suppression du médecin actuellement sélectionné dans la table.
+     * Affiche une boîte de dialogue de confirmation avant la suppression.
+     */
     private void handleDeleteMedecin() {
         Medecin selectedMedecin = medecinsTable.getSelectionModel().getSelectedItem();
 
@@ -328,7 +391,9 @@ public class MedecinsController {
     }
 
     /**
-     * Surcharge de l'étape suivante : Prescription. Remplace le root du même modalStage
+     * Ouvre la vue de prescription pour le médecin spécifié par son RPPS.
+     * Remplace le contenu de la fenêtre modale actuelle par la vue de prescription.
+     * @param rpps Le numéro RPPS du médecin pour lequel ouvrir la prescription.
      */
     private void openPrescriptionFor(String rpps) {
         try {
@@ -350,15 +415,26 @@ public class MedecinsController {
         }
     }
 
-    // Setters pour lier VenteController et le Stage modal unique
+    /**
+     * Définit le contrôleur de vente parent.
+     * @param venteController Le contrôleur de vente.
+     */
     public void setVenteController(VenteController venteController) {
         this.venteController = venteController;
     }
+
+    /**
+     * Définit la fenêtre modale unique utilisée pour afficher les formulaires (ajout médecin, prescription).
+     * @param modalStage La fenêtre modale.
+     */
     public void setModalStage(Stage modalStage) {
         this.modalStage = modalStage;
     }
 
-    /** Permet de rafraîchir la liste après ajout/édition */
+    /**
+     * Permet de rafraîchir la liste des médecins après un ajout ou une édition.
+     * Réactive la pagination et recharge la page courante.
+     */
     public void refreshMedecinsList() {
         pagination.setDisable(false);
         pagination.setVisible(true);

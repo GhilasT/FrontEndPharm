@@ -35,6 +35,11 @@ import com.pharmacie.model.Dashboard;
 import com.pharmacie.service.ApiRest;
 import com.pharmacie.util.LoggedSeller;
 
+/**
+ * Contrôleur principal du tableau de bord de la pharmacie.
+ * Gère la navigation, l'affichage des différentes sections (tableau de bord, ventes, médicaments, etc.),
+ * l'authentification de l'utilisateur et le passage en mode administrateur.
+ */
 public class PharmacyDashboard extends StackPane {
     private static final int MENU_WIDTH = 300;
     private static final int CARD_WIDTH = 246;
@@ -77,12 +82,20 @@ public class PharmacyDashboard extends StackPane {
     private BooleanProperty menuVisible = new SimpleBooleanProperty(false);
     private TilePane dashboardTilePane;
 
+    /**
+     * Constructeur du PharmacyDashboard.
+     * Charge le fichier FXML associé et initialise les composants.
+     */
     public PharmacyDashboard() {
         loadFXML();
         initializeComponents();
         initialize();
     }
 
+    /**
+     * Charge le fichier FXML pour ce composant.
+     * Définit cette instance comme racine et contrôleur du FXML.
+     */
     private void loadFXML() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/Dashboard1.fxml"));
 
@@ -103,6 +116,12 @@ public class PharmacyDashboard extends StackPane {
         }
     }
 
+    /**
+     * Initialise les composants et les fonctionnalités du tableau de bord.
+     * Configure les boutons du menu, les actions, le bouton de déconnexion,
+     * le bouton de mode administrateur, charge le tableau de bord initial,
+     * et met en place la gestion responsive de la fenêtre.
+     */
     public void initialize() {
         configureMenuButtons();
         menuButton.setOnAction(event -> toggleMenu());
@@ -128,7 +147,10 @@ public class PharmacyDashboard extends StackPane {
     }
 
     /**
-     * Configure the Admin Mode button visibility and action
+     * Configure la visibilité et l'action du bouton de passage en mode administrateur.
+     * Le bouton est visible et son action dépend du rôle de l'utilisateur connecté.
+     * Si l'utilisateur est administrateur, il peut accéder au tableau de bord admin.
+     * Sinon, une alerte d'accès restreint est affichée.
      */
     private void configureAdminButton() {
         btnSwitchToAdmin.setVisible(true);
@@ -158,7 +180,8 @@ public class PharmacyDashboard extends StackPane {
     }
     
     /**
-     * Handles switching to the Admin dashboard
+     * Gère le passage vers le tableau de bord administrateur.
+     * Effectue une transition de fondu avant de charger la vue du tableau de bord admin.
      */
     private void handleSwitchToAdmin() {
         try {
@@ -194,7 +217,8 @@ public class PharmacyDashboard extends StackPane {
     }
 
     /**
-     * Configure le menu pour qu'il soit complètement indépendant et ne provoque aucun recalcul de layout
+     * Configure le menu latéral pour qu'il soit indépendant du layout principal.
+     * Cela évite les recalculs de mise en page lors de l'affichage/masquage du menu.
      */
     private void setupIndependentMenu() {
         // S'assurer que le menu est au premier plan
@@ -207,7 +231,9 @@ public class PharmacyDashboard extends StackPane {
     }
 
     /**
-     * Gère le redimensionnement de la fenêtre pour ajuster les éléments UI
+     * Gère le redimensionnement de la fenêtre pour ajuster les éléments de l'interface utilisateur.
+     * Ajuste la visibilité du menu et met à jour la disposition du tableau de bord si nécessaire.
+     * Ajuste également la taille des polices.
      */
     private void handleWindowResize() {
         double width = getWidth();
@@ -231,7 +257,8 @@ public class PharmacyDashboard extends StackPane {
     }
 
     /**
-     * Ajuste la taille des polices en fonction de la largeur de la fenêtre
+     * Ajuste la taille des polices des éléments textuels en fonction de la largeur de la fenêtre.
+     * @param windowWidth La largeur actuelle de la fenêtre.
      */
     private void adjustFontSizes(double windowWidth) {
         double scaleFactor = Math.max(0.7, Math.min(1.0, windowWidth / 1280.0));
@@ -240,11 +267,20 @@ public class PharmacyDashboard extends StackPane {
         userLabel.setStyle(String.format("-fx-font-size: %.1fpx;", 22 * scaleFactor));
     }
 
+    /**
+     * Vérifie si le rôle de l'utilisateur connecté est autorisé.
+     * Actuellement, les rôles autorisés sont "PHARMACIEN_ADJOINT" et "APPRENTI".
+     * @return true si le rôle est autorisé, false sinon.
+     */
     private boolean isAuthorizedRole() {
         String role = LoggedSeller.getInstance().getRole();
         return "PHARMACIEN_ADJOINT".equals(role) || "APPRENTI".equals(role);
     }
 
+    /**
+     * Rafraîchit les informations de l'utilisateur affichées (nom complet).
+     * Reconfigure également la visibilité du bouton de mode administrateur.
+     */
     public void refreshUserInfo() {
         userLabel.setText(LoggedSeller.getInstance().getNomComplet());
         
@@ -252,6 +288,10 @@ public class PharmacyDashboard extends StackPane {
         configureAdminButton();
     }
 
+    /**
+     * Affiche un message d'accès non autorisé dans la zone de contenu.
+     * Cache le menu latéral et le bouton de menu.
+     */
     private void showAccessDenied() {
         contentPane.getChildren().clear();
         contentPane.getChildren().add(new Label("Accès non autorisé"));
@@ -259,6 +299,12 @@ public class PharmacyDashboard extends StackPane {
         menuButton.setVisible(false);
     }
 
+    /**
+     * Configure l'apparence d'un bouton du menu avec une icône et un texte.
+     * @param button Le bouton à configurer.
+     * @param iconName Le nom du fichier de l'icône (situé dans les ressources).
+     * @param text Le texte à afficher sur le bouton.
+     */
     private void configureMenuButton(Button button, String iconName, String text) {
         HBox content = new HBox(10);
         content.setAlignment(Pos.CENTER_LEFT);
@@ -302,6 +348,10 @@ public class PharmacyDashboard extends StackPane {
         button.setStyle("-fx-background-color: transparent; -fx-padding: 0 0 0 20;");
     }
 
+    /**
+     * Configure tous les boutons du menu latéral.
+     * Appelle {@link #configureMenuButton(Button, String, String)} pour chaque bouton.
+     */
     private void configureMenuButtons() {
         configureMenuButton(btnDashboard, "dashboard.png", "Tableau de Bord");
         configureMenuButton(btnSales, "ventes.png", "Ventes");
@@ -311,6 +361,10 @@ public class PharmacyDashboard extends StackPane {
         configureMenuButton(btnAnalytics, "analyseventes.png", "Analyse des ventes");
     }
 
+    /**
+     * Gère la déconnexion de l'utilisateur.
+     * Efface les informations de l'utilisateur connecté et retourne à l'écran de connexion.
+     */
     private void handleLogout() {
         LoggedSeller.getInstance().clearUser();
         Stage stage = (Stage) getScene().getWindow();
@@ -318,6 +372,10 @@ public class PharmacyDashboard extends StackPane {
         ((Login) App.getLoginScene().getRoot()).clearFields();
     }
 
+    /**
+     * Configure les actions associées à chaque bouton du menu latéral.
+     * Chaque bouton charge une vue ou une fonctionnalité spécifique.
+     */
     private void setupMenuActions() {
         btnDashboard.setOnAction(event -> {
             setActiveButton(btnDashboard);
@@ -350,6 +408,10 @@ public class PharmacyDashboard extends StackPane {
         });
     }
 
+    /**
+     * Charge et affiche la vue principale du tableau de bord (avec les cartes d'indicateurs).
+     * Récupère les données du tableau de bord via l'API et crée les cartes correspondantes.
+     */
     private void loadDashboard() {
         setActiveButton(btnDashboard);
         updateHeaderTitle("Tableau de Bord");
@@ -414,8 +476,9 @@ public class PharmacyDashboard extends StackPane {
     }
 
     /**
-     * Met à jour la mise en page du tableau de bord pour qu'il s'adapte à la taille
-     * actuelle et à l'état du menu
+     * Met à jour la disposition du tableau de bord (TilePane) pour s'adapter à la taille
+     * actuelle de la zone de contenu et à l'état du menu.
+     * Ajuste le nombre de colonnes et la taille des cartes.
      */
     private void updateDashboardLayout() {
         if (dashboardTilePane == null)
@@ -449,6 +512,11 @@ public class PharmacyDashboard extends StackPane {
         dashboardTilePane.setPadding(new Insets(20));
     }
 
+    /**
+     * Calcule le nombre de colonnes optimal pour le TilePane du tableau de bord
+     * en fonction de la largeur disponible de la zone de contenu.
+     * @return Le nombre de colonnes à afficher.
+     */
     private int calculateColumns() {
         double contentWidth = contentPane.getWidth();
         if (contentWidth <= 0)
@@ -460,6 +528,13 @@ public class PharmacyDashboard extends StackPane {
         return columns;
     }
 
+    /**
+     * Crée une carte (GridPane) pour afficher un indicateur du tableau de bord.
+     * @param title Le titre de la carte.
+     * @param value La valeur de l'indicateur.
+     * @param color La couleur de fond de la carte.
+     * @return Le GridPane configuré représentant la carte.
+     */
     private GridPane createCard(String title, String value, String color) {
         GridPane card = new GridPane();
         card.setPrefSize(CARD_WIDTH, CARD_HEIGHT);
@@ -596,9 +671,11 @@ public class PharmacyDashboard extends StackPane {
     }
     
     /**
-     * Handle clicks on dashboard cards
-     * @param title The card title that was clicked
-     * @param value The value displayed on the card
+     * Gère les clics sur les cartes du tableau de bord.
+     * En fonction du titre de la carte cliquée, navigue vers la section appropriée
+     * (ex: Analyse des ventes, Gestion du personnel, Médicaments).
+     * @param title Le titre de la carte qui a été cliquée.
+     * @param value La valeur affichée sur la carte.
      */
     private void handleCardClick(String title, String value) {
         switch (title) {
@@ -659,8 +736,8 @@ public class PharmacyDashboard extends StackPane {
     }
     
     /**
-     * Load medicaments page without filters
-     * This method replaces the previous loadMedicamentsWithFilter method
+     * Charge la page des médicaments sans filtres spécifiques.
+     * Met à jour le titre de l'en-tête et affiche la vue des médicaments.
      */
     private void loadMedicaments() {
         try {
@@ -683,7 +760,8 @@ public class PharmacyDashboard extends StackPane {
     }
 
     /**
-     * Show a dialog for features not yet implemented
+     * Affiche une boîte de dialogue informant que la fonctionnalité n'est pas encore implémentée.
+     * @param featureName Le nom de la fonctionnalité.
      */
     private void showNotImplementedAlert(String featureName) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -693,6 +771,11 @@ public class PharmacyDashboard extends StackPane {
         alert.showAndWait();
     }
 
+    /**
+     * Affiche ou masque le menu latéral avec une animation de translation.
+     * Ajuste le padding de la zone de contenu et de la barre supérieure en conséquence.
+     * Met à jour la disposition du tableau de bord si celui-ci est affiché.
+     */
     private void toggleMenu() {
         TranslateTransition slideTransition = new TranslateTransition(Duration.seconds(0.3), sideMenu);
         boolean newVisibility = !menuVisible.get();
@@ -742,6 +825,13 @@ public class PharmacyDashboard extends StackPane {
         slideTransition.play();
     }
 
+    /**
+     * Affiche une boîte de dialogue d'alerte.
+     * @param type Le type d'alerte (ex: INFORMATION, ERROR).
+     * @param title Le titre de la fenêtre d'alerte.
+     * @param header Le texte d'en-tête de l'alerte.
+     * @param content Le message principal de l'alerte.
+     */
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -750,6 +840,10 @@ public class PharmacyDashboard extends StackPane {
         alert.showAndWait();
     }
 
+    /**
+     * Met en surbrillance le bouton actif dans le menu latéral.
+     * @param activeButton Le bouton qui doit être marqué comme actif.
+     */
     private void setActiveButton(Button activeButton) {
         Button[] menuButtons = { btnDashboard, btnSales, btnMedics, btnCommandes,
                 btnSuppliers, btnAnalytics }; // Changed btnMedecins back to btnSuppliers
@@ -763,6 +857,10 @@ public class PharmacyDashboard extends StackPane {
         }
     }
 
+    /**
+     * Charge une vue spécifique dans la zone de contenu principale.
+     * @param title Le titre de la section à charger, utilisé pour déterminer le fichier FXML.
+     */
     private void loadContent(String title) {
         updateHeaderTitle(title);
         contentPane.getChildren().clear();
@@ -810,6 +908,11 @@ public class PharmacyDashboard extends StackPane {
             toggleMenu();
     }
 
+    /**
+     * Met à jour le titre affiché dans l'en-tête de la page.
+     * Ajuste la taille de la police si le titre est long.
+     * @param newTitle Le nouveau titre à afficher.
+     */
     private void updateHeaderTitle(String newTitle) {
         headerTitle.setText(newTitle);
 
@@ -825,6 +928,11 @@ public class PharmacyDashboard extends StackPane {
         headerTitle.setMinWidth(minWidth);
     }
 
+    /**
+     * Initialise les composants graphiques de base du tableau de bord.
+     * Configure le bouton de menu, la position initiale du menu latéral,
+     * et les liaisons pour la responsivité.
+     */
     private void initializeComponents() {
         menuButton.setText("☰");
         sideMenu.setTranslateX(-MENU_WIDTH);
@@ -874,6 +982,10 @@ public class PharmacyDashboard extends StackPane {
         }
     }
 
+    /**
+     * Charge et affiche la vue d'analyse des ventes.
+     * Met à jour le titre de l'en-tête et configure la responsivité de la vue chargée.
+     */
     private void loadAnalytics() {
         setActiveButton(btnAnalytics);
         updateHeaderTitle("Analyse des ventes");
@@ -901,6 +1013,13 @@ public class PharmacyDashboard extends StackPane {
             toggleMenu();
     }
 
+    /**
+     * Configure l'effet de survol pour un bouton.
+     * Change la couleur de fond du bouton lorsque la souris entre et sort.
+     * @param button Le bouton à configurer.
+     * @param normalColor La couleur de fond normale du bouton.
+     * @param hoverColor La couleur de fond du bouton au survol.
+     */
     private void setupButtonHoverEffect(Button button, String normalColor, String hoverColor) {
         button.setStyle("-fx-background-color: " + normalColor + ";");
         button.setOnMouseEntered(event -> button.setStyle("-fx-background-color: " + hoverColor + ";"));

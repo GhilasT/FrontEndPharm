@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Contrôleur pour la gestion des fournisseurs.
+ * Permet d'afficher, rechercher, ajouter, modifier et supprimer des fournisseurs.
+ */
 public class GestionFournisseurController {
     @FXML private TableView<Fournisseur> fournisseurTable;
     @FXML private TableColumn<Fournisseur, UUID> idFournisseurColumn;
@@ -33,6 +37,11 @@ public class GestionFournisseurController {
     private DashboardAdminController parentController;
     private FournisseurApi fournisseurService;
 
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure les colonnes de la table, la sélection, la recherche,
+     * et charge la liste initiale des fournisseurs.
+     */
     @FXML
     public void initialize() {
         fournisseurService = new FournisseurApi();
@@ -60,6 +69,10 @@ public class GestionFournisseurController {
         loadAllFournisseurs();
     }
     
+    /**
+     * Charge tous les fournisseurs depuis l'API et les affiche dans la table.
+     * En cas d'échec du chargement depuis l'API, des données de test sont affichées.
+     */
     private void loadAllFournisseurs() {
         Task<List<Fournisseur>> task = new Task<>() {
             @Override
@@ -92,6 +105,11 @@ public class GestionFournisseurController {
         new Thread(task).start();
     }
 
+    /**
+     * Gère la recherche de fournisseurs en fonction du texte saisi.
+     * Si le champ de recherche est vide, recharge tous les fournisseurs.
+     * Sinon, effectue une recherche spécifique.
+     */
     @FXML
     private void handleSearch() {
         String searchQuery = searchField.getText().trim();
@@ -117,16 +135,28 @@ public class GestionFournisseurController {
         new Thread(task).start();
     }
     
+    /**
+     * Gère l'action du bouton de réinitialisation de la recherche.
+     * Efface le champ de recherche et recharge tous les fournisseurs.
+     */
     @FXML
     private void handleResetSearch() {
         searchField.clear();
         loadAllFournisseurs();
     }
 
+    /**
+     * Définit le contrôleur parent (DashboardAdminController).
+     * @param controller Le contrôleur parent.
+     */
     public void setParentController(DashboardAdminController controller) {
         this.parentController = controller;
     }
 
+    /**
+     * Gère l'action du bouton "Retour".
+     * Revient à la vue principale du tableau de bord de l'administrateur.
+     */
     @FXML
     private void handleBack() {
         if (parentController != null) {
@@ -134,6 +164,11 @@ public class GestionFournisseurController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Ajouter".
+     * Ouvre une boîte de dialogue pour ajouter un nouveau fournisseur.
+     * Si l'ajout est confirmé, crée le fournisseur via l'API et rafraîchit la liste.
+     */
     @FXML
     private void handleAjouter() {
         AddFournisseurDialogController dialogController = new AddFournisseurDialogController();
@@ -160,6 +195,11 @@ public class GestionFournisseurController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Modifier".
+     * Ouvre une boîte de dialogue pour modifier le fournisseur sélectionné.
+     * Si la modification est confirmée, met à jour le fournisseur via l'API et rafraîchit la liste.
+     */
     @FXML
     private void handleModifier() {
         Fournisseur selected = fournisseurTable.getSelectionModel().getSelectedItem();
@@ -187,6 +227,11 @@ public class GestionFournisseurController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Supprimer".
+     * Demande confirmation avant de supprimer le fournisseur sélectionné.
+     * Si la suppression est confirmée, supprime le fournisseur via l'API et rafraîchit la liste.
+     */
     @FXML
     private void handleSupprimer() {
         Fournisseur selected = fournisseurTable.getSelectionModel().getSelectedItem();
@@ -221,6 +266,12 @@ public class GestionFournisseurController {
         }
     }
 
+    /**
+     * Affiche une boîte de dialogue d'alerte.
+     * @param type Le type d'alerte (Erreur, Information, etc.).
+     * @param title Le titre de la fenêtre d'alerte.
+     * @param message Le message principal de l'alerte.
+     */
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

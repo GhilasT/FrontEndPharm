@@ -28,6 +28,10 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Contrôleur pour la fenêtre de modification d'une vente existante.
+ * Permet de changer les médicaments, le mode de paiement, la date et la présence d'une ordonnance.
+ */
 public class ModifierVenteController {
 
     private static final Logger LOGGER = Logger.getLogger(ModifierVenteController.class.getName());
@@ -55,14 +59,27 @@ public class ModifierVenteController {
     private ObservableList<MedicamentPanier> medicamentsData = FXCollections.observableArrayList();
     private ObservableList<Medicament> suggestions = FXCollections.observableArrayList();
 
+    /**
+     * Définit la vente à modifier.
+     * @param vente L'objet Vente à modifier.
+     */
     public void setVente(Vente vente) {
         this.vente = vente;
     }
 
+    /**
+     * Définit le contrôleur parent (VentesController) pour permettre la communication.
+     * @param controller Le contrôleur parent.
+     */
     public void setVentesController(VentesController controller) {
         this.parentController = controller;
     }
 
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure les colonnes de la table, les modes de paiement,
+     * charge les données de la vente et met en place la recherche de médicaments.
+     */
     @FXML
     public void initialize() {
         if (vente == null) return;
@@ -104,6 +121,10 @@ public class ModifierVenteController {
         });
     }
 
+    /**
+     * Charge les données de la vente existante dans les champs de l'interface utilisateur.
+     * Cela inclut le mode de paiement, l'ordonnance, la date et la liste des médicaments.
+     */
     private void chargerDonneesVente() {
         try {
             // Mode de paiement
@@ -155,6 +176,11 @@ public class ModifierVenteController {
         }
     }
     
+    /**
+     * Recherche des médicaments en fonction d'un terme de recherche.
+     * Les résultats sont affichés dans une liste de suggestions.
+     * @param searchTerm Le terme à rechercher.
+     */
     private void rechercherMedicaments(String searchTerm) {
         try {
             List<Medicament> medicaments = ApiRest.searchForVente(searchTerm);
@@ -179,7 +205,8 @@ public class ModifierVenteController {
     }
     
     /**
-     * Méthode appelée par le bouton de recherche via onAction dans le FXML
+     * Méthode appelée par le bouton de recherche via onAction dans le FXML.
+     * Lance la recherche de médicaments en utilisant le texte du champ de recherche.
      */
     @FXML
     private void rechercherMedicaments() {
@@ -189,6 +216,11 @@ public class ModifierVenteController {
         }
     }
     
+    /**
+     * Ajoute un médicament sélectionné depuis la liste de suggestions au panier de la vente.
+     * Vérifie le stock avant d'ajouter.
+     * @param selected La chaîne représentant le médicament sélectionné (nom - prix).
+     */
     private void ajouterMedicament(String selected) {
         try {
             // Extraction du nom et du prix depuis la chaîne "Libellé - XX,XX€"
@@ -239,6 +271,10 @@ public class ModifierVenteController {
         }
     }
     
+    /**
+     * Met à jour la valeur totale de la vente affichée dans l'interface.
+     * Calcule le total en fonction des quantités et prix unitaires des médicaments dans le panier.
+     */
     private void mettreAJourTotal() {
         double total = medicamentsData.stream()
                 .mapToDouble(mp -> mp.getQuantite() * mp.getPrixUnitaire())
@@ -247,6 +283,12 @@ public class ModifierVenteController {
         labelTotalValue.setText(String.format("%.2f €", total));
     }
 
+    /**
+     * Gère l'action du bouton "Enregistrer".
+     * Valide les données, crée une requête de mise à jour et l'envoie à l'API.
+     * Ferme la fenêtre en cas de succès.
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handleEnregistrer(ActionEvent event) {
         try {
@@ -291,12 +333,22 @@ public class ModifierVenteController {
         }
     }
     
+    /**
+     * Gère l'action du bouton "Annuler".
+     * Ferme la fenêtre de modification sans enregistrer les changements.
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handleAnnuler(ActionEvent event) {
         // Fermeture de la fenêtre sans enregistrer
         ((Stage) btnAnnuler.getScene().getWindow()).close();
     }
     
+    /**
+     * Gère l'action de suppression d'un médicament du panier.
+     * Retire le médicament sélectionné de la table et met à jour le total.
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handleSupprimerMedicament(ActionEvent event) {
         MedicamentPanier selected = medicamentsTable.getSelectionModel().getSelectedItem();
@@ -310,6 +362,13 @@ public class ModifierVenteController {
         }
     }
     
+    /**
+     * Affiche une boîte de dialogue d'alerte.
+     * @param type Le type d'alerte (Erreur, Information, etc.).
+     * @param title Le titre de la fenêtre d'alerte.
+     * @param header Le texte d'en-tête de l'alerte.
+     * @param content Le message principal de l'alerte.
+     */
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

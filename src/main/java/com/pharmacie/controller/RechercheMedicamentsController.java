@@ -24,6 +24,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * Contrôleur pour la fonctionnalité de recherche de médicaments et la gestion du panier.
+ * Permet de rechercher des médicaments, de les ajouter à un panier et de valider la vente.
+ */
 public class RechercheMedicamentsController {
 
     private static final Logger LOGGER = Logger.getLogger(RechercheMedicamentsController.class.getName());
@@ -83,6 +87,10 @@ public class RechercheMedicamentsController {
 
     private double total = 0.0;
 
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure les colonnes de la table, le panier, les listeners et les boutons.
+     */
     @FXML
     public void initialize() {
         try {
@@ -142,6 +150,15 @@ public class RechercheMedicamentsController {
         }
     }
 
+    /**
+     * Définit les informations du client pour la vente en cours.
+     * @param clientId L'identifiant unique du client.
+     * @param nom Le nom du client.
+     * @param prenom Le prénom du client.
+     * @param telephone Le numéro de téléphone du client.
+     * @param email L'adresse e-mail du client.
+     * @param adresse L'adresse postale du client.
+     */
     public void setClientInfo(UUID clientId, String nom, String prenom, String telephone, String email, String adresse) {
         this.clientId = clientId;
         this.nom = nom;
@@ -151,6 +168,10 @@ public class RechercheMedicamentsController {
         this.adresse = adresse;
     }
 
+    /**
+     * Configure les colonnes de la table des médicaments.
+     * Définit les fabriques de cellules pour chaque colonne (ID, libellé, dénomination, prix, quantité, actions).
+     */
     private void configureTableColumns() {
         // Configuration des colonnes
         idColumn.setCellValueFactory(new PropertyValueFactory<>("codeCIS"));
@@ -171,8 +192,11 @@ public class RechercheMedicamentsController {
         actionColumn.setCellFactory(createActionColumnCellFactory());
     }
 
-
-
+    /**
+     * Configure l'affichage de la liste des médicaments dans le panier.
+     * Définit une fabrique de cellules personnalisée pour afficher les détails de chaque médicament du panier
+     * et un bouton pour le supprimer.
+     */
     private void configurePanierListView() {
         panierListView.setCellFactory(param -> new ListCell<MedicamentPanier>() {
             @Override
@@ -212,6 +236,11 @@ public class RechercheMedicamentsController {
         });
     }
 
+    /**
+     * Crée une fabrique de cellules pour la colonne d'actions de la table des médicaments.
+     * Chaque cellule contiendra un bouton "Ajouter" pour ajouter le médicament correspondant au panier.
+     * @return Une instance de Callback pour la création des cellules d'action.
+     */
     private Callback<TableColumn<Medicament, Void>, TableCell<Medicament, Void>> createActionColumnCellFactory() {
         return new Callback<TableColumn<Medicament, Void>, TableCell<Medicament, Void>>() {
             @Override
@@ -240,6 +269,11 @@ public class RechercheMedicamentsController {
         };
     }
 
+    /**
+     * Gère l'événement de clic sur le bouton de recherche.
+     * Lance la recherche de médicaments en utilisant le terme saisi dans le champ de recherche.
+     * @param event L'événement d'action déclenché par le clic.
+     */
     @FXML
     private void handleRechercher(ActionEvent event) {
         String searchTerm = searchField.getText().trim();
@@ -248,6 +282,12 @@ public class RechercheMedicamentsController {
         }
     }
 
+    /**
+     * Effectue la recherche de médicaments via l'API.
+     * Récupère les médicaments correspondant au terme de recherche, filtre ceux sans ordonnance
+     * et met à jour la table des médicaments.
+     * @param searchTerm Le terme à utiliser pour la recherche.
+     */
     private void rechercherMedicaments(String searchTerm) {
         try {
             // Vérifier d'abord si le backend est accessible
@@ -283,6 +323,12 @@ public class RechercheMedicamentsController {
         }
     }
 
+    /**
+     * Ajoute un médicament sélectionné au panier.
+     * Crée un nouvel objet {@link MedicamentPanier} et l'ajoute à la liste des données du panier.
+     * Met à jour le total du panier.
+     * @param medicament Le médicament à ajouter au panier.
+     */
     private void ajouterAuPanier(Medicament medicament) {
         String codeCIS = medicament.getCodeCIS();
 
@@ -299,6 +345,11 @@ public class RechercheMedicamentsController {
         panierData.add(nouvelItem);
         updateTotal();
     }
+
+    /**
+     * Met à jour le montant total affiché du panier.
+     * Calcule la somme des prix totaux de tous les articles dans le panier.
+     */
     private void updateTotal() {
         total = 0.0;
         for (MedicamentPanier item : panierData) {
@@ -307,6 +358,11 @@ public class RechercheMedicamentsController {
         totalLabel.setText(String.format("%.2f €", total));
     }
 
+    /**
+     * Gère l'événement de clic sur le bouton "Annuler".
+     * Ferme la fenêtre actuelle de recherche de médicaments.
+     * @param event L'événement d'action déclenché par le clic.
+     */
     @FXML
     private void handleAnnuler(ActionEvent event) {
         // Fermer la fenêtre
@@ -314,7 +370,12 @@ public class RechercheMedicamentsController {
         stage.close();
     }
 
-
+    /**
+     * Gère l'événement de clic sur le bouton "Valider".
+     * Crée une nouvelle vente avec les médicaments présents dans le panier.
+     * Affiche une alerte de succès et ferme la fenêtre si la vente est créée.
+     * @param event L'événement d'action déclenché par le clic.
+     */
     @FXML
     private void handleValider(ActionEvent event) {
         if (panierData.isEmpty()) {
@@ -350,6 +411,10 @@ public class RechercheMedicamentsController {
         }
     }
 
+    /**
+     * Valide si le panier contient des articles avant de procéder à la vente.
+     * @return true si le panier n'est pas vide, false sinon.
+     */
     private boolean validatePanier() {
         if (panierData.isEmpty()) {
             errorLabel.setText("Le panier est vide. Veuillez ajouter au moins un médicament.");
@@ -360,6 +425,13 @@ public class RechercheMedicamentsController {
         return true;
     }
 
+    /**
+     * Affiche une boîte de dialogue d'alerte.
+     * @param type Le type d'alerte (ex: INFORMATION, ERROR).
+     * @param title Le titre de la fenêtre d'alerte.
+     * @param header Le texte d'en-tête de l'alerte.
+     * @param content Le message principal de l'alerte.
+     */
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

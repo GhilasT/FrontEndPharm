@@ -31,6 +31,10 @@ import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 
+/**
+ * Contrôleur pour la gestion de l'affichage et des interactions avec la liste des médicaments.
+ * Gère la pagination, la recherche, le filtrage et l'affichage des détails des médicaments.
+ */
 public class MedicamentsController {
 
     @FXML private TableView<Medicament> medicamentsTable;
@@ -72,6 +76,11 @@ public class MedicamentsController {
     // Constantes pour la pagination
     private static final int ITEMS_PER_PAGE = 50; // Correspond à la taille de page du backend
 
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure les colonnes de la table, la recherche, les filtres, la pagination,
+     * les boutons et charge la première page de médicaments.
+     */
     @FXML
     public void initialize() {
         configureTableColumns();
@@ -82,6 +91,11 @@ public class MedicamentsController {
         loadMedicaments(0, "");
     }
     
+    /**
+     * Affiche une boîte de dialogue d'erreur.
+     * @param title Le titre de la fenêtre d'erreur.
+     * @param message Le message d'erreur à afficher.
+     */
     private void showError(String title, String message) {
         javafx.application.Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -92,6 +106,10 @@ public class MedicamentsController {
         });
     }
     
+    /**
+     * Configure les colonnes de la table des médicaments, y compris les usines de cellules
+     * pour le formatage conditionnel (stock, ordonnance).
+     */
     private void configureTableColumns() {
         colCodeCIS.setCellValueFactory(new PropertyValueFactory<>("codeCIS"));
         colLibelle.setCellValueFactory(new PropertyValueFactory<>("libelle"));
@@ -167,6 +185,10 @@ public class MedicamentsController {
         );
     }
     
+    /**
+     * Configure la fonctionnalité de recherche, y compris la recherche en temps réel
+     * avec un délai (debounce) et la recherche par appui sur la touche Entrée.
+     */
     private void configureSearch() {
         // Activer le bouton de recherche
         btnSearch.setDisable(false);
@@ -201,6 +223,10 @@ public class MedicamentsController {
         });
     }
     
+    /**
+     * Configure les filtres pour l'ordonnance et le stock, ainsi que les boutons
+     * pour appliquer et réinitialiser les filtres.
+     */
     private void configureFilters() {
         // Initialiser les valeurs des filtres
         filterOrdonnance.getSelectionModel().selectFirst();
@@ -213,6 +239,9 @@ public class MedicamentsController {
         btnResetFilters.setOnAction(e -> resetFilters());
     }
     
+    /**
+     * Configure le contrôle de pagination pour naviguer entre les pages de médicaments.
+     */
     private void configurePagination() {
         // Configurer la pagination
         pagination.setPageCount(1);
@@ -226,11 +255,20 @@ public class MedicamentsController {
         });
     }
     
+    /**
+     * Configure les actions des boutons "Modifier Stock" et "Détails".
+     */
     private void configureButtons() {
         btnModifierStock.setOnAction(e -> showModifierStockDialog());
         btnDetails.setOnAction(e -> showDetailsDialog());
     }
 
+    /**
+     * Charge les médicaments pour une page et un terme de recherche donnés.
+     * Vérifie d'abord l'accessibilité du backend.
+     * @param page Le numéro de la page à charger.
+     * @param searchTerm Le terme de recherche (peut être vide).
+     */
     private void loadMedicaments(int page, String searchTerm) {
         statusLabel.setText("Chargement des médicaments...");
         currentSearchTerm = searchTerm;
@@ -282,6 +320,12 @@ public class MedicamentsController {
         new Thread(checkTask).start();
     }
     
+    /**
+     * Récupère les médicaments depuis le backend pour une page et un terme de recherche spécifiques.
+     * Met à jour l'interface utilisateur avec les données reçues.
+     * @param page Le numéro de la page à récupérer.
+     * @param searchTerm Le terme de recherche à utiliser.
+     */
     private void fetchMedicamentsFromBackend(int page, String searchTerm) {
         Task<PageResponse<Medicament>> task = new Task<>() {
             @Override
@@ -350,6 +394,12 @@ public class MedicamentsController {
         new Thread(task).start();
     }
     
+    /**
+     * Met à jour les contrôles de pagination (nombre de pages, page actuelle) et le label de statut.
+     * @param currentPage La page actuellement affichée.
+     * @param totalPages Le nombre total de pages disponibles.
+     * @param totalElements Le nombre total d'éléments.
+     */
     private void updatePaginationControls(int currentPage, int totalPages, long totalElements) {
         javafx.application.Platform.runLater(() -> {
             pagination.setPageCount(Math.max(1, totalPages));
@@ -367,6 +417,10 @@ public class MedicamentsController {
         });
     }
     
+    /**
+     * Applique les filtres sélectionnés (ordonnance, stock) à la liste des médicaments affichés.
+     * Met à jour la table et le label de statut.
+     */
     private void applyFilters() {
         String ordonnanceFilter = filterOrdonnance.getValue();
         String stockFilter = filterStock.getValue();
@@ -395,6 +449,10 @@ public class MedicamentsController {
         statusLabel.setText(String.format("Filtres appliqués: %d médicaments affichés", filteredMedicaments.size()));
     }
     
+    /**
+     * Réinitialise les filtres à leurs valeurs par défaut et affiche tous les médicaments de la page courante.
+     * Met à jour la table et le label de statut.
+     */
     private void resetFilters() {
         filterOrdonnance.getSelectionModel().selectFirst();
         filterStock.getSelectionModel().selectFirst();
@@ -410,19 +468,24 @@ public class MedicamentsController {
     }
 
     /**
-     * Applies a predefined filter to the medicaments list.
-     * This method is called from the dashboard when a card is clicked.
-     * It's been modified to no longer apply filters.
+     * Applique un filtre prédéfini à la liste des médicaments.
+     * Cette méthode est appelée depuis le tableau de bord lorsqu'une carte est cliquée.
+     * Elle a été modifiée pour ne plus appliquer de filtres directement ici,
+     * car le chargement des données gère désormais la recherche et la pagination côté serveur.
      *
-     * @param filterType
+     * @param filterType Le type de filtre à appliquer (n'est plus utilisé activement pour filtrer).
      */
     public void applyFilter(String filterType) {
-        // The method is kept for backward compatibility
+        // La méthode est conservée pour la compatibilité ascendante
         Platform.runLater(() -> {
             statusLabel.setText("Liste complète des médicaments");
         });
     }
     
+    /**
+     * Affiche une boîte de dialogue avec les détails complets du médicament sélectionné.
+     * La boîte de dialogue contient plusieurs onglets/sections pour différentes catégories d'informations.
+     */
     private void showDetailsDialog() {
         Medicament selectedMedicament = medicamentsTable.getSelectionModel().getSelectedItem();
         if (selectedMedicament == null) return;
@@ -501,7 +564,11 @@ public class MedicamentsController {
         dialog.showAndWait();
     }
     
-    // Méthode pour créer le panneau d'informations administratives
+    /**
+     * Crée et retourne un panneau (GridPane) affichant les informations administratives d'un médicament.
+     * @param medicament Le médicament pour lequel afficher les informations.
+     * @return Un GridPane contenant les informations administratives.
+     */
     private GridPane createInfoAdminPanel(Medicament medicament) {
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -554,7 +621,11 @@ public class MedicamentsController {
         return grid;
     }
     
-    // Méthode pour créer le panneau d'informations de disponibilité
+    /**
+     * Crée et retourne un panneau (GridPane) affichant les informations de disponibilité d'un médicament.
+     * @param medicament Le médicament pour lequel afficher les informations.
+     * @return Un GridPane contenant les informations de disponibilité.
+     */
     private GridPane createInfoDispoPanel(Medicament medicament) {
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -610,7 +681,11 @@ public class MedicamentsController {
         return grid;
     }
     
-    // Méthode pour créer le panneau d'informations de prescription
+    /**
+     * Crée et retourne un panneau (GridPane) affichant les informations de prescription d'un médicament.
+     * @param medicament Le médicament pour lequel afficher les informations.
+     * @return Un GridPane contenant les informations de prescription.
+     */
     private GridPane createInfoPrescriptionPanel(Medicament medicament) {
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -648,7 +723,11 @@ public class MedicamentsController {
         return grid;
     }
     
-    // Méthode pour créer le panneau d'informations génériques
+    /**
+     * Crée et retourne un panneau (GridPane) affichant les informations sur les génériques d'un médicament.
+     * @param medicament Le médicament pour lequel afficher les informations.
+     * @return Un GridPane contenant les informations sur les génériques.
+     */
     private GridPane createInfoGeneriquesPanel(Medicament medicament) {
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -681,6 +760,10 @@ public class MedicamentsController {
     }
     
     
+    /**
+     * Affiche une boîte de dialogue permettant de modifier le stock du médicament sélectionné.
+     * Met à jour le stock via l'API et rafraîchit la table.
+     */
     private void showModifierStockDialog() {
         Medicament selectedMedicament = medicamentsTable.getSelectionModel().getSelectedItem();
         if (selectedMedicament == null) return;
@@ -744,6 +827,13 @@ public class MedicamentsController {
         });
     }
     
+    /**
+     * Affiche une boîte de dialogue d'alerte.
+     * @param alertType Le type d'alerte (Erreur, Information, etc.).
+     * @param title Le titre de la fenêtre d'alerte.
+     * @param header Le texte d'en-tête de l'alerte.
+     * @param content Le message principal de l'alerte.
+     */
     private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

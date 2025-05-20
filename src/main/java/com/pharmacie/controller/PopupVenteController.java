@@ -14,6 +14,10 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Contrôleur pour le popup de sélection du type de vente (avec ou sans ordonnance).
+ * Permet à l'utilisateur de choisir le flux de vente approprié.
+ */
 public class PopupVenteController {
 
     private static final Logger LOGGER = Logger.getLogger(PopupVenteController.class.getName());
@@ -26,10 +30,21 @@ public class PopupVenteController {
 
     private Stage stage;
 
+    /**
+     * Définit la {@link Stage} (fenêtre) de ce popup.
+     * Utilisé pour pouvoir fermer le popup.
+     * @param stage La fenêtre du popup.
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
+    /**
+     * Gère l'action du bouton "Avec Ordonnance".
+     * Affiche une information indiquant que la fonctionnalité n'est pas encore implémentée
+     * et ferme le popup.
+     * @param event L'événement d'action déclenché.
+     */
     @FXML
     void handleAvecOrdonnance(ActionEvent event) {
         // Fonctionnalité non implémentée pour le moment
@@ -43,6 +58,11 @@ public class PopupVenteController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Sans Ordonnance".
+     * Ferme le popup actuel et ouvre le formulaire client pour une vente sans ordonnance.
+     * @param event L'événement d'action déclenché.
+     */
     @FXML
     void handleSansOrdonnance(ActionEvent event) {
         try {
@@ -70,6 +90,13 @@ public class PopupVenteController {
         }
     }
     
+    /**
+     * Affiche une boîte de dialogue d'alerte.
+     * @param type Le type d'alerte (ex: INFORMATION, ERROR).
+     * @param title Le titre de la fenêtre d'alerte.
+     * @param header Le texte d'en-tête de l'alerte.
+     * @param content Le message principal de l'alerte.
+     */
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

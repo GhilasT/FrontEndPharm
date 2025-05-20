@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Contrôleur pour la gestion des préparateurs.
+ * Permet d'afficher, rechercher, ajouter, modifier et supprimer des préparateurs.
+ */
 public class GestionPreparateurController {
     @FXML private TableView<Preparateur> preparateurTable;
     @FXML private TableColumn<Preparateur, UUID> idColumn;
@@ -34,12 +38,17 @@ public class GestionPreparateurController {
 
     @FXML private Button modifierButton, supprimerButton;
     @FXML private TextField searchField;
-    @FXML private Button resetSearchButton; // Ajouté
+    @FXML private Button resetSearchButton;
 
     private ObservableList<Preparateur> preparateurData = FXCollections.observableArrayList();
     private DashboardAdminController parentController;
     private PreparateurApi preparateurService;
 
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure les colonnes de la table, la recherche, les boutons de modification/suppression
+     * et charge la liste initiale des préparateurs.
+     */
     @FXML
     public void initialize() {
         preparateurService = new PreparateurApi();
@@ -62,6 +71,9 @@ public class GestionPreparateurController {
         loadAllPreparateurs();
     }
 
+    /**
+     * Configure les colonnes de la table des préparateurs avec les propriétés correspondantes.
+     */
     private void configureColumns() {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("idPersonne"));
         nomColumn.setCellValueFactory(new PropertyValueFactory<>("nom"));
@@ -78,6 +90,10 @@ public class GestionPreparateurController {
         emailProColumn.setCellValueFactory(new PropertyValueFactory<>("emailPro"));
     }
 
+    /**
+     * Gère la recherche de préparateurs en fonction du texte saisi dans le champ de recherche.
+     * La recherche est effectuée si le texte est vide (pour tout afficher) ou a au moins 3 caractères.
+     */
     @FXML
     private void handleSearch() {
         String query = searchField.getText().trim();
@@ -107,12 +123,19 @@ public class GestionPreparateurController {
         new Thread(task).start();
     }
 
+    /**
+     * Gère l'action du bouton de réinitialisation de la recherche.
+     * Efface le champ de recherche et recharge tous les préparateurs.
+     */
     @FXML
     private void handleResetSearch() {
         searchField.clear();
         loadAllPreparateurs();
     }
 
+    /**
+     * Charge tous les préparateurs depuis l'API et les affiche dans la table.
+     */
     private void loadAllPreparateurs() {
         Task<List<Preparateur>> task = new Task<>() {
             @Override
@@ -134,10 +157,18 @@ public class GestionPreparateurController {
         new Thread(task).start();
     }
 
+    /**
+     * Définit le contrôleur parent (DashboardAdminController).
+     * @param controller Le contrôleur parent.
+     */
     public void setParentController(DashboardAdminController controller) {
         this.parentController = controller;
     }
 
+    /**
+     * Gère l'action du bouton "Retour".
+     * Revient à la vue de gestion du personnel dans le tableau de bord de l'administrateur.
+     */
     @FXML
     private void handleBack() {
         if (parentController != null) {
@@ -145,6 +176,11 @@ public class GestionPreparateurController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Ajouter".
+     * Ouvre une boîte de dialogue pour ajouter un nouveau préparateur.
+     * Si l'ajout est confirmé, crée le préparateur via l'API et rafraîchit la liste.
+     */
     @FXML
     private void handleAjouter() {
         AddPreparateurDialogController dialogController = new AddPreparateurDialogController();
@@ -165,6 +201,11 @@ public class GestionPreparateurController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Modifier".
+     * Ouvre une boîte de dialogue pour modifier le préparateur sélectionné.
+     * Si la modification est confirmée, met à jour le préparateur via l'API et rafraîchit la liste.
+     */
     @FXML
     private void handleModifier() {
         Preparateur selected = preparateurTable.getSelectionModel().getSelectedItem();
@@ -185,6 +226,11 @@ public class GestionPreparateurController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Supprimer".
+     * Demande confirmation avant de supprimer le préparateur sélectionné.
+     * Si la suppression est confirmée, supprime le préparateur via l'API et rafraîchit la liste.
+     */
     @FXML
     private void handleSupprimer() {
         Preparateur selected = preparateurTable.getSelectionModel().getSelectedItem();
@@ -210,6 +256,12 @@ public class GestionPreparateurController {
         }
     }
 
+    /**
+     * Affiche une boîte de dialogue d'alerte.
+     * @param type Le type d'alerte (Erreur, Information, etc.).
+     * @param title Le titre de la fenêtre d'alerte.
+     * @param message Le message principal de l'alerte.
+     */
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

@@ -7,6 +7,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 
+/**
+ * Contrôleur pour la section de gestion du personnel.
+ * Fournit des boutons pour naviguer vers les différentes sous-sections de gestion
+ * (Administrateurs, Préparateurs, Pharmaciens Adjoints, Apprentis).
+ */
 public class GestionPersonnelController {
     
     @FXML private Button backButton;
@@ -17,11 +22,19 @@ public class GestionPersonnelController {
     
     private DashboardAdminController parentController;
 
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure les gestionnaires d'événements pour les boutons de navigation.
+     */
     @FXML
     private void initialize() {
         setupButtonHandlers();
     }
     
+    /**
+     * Configure les actions à exécuter lorsque les boutons de navigation sont cliqués.
+     * Chaque bouton charge la vue FXML correspondante dans la zone de contenu du parent.
+     */
     private void setupButtonHandlers() {
         GestPerso.setOnAction(e -> handleAdminSection());
         GestFournisseurs.setOnAction(e -> handlePreparateursSection());
@@ -29,7 +42,10 @@ public class GestionPersonnelController {
         GestCommandes.setOnAction(e -> handleApprentiSection());
     }
     
-    // Méthodes pour gérer les différentes sections de personnel
+    /**
+     * Gère la navigation vers la section de gestion des administrateurs.
+     * Charge la vue GestionAdmin.fxml.
+     */
     private void handleAdminSection() {
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionAdmin.fxml"));
@@ -42,6 +58,10 @@ public class GestionPersonnelController {
     }
 }
     
+    /**
+     * Gère la navigation vers la section de gestion des préparateurs.
+     * Charge la vue GestionPreparateur.fxml.
+     */
 private void handlePreparateursSection() {
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionPreparateur.fxml"));
@@ -54,6 +74,10 @@ private void handlePreparateursSection() {
     }
 }
     
+    /**
+     * Gère la navigation vers la section de gestion des pharmaciens adjoints.
+     * Charge la vue GestionPharmacienAdjoint.fxml.
+     */
 private void handlePharmacienSection() { 
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionPharmacienAdjoint.fxml"));
@@ -66,6 +90,10 @@ private void handlePharmacienSection() {
     }
 }
     
+    /**
+     * Gère la navigation vers la section de gestion des apprentis.
+     * Charge la vue GestionApprenti.fxml.
+     */
 private void handleApprentiSection() {
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionApprenti.fxml"));
@@ -78,10 +106,18 @@ private void handleApprentiSection() {
     }
 }
 
+    /**
+     * Définit le contrôleur parent (DashboardAdminController).
+     * @param controller Le contrôleur parent.
+     */
     public void setParentController(DashboardAdminController controller) {
         this.parentController = controller;
     }
 
+    /**
+     * Gère l'action du bouton "Retour".
+     * Revient à la vue principale du tableau de bord de l'administrateur.
+     */
     @FXML
     private void handleBack() {
         if(parentController != null) {

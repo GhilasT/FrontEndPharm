@@ -50,6 +50,12 @@ import javafx.scene.control.ButtonType;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+/**
+ * Contrôleur pour la gestion des commandes fournisseurs.
+ * Permet d'afficher la liste des commandes, de voir leurs détails,
+ * de modifier leur statut (notamment les marquer comme reçues ou incomplètes),
+ * et de passer de nouvelles commandes.
+ */
 public class GestionCommandeController {
     //Constante
     private static final String CURRENCY_SYMBOL = " €";
@@ -71,8 +77,11 @@ public class GestionCommandeController {
     private Map<UUID,Employe> employeChargerMap = new HashMap<>();
     @FXML private Pane paneParent; 
 
-
-
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure la table des commandes, charge les données de manière asynchrone
+     * et configure les actions des différents boutons.
+     */
     @FXML
     public void initialize() {
         configurationTable();
@@ -94,6 +103,11 @@ public class GestionCommandeController {
         });
     }
 
+    /**
+     * Configure les colonnes de la TableView des commandes.
+     * Définit comment chaque colonne doit extraire et afficher les données
+     * des objets Commande.
+     */
     private void configurationTable() {
         
         // Configuration des colonnes en fonction de la classe Commande
@@ -134,12 +148,21 @@ public class GestionCommandeController {
         tableViewCommandes.setItems(commandesObservable);
     }
     
+    /**
+     * Exécute une tâche JavaFX (Task) dans un nouveau thread démon.
+     * @param task La tâche à exécuter.
+     */
     private void executerTache(Task<?> task) {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }
 
+    /**
+     * Charge les données des commandes de manière asynchrone depuis le service.
+     * Met à jour la TableView avec les commandes chargées.
+     * Gère les cas de succès et d'échec du chargement.
+     */
     private void chargeCommandeDonneAsync() {
         executerTache(new Task<List<Commande>>() {
             @Override 
@@ -185,10 +208,20 @@ public class GestionCommandeController {
         });
     }
 
+    /**
+     * Formate un prix BigDecimal en une chaîne de caractères avec le symbole monétaire.
+     * @param prix Le prix à formater.
+     * @return Une chaîne représentant le prix formaté, ou une chaîne vide si le prix est nul.
+     */
     private String formaterPrix(BigDecimal prix) {
         return prix != null ? prix + CURRENCY_SYMBOL : "";
     }
 
+    /**
+     * Gère l'action du bouton "Infos Vendeur".
+     * Affiche une popup avec les informations de l'employé associé à la commande sélectionnée.
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handleInfoEmployer(ActionEvent event){
         Commande commandeSelectionner=tableViewCommandes.getSelectionModel().getSelectedItem();
@@ -212,6 +245,11 @@ public class GestionCommandeController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Infos Fournisseur".
+     * Affiche une popup avec les informations du fournisseur associé à la commande sélectionnée.
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handleInfoFournisseur(ActionEvent event) {
         Commande commandeSelectionner=tableViewCommandes.getSelectionModel().getSelectedItem();
@@ -235,6 +273,12 @@ public class GestionCommandeController {
         }
     }
 
+    /**
+     * Récupère un fournisseur par son ID.
+     * Tente d'abord de le récupérer depuis un cache local, sinon effectue un appel API.
+     * @param id L'UUID du fournisseur à récupérer.
+     * @return L'objet Fournisseur correspondant, ou null si non trouvé ou en cas d'erreur.
+     */
     private Fournisseur getFournisseurById(UUID id) {
         if (fournisseurChargerMap.containsKey(id)) {
             return fournisseurChargerMap.get(id);
@@ -273,7 +317,13 @@ public class GestionCommandeController {
         return fournisseur;
     }
     
-    private Employe getEmployeById(UUID employeId) {//Recupere l'employe par son id dans la BDD
+    /**
+     * Récupère un employé par son ID.
+     * Tente d'abord de le récupérer depuis un cache local, sinon effectue un appel API.
+     * @param employeId L'UUID de l'employé à récupérer.
+     * @return L'objet Employe correspondant, ou null si non trouvé ou en cas d'erreur.
+     */
+    private Employe getEmployeById(UUID employeId) {
         if (employeChargerMap.containsKey(employeId)) {
             return employeChargerMap.get(employeId);
         }
@@ -312,6 +362,12 @@ public class GestionCommandeController {
         return employe;
     }
 
+    /**
+     * Gère l'action du bouton "Modifier Statut" pour marquer une commande comme "Reçu".
+     * Met à jour le statut de la commande sélectionnée via un appel API.
+     * Rafraîchit la table des commandes après la mise à jour.
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handleChangerStatusRecu(ActionEvent event) {
         Commande commandeSelectionner = tableViewCommandes.getSelectionModel().getSelectedItem();
@@ -341,6 +397,11 @@ public class GestionCommandeController {
         }
     }
         
+    /**
+     * Affiche une popup permettant d'éditer les quantités des médicaments
+     * pour une commande marquée comme incomplète.
+     * @param commande La commande incomplète à éditer.
+     */
     private void AfficherPopupEditerQteCommandeIncomplet(Commande commande) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Page Commande Incomplete");
@@ -398,6 +459,12 @@ public class GestionCommandeController {
         dialog.showAndWait();
     }
     
+    /**
+     * Envoie les quantités mises à jour pour une commande incomplète à l'API.
+     * Met à jour le statut de la commande et rafraîchit la table.
+     * @param referenceCommande L'UUID de la commande à mettre à jour.
+     * @param nouvellesQuantites La liste des nouvelles quantités pour les lignes de commande.
+     */
     private void envoyerQuantitesMiseAJour(UUID referenceCommande, List<Integer> nouvellesQuantites) {
         try {
             JSONArray jsonQuantites = new JSONArray(nouvellesQuantites);
@@ -442,6 +509,11 @@ public class GestionCommandeController {
         }
     }
     
+    /**
+     * Gère l'action du bouton "Commande Incomplète".
+     * Ouvre une popup pour éditer les quantités si la commande sélectionnée est "En attente".
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handleCommandeIncomplet(ActionEvent event){
         Commande commandeSelectionner=tableViewCommandes.getSelectionModel().getSelectedItem();
@@ -453,6 +525,11 @@ public class GestionCommandeController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Info Commande".
+     * Affiche une popup avec les détails de la commande sélectionnée (lignes de commande).
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handleInfoCommande(ActionEvent event ){
         Commande commandeSelectionner=tableViewCommandes.getSelectionModel().getSelectedItem();
@@ -464,6 +541,9 @@ public class GestionCommandeController {
         }
     }
 
+    /**
+     * Rafraîchit la table des commandes en rechargeant les données de manière asynchrone.
+     */
     @FXML
     public void rafraichirTableCommandes() {
         commandesObservable.clear();

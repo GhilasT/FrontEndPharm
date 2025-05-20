@@ -34,6 +34,10 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Contrôleur pour la gestion de l'affichage et des interactions avec la liste des ventes.
+ * Permet d'effectuer des ventes, de les modifier, supprimer, et de visualiser leurs détails.
+ */
 public class VentesController {
 
     private static final Logger LOGGER = Logger.getLogger(VentesController.class.getName());
@@ -73,10 +77,18 @@ public class VentesController {
     private Node listeInitiale;
 
     private UUID clientId;
+    /**
+     * Définit l'ID du client pour une nouvelle vente.
+     * @param id L'UUID du client.
+     */
     public void setClientId(UUID id) {
         this.clientId = id;
     }
 
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure les colonnes de la table et charge les données initiales des ventes.
+     */
     @FXML
     public void initialize() {
         listeInitiale = rootPane.getCenter();
@@ -84,6 +96,10 @@ public class VentesController {
         loadVentes();
     }
 
+    /**
+     * Configure les colonnes de la TableView des ventes, y compris les usines de cellules
+     * pour l'affichage des données et des boutons d'action.
+     */
     private void configureTableColumns() {
         // Configuration des colonnes
         idColumn.setCellValueFactory(
@@ -106,12 +122,24 @@ public class VentesController {
         actionsColumn.setCellFactory(createActionsColumnCellFactory());
     }
 
+    /**
+     * Tronque un UUID pour un affichage plus concis.
+     * @param uuid L'UUID à tronquer.
+     * @return Une chaîne représentant les 8 premiers caractères de l'UUID suivis de "...".
+     *         Retourne "???" si l'UUID est nul.
+     */
     private String tronquerUUID(UUID uuid) {
         if (uuid == null)
             return "???";
         return uuid.toString().substring(0, 8) + "...";
     }
 
+    /**
+     * Crée une usine de cellules pour la colonne d'actions de la table des ventes.
+     * Cette colonne contient des boutons pour détailler, modifier, supprimer une vente,
+     * et filtrer les ventes par client ou pharmacien.
+     * @return Un Callback pour la création des cellules d'action.
+     */
     private Callback<TableColumn<Vente, Void>, TableCell<Vente, Void>> createActionsColumnCellFactory() {
         return param -> new TableCell<Vente, Void>() {
             private final Button btnSupprimer = new Button("Supprimer");
@@ -172,6 +200,10 @@ public class VentesController {
         };
     }
 
+    /**
+     * Charge la liste de toutes les ventes depuis l'API REST et les affiche dans la table.
+     * Gère les exceptions potentielles lors de l'appel à l'API.
+     */
     private void loadVentes() {
         try {
             // Charger la liste des ventes via l'API REST
@@ -186,6 +218,11 @@ public class VentesController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Effectuer une vente".
+     * Ouvre une fenêtre modale pour sélectionner ou créer un client, puis charge la vue de vente.
+     * @param event L'événement d'action déclenché par le bouton.
+     */
     @FXML
     private void handleEffectuerVente(ActionEvent event) {
         try {
@@ -223,10 +260,18 @@ public class VentesController {
         }
     }
 
+    /**
+     * Rétablit l'affichage central du BorderPane à la liste initiale des ventes.
+     */
     public void returnToList() {
         rootPane.setCenter(listeInitiale);
     }
 
+    /**
+     * Gère la suppression d'une vente.
+     * Affiche une boîte de dialogue de confirmation avant de supprimer la vente via l'API REST.
+     * @param vente La vente à supprimer.
+     */
     private void handleSupprimerVente(Vente vente) {
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDialog.setTitle("Confirmation de suppression");
@@ -248,6 +293,11 @@ public class VentesController {
         }
     }
 
+    /**
+     * Gère la modification d'une vente.
+     * Ouvre une fenêtre modale avec le formulaire de modification de la vente.
+     * @param vente La vente à modifier.
+     */
     private void handleModifierVente(Vente vente) {
         try {
             // Chargement du formulaire de modification de vente
@@ -276,6 +326,11 @@ public class VentesController {
         }
     }
 
+    /**
+     * Affiche une boîte de dialogue avec des options pour voir les détails
+     * du pharmacien, du client ou des médicaments associés à une vente.
+     * @param vente La vente pour laquelle afficher les détails.
+     */
     private void handleDetailsVente(Vente vente) {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -388,6 +443,10 @@ public class VentesController {
         dialog.showAndWait();
     }
 
+    /**
+     * Affiche les détails d'un médicament dans une nouvelle fenêtre modale.
+     * @param medicament Le médicament dont les détails doivent être affichés.
+     */
     private void showMedicamentDetails(Medicament medicament) {
         Stage detailsStage = new Stage();
         detailsStage.initModality(Modality.APPLICATION_MODAL);
@@ -430,6 +489,15 @@ public class VentesController {
         detailsStage.showAndWait();
     }
 
+    /**
+     * Ajoute une ligne stylisée à un GridPane, typiquement pour afficher une paire label-valeur.
+     * @param grid Le GridPane auquel ajouter la ligne.
+     * @param row L'index de la ligne où ajouter les éléments.
+     * @param labelText Le texte du label.
+     * @param value La valeur à afficher.
+     * @param labelStyle Le style CSS pour le label.
+     * @param valueStyle Le style CSS pour la valeur.
+     */
     private void addStyledRow(GridPane grid, int row, String labelText, String value, String labelStyle,
                               String valueStyle) {
         Label label = new Label(labelText);
@@ -443,6 +511,10 @@ public class VentesController {
         grid.add(valueLabel, 1, row);
     }
 
+    /**
+     * Affiche les détails d'un client dans une nouvelle fenêtre modale.
+     * @param client Le client dont les détails doivent être affichés.
+     */
     private void afficherDetailsClient(Client client) {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -479,6 +551,10 @@ public class VentesController {
         dialog.show();
     }
 
+    /**
+     * Affiche les détails d'un pharmacien adjoint dans une nouvelle fenêtre modale.
+     * @param pharmacien Le pharmacien adjoint dont les détails doivent être affichés.
+     */
     private void afficherDetailsPharmacien(PharmacienAdjoint pharmacien) {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -511,6 +587,15 @@ public class VentesController {
         dialog.show();
     }
 
+    /**
+     * Ajoute une ligne de formulaire (icône, label, valeur) à un GridPane.
+     * Utilisé pour afficher les détails d'une entité de manière structurée.
+     * @param grid Le GridPane auquel ajouter la ligne.
+     * @param row L'index de la ligne.
+     * @param icon Le caractère ou la chaîne représentant l'icône.
+     * @param labelText Le texte du label.
+     * @param value La valeur à afficher.
+     */
     private void addFormRow(GridPane grid, int row, String icon, String labelText, String value) {
         Label iconLabel = new Label(icon);
         iconLabel.getStyleClass().add("detail-icon");
@@ -529,7 +614,12 @@ public class VentesController {
         grid.add(valueLabel, 1, row);
     }
 
-    // Gestion des erreurs d'API
+    /**
+     * Gère les erreurs survenant lors des appels à l'API REST.
+     * Enregistre l'erreur et affiche une alerte à l'utilisateur.
+     * @param entite Le nom de l'entité concernée par l'erreur (ex: "client", "pharmacien").
+     * @param ex L'exception survenue.
+     */
     private void gererErreurApi(String entite, Exception ex) {
         LOGGER.log(Level.SEVERE, "Erreur API - " + entite, ex);
         showAlert(Alert.AlertType.ERROR, "Erreur",
@@ -538,6 +628,13 @@ public class VentesController {
                         entite, ex.getMessage()));
     }
 
+    /**
+     * Affiche une boîte de dialogue d'alerte.
+     * @param type Le type d'alerte (ex: ERROR, INFORMATION).
+     * @param title Le titre de la fenêtre d'alerte.
+     * @param header Le texte d'en-tête de l'alerte.
+     * @param content Le message principal de l'alerte.
+     */
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -546,10 +643,18 @@ public class VentesController {
         alert.showAndWait();
     }
 
+    /**
+     * Définit l'UUID de l'utilisateur actuellement connecté.
+     * @param utilisateurConnecte L'UUID de l'utilisateur.
+     */
     public void setUtilisateurConnecte(UUID utilisateurConnecte) {
         this.utilisateurConnecte = utilisateurConnecte;
     }
 
+    /**
+     * Charge et affiche les ventes associées à un ID client spécifique.
+     * @param clientId L'UUID du client.
+     */
     private void loadVentesClient(UUID clientId) {
         try {
             List<Vente> ventes = ApiRest.getVentesByClientId(clientId);
@@ -560,6 +665,10 @@ public class VentesController {
         }
     }
 
+    /**
+     * Charge et affiche les ventes associées à un ID pharmacien spécifique.
+     * @param pharmacienId L'UUID du pharmacien.
+     */
     private void loadVentesPharmacien(UUID pharmacienId) {
         try {
             List<Vente> ventes = ApiRest.getVentesByPharmacienId(pharmacienId);
@@ -570,6 +679,11 @@ public class VentesController {
         }
     }
 
+    /**
+     * Gère l'action du bouton pour basculer entre l'affichage de toutes les ventes
+     * et uniquement les ventes du pharmacien connecté.
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handleToggleVentes(ActionEvent event) {
         showMySales = !showMySales;
@@ -585,6 +699,9 @@ public class VentesController {
         }
     }
 
+    /**
+     * Charge les ventes effectuées par le pharmacien actuellement connecté.
+     */
     private void loadMyVentes() {
         try {
             UUID pharmacienId = LoggedSeller.getInstance().getId();
@@ -596,6 +713,11 @@ public class VentesController {
         }
     }
 
+    /**
+     * Gère l'action du bouton de réinitialisation des filtres d'affichage des ventes.
+     * Affiche à nouveau toutes les ventes.
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handleReset(ActionEvent event) {
         showMySales = false;
@@ -604,6 +726,10 @@ public class VentesController {
         loadVentes();
     }
 
+    /**
+     * Affiche une alerte informant que la fonctionnalité demandée n'est pas encore implémentée.
+     * @param featureName Le nom de la fonctionnalité non implémentée.
+     */
     private void showNotImplementedAlert(String featureName) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");

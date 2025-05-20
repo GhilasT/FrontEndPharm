@@ -16,14 +16,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Classe utilitaire pour les tests des fonctionnalités
+ * Classe utilitaire pour les tests des fonctionnalités.
+ * Elle fournit des méthodes pour tester l'ouverture de différentes fenêtres de l'application.
  */
 public class TestUtils {
 
     private static final Logger LOGGER = Logger.getLogger(TestUtils.class.getName());
 
     /**
-     * Teste l'ouverture du popup de vente
+     * Teste l'ouverture du popup de vente.
+     * Crée et affiche la fenêtre du popup de vente.
      */
     public static void testPopupVente() {
         try {
@@ -54,7 +56,8 @@ public class TestUtils {
     }
 
     /**
-     * Teste l'ouverture du formulaire client
+     * Teste l'ouverture du formulaire client.
+     * Crée et affiche la fenêtre du formulaire client.
      */
     public static void testFormulaireClient() {
         try {
@@ -82,7 +85,8 @@ public class TestUtils {
     }
 
     /**
-     * Teste l'ouverture de la page de recherche de médicaments
+     * Teste l'ouverture de la page de recherche de médicaments.
+     * Crée et affiche la fenêtre de recherche de médicaments, en initialisant les informations client.
      */
     public static void testRechercheMedicaments() {
         try {
@@ -113,7 +117,8 @@ public class TestUtils {
     }
 
     /**
-     * Teste l'ouverture de la page des ventes
+     * Teste l'ouverture de la page des ventes.
+     * Crée et affiche la fenêtre de la page des ventes.
      */
     public static void testPageVentes() {
         try {
@@ -141,7 +146,8 @@ public class TestUtils {
     }
 
     /**
-     * Exécute tous les tests
+     * Exécute tous les tests définis dans cette classe.
+     * Affiche une boîte de dialogue de confirmation avant de lancer les tests séquentiellement.
      */
     public static void runAllTests() {
         try {
@@ -167,6 +173,13 @@ public class TestUtils {
         }
     }
 
+    /**
+     * Affiche une alerte à l'utilisateur.
+     * @param type Le type d'alerte (ex: ERROR, INFORMATION).
+     * @param title Le titre de la fenêtre d'alerte.
+     * @param header Le texte d'en-tête de l'alerte.
+     * @param content Le message principal de l'alerte.
+     */
     public static void showAlert(Alert.AlertType type, String title, String header, String content) {
         Platform.runLater(() -> {
             Alert alert = new Alert(type);

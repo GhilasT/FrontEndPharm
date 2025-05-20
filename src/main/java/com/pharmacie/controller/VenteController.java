@@ -44,6 +44,11 @@ import javafx.scene.image.ImageView;
 //PARACETAMOL/CODEINE TEVA 500 mg/30 mg, comprimé pelliculé
 //pharmacien.pro@example.com
 
+/**
+ * Contrôleur pour l'interface de création d'une nouvelle vente.
+ * Gère la recherche de médicaments, l'ajout au panier, la gestion du panier,
+ * l'ajout d'ordonnance et la finalisation du paiement.
+ */
 public class VenteController {
 
     @FXML
@@ -80,11 +85,19 @@ public class VenteController {
     @FXML private Button btnRetour;
     private VentesController parentController;
 
+    /**
+     * Définit le contrôleur parent (VentesController) pour permettre la navigation retour.
+     * @param parent Le contrôleur VentesController.
+     */
     public void setParentController(VentesController parent) {
         this.parentController = parent;
     }
 
 
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure les listeners pour la barre de recherche de médicaments et la liste de suggestions.
+     */
     @FXML
     public void initialize() {
         barDeRecherche.textProperty().addListener((obs, oldVal, newVal) -> {
@@ -111,6 +124,12 @@ public class VenteController {
         });
     }
 
+    /**
+     * Gère l'action du bouton "Retour".
+     * Si un contrôleur parent est défini, appelle sa méthode pour revenir à la vue précédente.
+     * Sinon, affiche une alerte.
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handleRetour(ActionEvent event) {
         if (parentController != null) {
@@ -125,10 +144,19 @@ public class VenteController {
 
 
 
+    /**
+     * Définit l'ID du client pour la vente en cours.
+     * @param clientId L'UUID du client.
+     */
     public void setClientId(UUID clientId) {
         this.clientId = clientId;
     }
 
+    /**
+     * Gère l'action du bouton d'ajout de médicament (souvent implicite via la sélection).
+     * Ajoute le premier médicament de la liste de suggestions au panier.
+     * @param event L'événement d'action.
+     */
     @FXML
     private void ajouterMedicament(ActionEvent event) {
         if (!listView.getItems().isEmpty()) {
@@ -143,10 +171,19 @@ public class VenteController {
         }
     }
 
+    /**
+     * Définit l'ID du pharmacien adjoint pour la vente en cours.
+     * @param pharmId L'UUID du pharmacien adjoint.
+     */
     public void setPharmacienAdjointId(UUID pharmId) {
         this.pharmacienAdjointId = pharmId;
     }
 
+    /**
+     * Recherche des médicaments en fonction du terme saisi.
+     * Appelle l'API REST et met à jour la liste de suggestions.
+     * @param searchTerm Le terme de recherche.
+     */
     @FXML
     private void rechercherMedicaments(String searchTerm) {
         try {
@@ -171,10 +208,20 @@ public class VenteController {
         }
     }
 
+    /**
+     * Définit si une ordonnance a été ajoutée pour cette vente.
+     * @param valeur true si une ordonnance a été ajoutée, false sinon.
+     */
     public void setOrdonnanceAjoutee(boolean valeur) {
         this.ordonnanceAjoutee = valeur;
     }
 
+    /**
+     * Ajoute un médicament sélectionné au panier.
+     * Extrait les informations du médicament, le crée en tant qu'objet MedicamentPanier,
+     * l'ajoute à la liste du panier et rafraîchit l'affichage.
+     * @param selected La chaîne représentant le médicament sélectionné (nom - prix).
+     */
     @FXML
     public void ajouterMedicament(String selected) {
         try {
@@ -321,13 +368,19 @@ public class VenteController {
      * sommeQte += qte;
      * }
      * }
-     * }
      * LabelQuantierValue.setText(String.valueOf(sommeQte));
      * LabelPrixValue.setText(String.format("%.2f €", total));
      * }
      *
      */
 
+    /**
+     * Gère l'action du bouton "Payer".
+     * Crée une requête de vente avec les informations du client, du pharmacien,
+     * des médicaments du panier et le mode de paiement.
+     * Appelle l'API REST pour enregistrer la vente.
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handlePayer(ActionEvent event) {
         List<MedicamentPanier> panier = new ArrayList<>(panierItems); // Utiliser directement panierItems
@@ -400,10 +453,22 @@ public class VenteController {
         }
     }
 
+    /**
+     * Calcule le montant total des médicaments dans le panier.
+     * @param panier La liste des médicaments dans le panier.
+     * @return Le montant total.
+     */
     private double calculerMontantTotal(List<MedicamentPanier> panier) {
         return panier.stream().mapToDouble(mp -> mp.getPrixUnitaire() * mp.getQuantite()).sum();
     }
 
+    /**
+     * Affiche une boîte de dialogue d'alerte.
+     * @param type Le type d'alerte (ex: ERROR, INFORMATION).
+     * @param title Le titre de la fenêtre d'alerte.
+     * @param header Le texte d'en-tête de l'alerte.
+     * @param content Le message principal de l'alerte.
+     */
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -412,21 +477,29 @@ public class VenteController {
         alert.showAndWait();
     }
 
+    /**
+     * Récupère l'ID du client associé à cette vente.
+     * @return L'UUID du client.
+     */
     public UUID getClientId() {
         return clientId;
     }
 
     /**
-     * Récupère les médicaments du panier.
+     * Récupère les médicaments actuellement dans le panier.
      *
-     * @return Liste des médicaments ajoutés au panier sous forme de
-     *         MedicamentPanier
+     * @return Une nouvelle liste contenant les objets {@link MedicamentPanier} du panier.
      */
     public List<MedicamentPanier> getMedicamentsPanier() {
         return new ArrayList<>(panierItems);
 
     }
 
+    /**
+     * Gère l'action du bouton "Ajouter Ordonnance".
+     * Ouvre une fenêtre modale pour sélectionner un médecin.
+     * @param event L'événement d'action.
+     */
     @FXML
     private void handleAjouterOrdonnance(ActionEvent event) {
         try {
@@ -458,7 +531,9 @@ public class VenteController {
     }
 
     /**
-     * Sera appelé par OrdonnanceController lorsque l'ordonnance est validée.
+     * Méthode appelée par {@code OrdonnanceController} lorsque l'ordonnance est validée.
+     * Met à jour l'ID du médecin et indique qu'une ordonnance a été ajoutée.
+     * @param medecinId L'UUID du médecin sélectionné.
      */
     public void onOrdonnanceAjoutee(UUID medecinId) {
         this.pharmacienAdjointId = medecinId;
@@ -466,6 +541,9 @@ public class VenteController {
         // Vous pouvez aussi rafraîchir un label, etc.
     }
 
+    /**
+     * Met à jour les informations récapitulatives du panier (quantité totale et prix total).
+     */
     private void majInfosPanier() {
         int sommeQte = 0;
         double total = 0.0;
@@ -479,6 +557,11 @@ public class VenteController {
         LabelPrixValue.setText(String.format("%.2f €", total));
     }
 
+    /**
+     * Rafraîchit l'affichage de la grille du panier.
+     * Supprime les anciennes lignes de médicaments et reconstruit la grille
+     * à partir de la liste actuelle {@code panierItems}.
+     */
     private void refreshGrid() {
         // 1) Supprimer uniquement les nœuds de la grille ayant rowIndex > 0
         List<Node> toRemove = new ArrayList<>();
@@ -535,7 +618,9 @@ public class VenteController {
     }
 
     /**
-     * Vide complètement le panier (modèle + vue) quand on clique sur la poubelle.
+     * Gère l'événement de clic sur l'icône de la poubelle pour vider le panier.
+     * Efface tous les articles du modèle de panier et rafraîchit l'interface utilisateur.
+     * @param event L'événement de souris déclenché par le clic.
      */
     @FXML
     private void handleEmptyCart(MouseEvent event) {

@@ -24,6 +24,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Contrôleur pour la gestion des prescriptions associées à une ordonnance.
+ * Permet d'afficher, de modifier et de valider les prescriptions pour les médicaments
+ * d'un panier client dans le cadre d'une vente avec ordonnance.
+ */
 public class PrescriptionController {
 
     @FXML
@@ -49,11 +54,18 @@ public class PrescriptionController {
     @FXML private Label rppsLabel;
     private String rppsMedecin;
 
+    /**
+     * Référence vers le contrôleur de vente, utilisée pour notifier la création d'une ordonnance.
+     */
     public VenteController venteController;
 
     private ObservableList<Prescription> prescriptionsList = FXCollections.observableArrayList();  // Liste des prescriptions
     private List<MedicamentPanier> medicamentsPanier;  // Liste des médicaments récupérés du panier
 
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure les colonnes de la table des prescriptions pour l'affichage et l'édition.
+     */
     @FXML
     private void initialize() {
         // 1) Configuration des colonnes
@@ -91,17 +103,27 @@ public class PrescriptionController {
         prescriptionTable.setEditable(true);
     }
 
+    /**
+     * Définit le contrôleur de vente parent.
+     * @param vc Le contrôleur de vente.
+     */
     public void setVenteController(VenteController vc) {
         this.venteController = vc;
     }
 
-
+    /**
+     * Définit l'identifiant du client pour lequel l'ordonnance est créée.
+     * @param clientId L'identifiant unique du client.
+     */
     public void  setClientId(UUID clientId){
         this.clientId = clientId;
 
     }
 
-    // Méthode pour charger les médicaments du panier dans la liste des prescriptions
+    /**
+     * Charge les médicaments du panier dans la liste des prescriptions à afficher.
+     * Crée une nouvelle {@link Prescription} pour chaque {@link MedicamentPanier}.
+     */
     public void loadMedicamentsPanier() {
         for (MedicamentPanier mp : medicamentsPanier) {
             Prescription prescription = new Prescription(
@@ -115,7 +137,12 @@ public class PrescriptionController {
         prescriptionTable.setItems(prescriptionsList);  // Afficher dans la table
     }
 
-    // Méthode pour valider les prescriptions (ajouter à l'ordonnance)
+    /**
+     * Gère l'événement de validation des prescriptions.
+     * Construit une requête de création d'ordonnance avec les prescriptions actuelles
+     * et l'envoie à l'API. Affiche une alerte de succès ou d'erreur.
+     * @param event L'événement d'action déclenché par le clic sur le bouton valider.
+     */
     @FXML
     private void handleValiderPrescription(ActionEvent event) {
         // 1) Construis la liste DTO des prescriptions via le constructeur manuel
@@ -168,7 +195,13 @@ public class PrescriptionController {
         new Thread(task).start();
     }
 
-    // Méthode pour afficher un message d'alerte
+    /**
+     * Affiche une boîte de dialogue d'alerte.
+     * @param type Le type d'alerte (ex: INFORMATION, ERROR).
+     * @param title Le titre de la fenêtre d'alerte.
+     * @param header Le texte d'en-tête de l'alerte.
+     * @param content Le message principal de l'alerte.
+     */
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -177,6 +210,12 @@ public class PrescriptionController {
         alert.showAndWait();
     }
 
+    /**
+     * Définit la liste des médicaments provenant du panier.
+     * Efface les prescriptions existantes et crée de nouvelles prescriptions
+     * basées sur les médicaments fournis.
+     * @param list La liste des {@link MedicamentPanier}.
+     */
     public void setMedicamentsPanier(List<MedicamentPanier> list) {
         // 1) Définit toujours une liste non-nulle
         this.medicamentsPanier = (list != null ? list : Collections.emptyList());
@@ -200,6 +239,11 @@ public class PrescriptionController {
         prescriptionTable.setItems(prescriptionsList);
     }
 
+    /**
+     * Définit le numéro RPPS du médecin prescripteur.
+     * Met à jour le label affichant le RPPS.
+     * @param rpps Le numéro RPPS du médecin.
+     */
     public void setMedecinRpps(String rpps) {
         // 1) Mémoriser si besoin
         this.rppsMedecin = rpps;
@@ -209,7 +253,11 @@ public class PrescriptionController {
         //    sinon tu laisses la table vide pour une nouvelle ordonnance
     }
 
-
+    /**
+     * Gère l'événement d'annulation de la création de prescription.
+     * Ferme la fenêtre actuelle.
+     * @param event L'événement d'action déclenché par le clic sur le bouton annuler.
+     */
     @FXML
     private void handleAnnulerPrescription(ActionEvent event) {
         // Récupère la fenêtre par le source de l'événement et ferme-la

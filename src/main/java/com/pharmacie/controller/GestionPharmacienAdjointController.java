@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Contrôleur pour la gestion des pharmaciens adjoints.
+ * Permet d'afficher, rechercher, ajouter, modifier et supprimer des pharmaciens adjoints.
+ */
 public class GestionPharmacienAdjointController {
     @FXML private TableView<PharmacienAdjoint> pharmacienTable;
     @FXML private TableColumn<PharmacienAdjoint, UUID> idColumn;
@@ -39,6 +43,11 @@ public class GestionPharmacienAdjointController {
     private DashboardAdminController parentController;
     private PharmacienAdjointApi pharmacienService;
 
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure les colonnes de la table, la sélection, la recherche,
+     * et charge la liste initiale des pharmaciens adjoints.
+     */
     @FXML
     public void initialize() {
         pharmacienService = new PharmacienAdjointApi();
@@ -71,6 +80,10 @@ public class GestionPharmacienAdjointController {
         loadAllPharmaciens();
     }
 
+    /**
+     * Charge tous les pharmaciens adjoints depuis l'API et les affiche dans la table.
+     * En cas d'échec du chargement depuis l'API, des données de test sont affichées.
+     */
     private void loadAllPharmaciens() {
         Task<List<PharmacienAdjoint>> task = new Task<>() {
             @Override
@@ -113,6 +126,11 @@ public class GestionPharmacienAdjointController {
         new Thread(task).start();
     }
 
+    /**
+     * Gère la recherche de pharmaciens adjoints en fonction du texte saisi.
+     * Si le champ de recherche est vide, recharge tous les pharmaciens.
+     * Sinon, effectue une recherche spécifique.
+     */
     @FXML
     private void handleSearch() {
         String searchQuery = searchField.getText().trim();
@@ -142,16 +160,28 @@ public class GestionPharmacienAdjointController {
         new Thread(task).start();
     }
 
+    /**
+     * Gère l'action du bouton de réinitialisation de la recherche.
+     * Efface le champ de recherche et recharge tous les pharmaciens adjoints.
+     */
     @FXML
     private void handleResetSearch() {
         searchField.clear();
         loadAllPharmaciens();
     }
 
+    /**
+     * Définit le contrôleur parent (DashboardAdminController).
+     * @param controller Le contrôleur parent.
+     */
     public void setParentController(DashboardAdminController controller) {
         this.parentController = controller;
     }
 
+    /**
+     * Gère l'action du bouton "Retour".
+     * Revient à la vue de gestion du personnel dans le tableau de bord de l'administrateur.
+     */
     @FXML
     private void handleBack() {
         if (parentController != null) {
@@ -159,6 +189,11 @@ public class GestionPharmacienAdjointController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Ajouter".
+     * Ouvre une boîte de dialogue pour ajouter un nouveau pharmacien adjoint.
+     * Si l'ajout est confirmé, crée le pharmacien adjoint via l'API et rafraîchit la liste.
+     */
     @FXML
     private void handleAjouter() {
         AddPharmacienAdjointDialogController dialogController = new AddPharmacienAdjointDialogController();
@@ -197,6 +232,11 @@ public class GestionPharmacienAdjointController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Modifier".
+     * Ouvre une boîte de dialogue pour modifier le pharmacien adjoint sélectionné.
+     * Si la modification est confirmée, met à jour le pharmacien adjoint via l'API et rafraîchit la liste.
+     */
     @FXML
     private void handleModifier() {
         PharmacienAdjoint selected = pharmacienTable.getSelectionModel().getSelectedItem();
@@ -219,6 +259,11 @@ public class GestionPharmacienAdjointController {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Supprimer".
+     * Demande confirmation avant de supprimer le pharmacien adjoint sélectionné.
+     * Si la suppression est confirmée, supprime le pharmacien adjoint via l'API et rafraîchit la liste.
+     */
     @FXML
     private void handleSupprimer() {
         PharmacienAdjoint selected = pharmacienTable.getSelectionModel().getSelectedItem();
@@ -260,6 +305,12 @@ public class GestionPharmacienAdjointController {
         }
     }
 
+    /**
+     * Affiche une boîte de dialogue d'alerte.
+     * @param type Le type d'alerte (Erreur, Information, etc.).
+     * @param title Le titre de la fenêtre d'alerte.
+     * @param message Le message principal de l'alerte.
+     */
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

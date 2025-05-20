@@ -21,16 +21,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Contrôleur pour modifier le PharmacyDashboard afin d'intégrer la vue des ventes
+ * Classe utilitaire pour modifier le comportement du {@link PharmacyDashboard}.
+ * Permet notamment de redéfinir l'action du bouton "Ventes" et de configurer
+ * l'apparence du bouton "Médecins" (anciennement "Fournisseurs").
  */
 public class PharmacyDashboardModifier {
 
     private static final Logger LOGGER = Logger.getLogger(PharmacyDashboardModifier.class.getName());
 
     /**
-     * Modifie le comportement du bouton Ventes dans le PharmacyDashboard
+     * Modifie le comportement du bouton Ventes dans le PharmacyDashboard et ajuste le bouton Médecins.
+     * Utilise la réflexion pour accéder aux composants privés du {@link PharmacyDashboard}.
+     * L'action du bouton "Ventes" est modifiée pour charger la vue des ventes.
+     * Le bouton "Fournisseurs" est reconfiguré pour afficher "Médecins" avec une icône appropriée.
      * 
-     * @param dashboard Instance du PharmacyDashboard
+     * @param dashboard L'instance du {@link PharmacyDashboard} à modifier.
      */
     public static void modifyDashboard(PharmacyDashboard dashboard) {
         try {
