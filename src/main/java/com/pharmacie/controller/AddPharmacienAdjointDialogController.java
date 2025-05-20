@@ -64,7 +64,7 @@ public class AddPharmacienAdjointDialogController {
      * Configure les valeurs par défaut pour les champs et les contrôles.
      */
     private void initialize() {
-        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "ALTERNANCE");
+        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "APPRENTISSAGE");
         dateEmbauchePicker.setValue(LocalDate.now());
         salaireField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*(\\.\\d*)?")) {

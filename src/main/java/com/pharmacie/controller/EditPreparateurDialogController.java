@@ -39,6 +39,17 @@ public class EditPreparateurDialogController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/EditPreparateurDialog.fxml"));
             loader.setController(this);
             dialog.setDialogPane(loader.load());
+            
+            // Vérifier si les boutons existent déjà dans le FXML
+            boolean hasButtonTypes = !dialog.getDialogPane().getButtonTypes().isEmpty();
+            
+            // N'ajouter les boutons que s'ils n'existent pas déjà
+            if (!hasButtonTypes) {
+                ButtonType okButtonType = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
+                ButtonType cancelButtonType = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+                dialog.getDialogPane().getButtonTypes().addAll(okButtonType, cancelButtonType);
+            }
+            
             initialize();
             setupValidation();
         } catch (Exception e) {
@@ -50,7 +61,7 @@ public class EditPreparateurDialogController {
      * Initialise les composants du formulaire, comme le ComboBox pour le statut du contrat.
      */
     private void initialize() {
-        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "ALTERNANCE");
+        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "APPRENTISSAGE");
     }
 
     /**

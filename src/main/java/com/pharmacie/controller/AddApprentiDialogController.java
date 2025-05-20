@@ -57,7 +57,7 @@ public class AddApprentiDialogController {
      * - Ajoute une validation des saisies pour le champ salaire
      */
     private void initialize() {
-        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "ALTERNANCE");
+        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "APPRENTISSAGE");
         dateEmbauchePicker.setValue(LocalDate.now());
         salaireField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*(\\.\\d*)?")) {

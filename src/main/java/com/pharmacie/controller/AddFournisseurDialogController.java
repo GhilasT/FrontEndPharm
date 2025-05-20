@@ -36,10 +36,22 @@ public class AddFournisseurDialogController {
             dialog.setTitle("Ajouter un fournisseur");
             dialog.setDialogPane(loader.load());
             
-            // Ajouter les boutons OK et Annuler si nécessaire
-            ButtonType okButtonType = new ButtonType("Ajouter", ButtonBar.ButtonData.OK_DONE);
-            ButtonType cancelButtonType = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
-            dialog.getDialogPane().getButtonTypes().addAll(okButtonType, cancelButtonType);
+            // Vérifier si les boutons existent déjà dans le FXML
+            boolean hasOkButton = dialog.getDialogPane().getButtonTypes().stream()
+                .anyMatch(bt -> bt.getButtonData() == ButtonBar.ButtonData.OK_DONE);
+            boolean hasCancelButton = dialog.getDialogPane().getButtonTypes().stream()
+                .anyMatch(bt -> bt.getButtonData() == ButtonBar.ButtonData.CANCEL_CLOSE);
+                
+            // N'ajouter les boutons que s'ils n'existent pas déjà
+            if (!hasOkButton) {
+                ButtonType okButtonType = new ButtonType("Ajouter", ButtonBar.ButtonData.OK_DONE);
+                dialog.getDialogPane().getButtonTypes().add(okButtonType);
+            }
+            
+            if (!hasCancelButton) {
+                ButtonType cancelButtonType = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+                dialog.getDialogPane().getButtonTypes().add(cancelButtonType);
+            }
             
             configureValidation();
         } catch (IOException e) {

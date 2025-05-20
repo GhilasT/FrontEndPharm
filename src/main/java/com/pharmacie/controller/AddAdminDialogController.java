@@ -67,6 +67,16 @@ public class AddAdminDialogController {
             dialog.setTitle("Ajouter un administrateur");
             dialog.setDialogPane(loader.load());
 
+            // Vérifier si les boutons existent déjà dans le FXML
+            boolean hasButtonTypes = !dialog.getDialogPane().getButtonTypes().isEmpty();
+            
+            // N'ajouter les boutons que s'ils n'existent pas déjà
+            if (!hasButtonTypes) {
+                ButtonType okButtonType = new ButtonType("Ajouter", ButtonBar.ButtonData.OK_DONE);
+                ButtonType cancelButtonType = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+                dialog.getDialogPane().getButtonTypes().addAll(okButtonType, cancelButtonType);
+            }
+
             // Configuration après chargement du FXML
             initialize();
 
@@ -98,7 +108,7 @@ public class AddAdminDialogController {
      */
     private void initialize() {
         // Initialisation des valeurs du ComboBox
-        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "ALTERNANCE");
+        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "APPRENTISSAGE");
 
         // Date par défaut = aujourd'hui
         dateEmbauchePicker.setValue(LocalDate.now());

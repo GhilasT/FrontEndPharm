@@ -49,7 +49,7 @@ public class EditPharmacienAdjointDialogController {
      * Initialise les composants du formulaire, comme le ComboBox pour le statut du contrat.
      */
     private void initialize() {
-        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "ALTERNANCE");
+        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "APPRENTISSAGE");
     }
 
     /**

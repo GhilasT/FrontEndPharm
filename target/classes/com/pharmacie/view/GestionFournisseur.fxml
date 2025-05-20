@@ -19,7 +19,11 @@
     </top>
     
     <center>
-        <VBox spacing="10" padding="10">
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <TextField fx:id="searchField" promptText="Rechercher un fournisseur..." HBox.hgrow="ALWAYS"/>
                 <Button onAction="#handleResetSearch" text="Réinitialiser"/>

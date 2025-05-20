@@ -43,6 +43,16 @@ public class EditAdminDialogController {
             DialogPane dialogPane = loader.load();
             dialog.setDialogPane(dialogPane);
             
+            // Vérifier si les boutons existent déjà dans le FXML
+            boolean hasButtonTypes = !dialog.getDialogPane().getButtonTypes().isEmpty();
+            
+            // N'ajouter les boutons que s'ils n'existent pas déjà
+            if (!hasButtonTypes) {
+                ButtonType okButtonType = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
+                ButtonType cancelButtonType = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+                dialog.getDialogPane().getButtonTypes().addAll(okButtonType, cancelButtonType);
+            }
+            
             configureValidation();
 
         } catch (IOException e) {
@@ -85,7 +95,7 @@ public class EditAdminDialogController {
      */
     @FXML
     private void initialize() {
-        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "ALTERNANCE");
+        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "APPRENTISSAGE");
     }
 
     /**

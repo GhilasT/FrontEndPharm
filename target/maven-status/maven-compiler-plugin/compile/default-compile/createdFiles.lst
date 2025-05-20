@@ -1,3 +1,4 @@
+com\pharmacie\controller\FournisseursController$4.class
 com\pharmacie\controller\PharmacyDashboard.class
 com\pharmacie\model\AnalyseVenteData.class
 com\pharmacie\controller\PrescriptionController$1.class
@@ -6,6 +7,7 @@ com\pharmacie\model\LigneCommande.class
 com\pharmacie\controller\MedicamentsController$2.class
 com\pharmacie\controller\DashboardAdminController.class
 com\pharmacie\model\dto\FournisseurCreateRequest.class
+com\pharmacie\controller\GestionMedecinsAdminController.class
 com\pharmacie\model\Fournisseur.class
 com\pharmacie\model\VenteUpdateRequest.class
 com\pharmacie\service\AdminApi.class
@@ -59,10 +61,12 @@ com\pharmacie\controller\MedecinsController$1.class
 com\pharmacie\controller\AddMedecinController.class
 com\pharmacie\controller\RechercheMedicamentsController$2.class
 com\pharmacie\controller\MedicamentsController.class
+com\pharmacie\controller\GestionCommandesAdminController.class
 com\pharmacie\model\dto\ClientCreateRequest.class
 com\pharmacie\util\PersonneMixin.class
 com\pharmacie\SystemInfo.class
 com\pharmacie\model\dto\MedecinResponse.class
+com\pharmacie\controller\FournisseursController$1.class
 com\pharmacie\model\dto\FournisseurUpdateRequest.class
 com\pharmacie\controller\EditPreparateurDialogController.class
 com\pharmacie\controller\GestionPharmacienAdjointController.class
@@ -71,6 +75,7 @@ com\pharmacie\util\DialogService.class
 com\pharmacie\controller\GestionAdminController$2.class
 com\pharmacie\controller\GestionPharmacienAdjointController$1.class
 com\pharmacie\controller\PasserCommandeController.class
+com\pharmacie\controller\AdminHeaderController.class
 com\pharmacie\model\dto\OrdonnanceCreateRequest.class
 com\pharmacie\model\Dashboard.class
 com\pharmacie\controller\PasserCommandeController$4.class
@@ -103,7 +108,10 @@ com\pharmacie\model\dto\PreparateurCreateRequest.class
 com\pharmacie\controller\PasserCommandeController$2.class
 com\pharmacie\controller\AnalyseVentesController.class
 com\pharmacie\service\FournisseurApi.class
+com\pharmacie\controller\GestionMedicamentsAdminController.class
+com\pharmacie\util\ResourceLoader.class
 com\pharmacie\controller\GestionPersonnelController.class
+com\pharmacie\controller\FournisseursController$5.class
 com\pharmacie\model\Prescription.class
 com\pharmacie\model\StockMedicamentDTO.class
 com\pharmacie\model\PharmacienAdjoint.class
@@ -117,6 +125,7 @@ com\pharmacie\service\PreparateurApi.class
 com\pharmacie\App.class
 com\pharmacie\controller\EditFournisseurDialogController.class
 com\pharmacie\controller\VenteController.class
+com\pharmacie\controller\FournisseursController$2.class
 com\pharmacie\controller\AddMedecinController$1.class
 com\pharmacie\model\dto\AdminUpdateRequest.class
 com\pharmacie\model\dto\PharmacienAdjointUpdateRequest.class
@@ -128,3 +137,4 @@ com\pharmacie\service\LigneCommandeService.class
 com\pharmacie\controller\PrescriptionController.class
 com\pharmacie\controller\MedecinsController.class
 com\pharmacie\model\dto\ApprentiUpdateRequest.class
+com\pharmacie\controller\FournisseursController$3.class

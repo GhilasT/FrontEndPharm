@@ -47,7 +47,7 @@ public class EditApprentiDialogController {
      * Initialise les composants du formulaire, comme le ComboBox pour le statut du contrat.
      */
     private void initialize() {
-        statutContratCombo.getItems().addAll("Contrat pro", "Alternance", "Stage");
+        statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "APPRENTISSAGE");
     }
 
     /**
