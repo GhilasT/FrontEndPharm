@@ -233,8 +233,11 @@ public class DashboardAdminController {
      */
     public void loadGestionMedecins() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/MedecinsPage.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionMedecinsAdmin.fxml"));
             Parent medecinsView = loader.load();
+            
+            GestionMedecinsAdminController controller = loader.getController();
+            controller.setParentController(this);
             
             contentArea.getChildren().setAll(medecinsView);
         } catch (IOException ex) {
@@ -247,8 +250,11 @@ public class DashboardAdminController {
      */
     public void loadGestionCommandes() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionCommande.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionCommandesAdmin.fxml"));
             Parent commandesView = loader.load();
+            
+            GestionCommandesAdminController controller = loader.getController();
+            controller.setParentController(this);
             
             contentArea.getChildren().setAll(commandesView);
         } catch (IOException ex) {
@@ -275,8 +281,11 @@ public class DashboardAdminController {
      */
     public void loadGestionMedicaments() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/médicaments.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/GestionMedicaments.fxml"));
             Parent medicamentsView = loader.load();
+            
+            GestionMedicamentsAdminController controller = loader.getController();
+            controller.setParentController(this);
             
             contentArea.getChildren().setAll(medicamentsView);
         } catch (IOException ex) {

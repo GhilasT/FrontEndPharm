@@ -90,44 +90,51 @@ public class AddMedecinController {
                 genreActivite
         );
 
-        Task<Void> task = new Task<>() {
+        Task<MedecinResponse> task = new Task<>() {
             @Override
-            protected Void call() throws Exception {
-                try {
-                    // Vérifier si le médecin existe
-                    MedecinResponse existing = ApiRest.checkMedecinByRpps(rpps);
-                    if (existing != null) {
-                        showAlert(Alert.AlertType.ERROR,
-                                "Médecin déjà existant",
-                                "Le médecin avec ce numéro RPPS existe déjà",
-                                null);
-                    } else {
-                        // Créer le médecin et récupérer la réponse
-                        createdMedecin = ApiRest.createMedecin(request);
-
-                        showAlert(Alert.AlertType.INFORMATION,
-                                "Succès",
-                                "Médecin créé",
-                                "Le médecin a été ajouté avec succès.");
-
-                        // Rafraîchir la liste principale
-                        if (medecinsController != null) {
-                            medecinsController.refreshMedecinsList();
-                        }
-
-                        // Fermer le formulaire
-                        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-                        stage.close();
-                    }
-                } catch (Exception e) {
-                    showAlert(Alert.AlertType.ERROR,
-                            "Erreur",
-                            "Problème de connexion",
-                            e.getMessage());
+            protected MedecinResponse call() throws Exception {
+                // Vérifier si le médecin existe
+                MedecinResponse existing = ApiRest.checkMedecinByRpps(rpps);
+                if (existing != null) {
+                    throw new Exception("Le médecin avec ce numéro RPPS existe déjà");
                 }
-                return null;
+                // Créer le médecin et récupérer la réponse
+                return ApiRest.createMedecin(request);
             }
         };
+
+        task.setOnSucceeded(e -> {
+            createdMedecin = task.getValue();
+            
+            // Afficher le message de succès
+            javafx.application.Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Succès");
+                alert.setHeaderText("Médecin ajouté avec succès");
+                alert.setContentText("Le médecin " + nom + " " + prenom + " a été ajouté avec succès.");
+                alert.showAndWait();
+            });
+            
+            // Rafraîchir la liste principale
+            if (medecinsController != null) {
+                medecinsController.refreshMedecinsList();
+            }
+
+            // Fermer le formulaire
+            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            stage.close();
+        });
+
+        task.setOnFailed(e -> {
+            Throwable exception = task.getException();
+            javafx.application.Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur");
+                alert.setHeaderText("Impossible d'ajouter le médecin");
+                alert.setContentText(exception.getMessage());
+                alert.showAndWait();
+            });
+        });
 
         new Thread(task).start();
     }

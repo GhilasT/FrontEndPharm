@@ -159,11 +159,11 @@ public class MedecinsController {
 
     /**
      * Configure la fonctionnalité de recherche de médecins.
-     * La recherche est déclenchée lors de la saisie (après 3 caractères) ou en cliquant sur le bouton de recherche.
+     * La recherche est déclenchée lors de la saisie (après 2 caractères) ou en cliquant sur le bouton de recherche.
      */
     private void configureSearch() {
         searchField.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && !newVal.trim().isEmpty() && newVal.trim().length() >= 3) {
+            if (newVal != null && !newVal.trim().isEmpty() && newVal.trim().length() >= 2) {
                 currentPage = 0; // Réinitialiser à la première page lors d'une nouvelle recherche
                 searchMedecins(newVal.trim());
             } else if (newVal == null || newVal.trim().isEmpty()) {
@@ -436,8 +436,22 @@ public class MedecinsController {
      * Réactive la pagination et recharge la page courante.
      */
     public void refreshMedecinsList() {
-        pagination.setDisable(false);
-        pagination.setVisible(true);
-        loadMedecins(currentPage, "");
+        javafx.application.Platform.runLater(() -> {
+            pagination.setDisable(false);
+            pagination.setVisible(true);
+            
+            // Retourner à la première page pour voir le médecin nouvellement ajouté
+            currentPage = 0;
+            pagination.setCurrentPageIndex(0);
+            
+            // Vider le champ de recherche pour afficher tous les médecins
+            searchField.clear();
+            
+            // Recharger la liste complète des médecins
+            loadMedecins(currentPage, "");
+            
+            // Afficher un message d'état dans le status label
+            statusLabel.setText("Liste des médecins actualisée");
+        });
     }
 }

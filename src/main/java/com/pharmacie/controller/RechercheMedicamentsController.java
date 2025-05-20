@@ -118,7 +118,7 @@ public class RechercheMedicamentsController {
             // Ajouter un listener sur le champ de recherche pour rechercher automatiquement
             searchField.textProperty().addListener((observable, oldValue, newValue) -> {
                 try {
-                    if (newValue.length() >= 3) {
+                    if (newValue.length() >= 2) {
                         rechercherMedicaments(newValue);
                     } else if (newValue.isEmpty()) {
                         medicamentsData.clear();

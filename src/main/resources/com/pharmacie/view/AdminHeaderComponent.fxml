@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+
+<HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.pharmacie.controller.AdminHeaderController"
+      styleClass="admin-header" 
+      style="-fx-background-color: #1F82F2; -fx-padding: 10px; -fx-spacing: 10px; -fx-alignment: center-left;">
+    
+    <Button fx:id="backButton" text="Retour" 
+            style="-fx-background-color: #FFFFFF; -fx-text-fill: #1F82F2; -fx-font-weight: bold; -fx-background-radius: 5px;" 
+            onAction="#handleBack"/>
+    
+    <Region HBox.hgrow="ALWAYS"/>
+    
+    <Label fx:id="headerLabel" style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;">
+        Gestion des Fournisseurs
+    </Label>
+    
+    <Region HBox.hgrow="ALWAYS"/>
+    
+    <padding>
+        <Insets top="10" right="20" bottom="10" left="20"/>
+    </padding>
+</HBox>

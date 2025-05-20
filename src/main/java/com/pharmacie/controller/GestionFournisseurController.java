@@ -32,6 +32,7 @@ public class GestionFournisseurController {
 
     @FXML private TextField searchField;
     @FXML private Button modifierButton, supprimerButton;
+    @FXML private AdminHeaderController headerController;
     
     private ObservableList<Fournisseur> fournisseurData = FXCollections.observableArrayList();
     private DashboardAdminController parentController;
@@ -45,6 +46,11 @@ public class GestionFournisseurController {
     @FXML
     public void initialize() {
         fournisseurService = new FournisseurApi();
+        
+        // Configurer l'en-tête
+        if (headerController != null) {
+            headerController.setHeaderText("Gestion des Fournisseurs");
+        }
         
         // Configuration des colonnes
         idFournisseurColumn.setCellValueFactory(new PropertyValueFactory<>("idFournisseur"));
@@ -151,6 +157,9 @@ public class GestionFournisseurController {
      */
     public void setParentController(DashboardAdminController controller) {
         this.parentController = controller;
+        if (headerController != null) {
+            headerController.setParentController(controller);
+        }
     }
 
     /**

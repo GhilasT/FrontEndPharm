@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.pharmacie.controller.GestionMedecinsAdminController"
+      prefHeight="600.0" prefWidth="900.0">
+    
+    <top>
+        <fx:include fx:id="header" source="AdminHeaderComponent.fxml"/>
+    </top>
+    
+    <center>
+        <fx:include source="MedecinsPage.fxml"/>
+    </center>
+    
+</BorderPane>
