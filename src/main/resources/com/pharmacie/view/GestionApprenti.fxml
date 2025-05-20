@@ -13,7 +13,7 @@
 <Pane xmlns="http://javafx.com/javafx/17"
    xmlns:fx="http://javafx.com/fxml/1"
    fx:controller="com.pharmacie.controller.GestionApprentiController"
-   prefHeight="710" prefWidth="1300"
+   prefHeight="560" prefWidth="1300"
    style="-fx-background-color: #FFFFFF;">
 
    <children>

@@ -62,7 +62,7 @@
     </TitledPane>
 
     <!-- Tableau des médicaments avec style amélioré -->
-    <TableView fx:id="medicamentsTable" prefHeight="400" styleClass="dynamic-width, dynamic-height, grow">
+    <TableView fx:id="medicamentsTable" prefHeight="350" styleClass="dynamic-width, dynamic-height, grow">
         <columns>
             <TableColumn fx:id="colCodeCIS" text="Code CIS" reorderable="false" prefWidth="100" styleClass="priority"/>
             <TableColumn fx:id="colLibelle" text="Libellé" reorderable="false" prefWidth="200" styleClass="priority"/>

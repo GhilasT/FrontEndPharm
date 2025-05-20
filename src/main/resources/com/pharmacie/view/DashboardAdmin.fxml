@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.Region?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="1300.0"
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="650.0" minWidth="1300.0"
    prefHeight="800.0" prefWidth="1300.0" style="-fx-background-color: #FFFFFF;"
    xmlns="http://javafx.com/javafx/20.0.1"
    xmlns:fx="http://javafx.com/fxml/1"

@@ -7,7 +7,7 @@
 <Pane xmlns="http://javafx.com/javafx/23.0.1"
    xmlns:fx="http://javafx.com/fxml/1"
    fx:controller="com.pharmacie.controller.GestionPreparateurController"
-   prefHeight="710.0" prefWidth="1300.0"
+   prefHeight="560.0" prefWidth="1300.0"
    style="-fx-background-color: #FFFFFF;">
 
    <children>
@@ -30,7 +30,7 @@
       </Pane>
 
       <!-- Contenu principal -->
-      <VBox layoutY="70.0" prefWidth="1300.0" prefHeight="640.0" spacing="20.0"
+      <VBox layoutY="70.0" prefWidth="1300.0" prefHeight="490.0" spacing="20.0"
          style="-fx-padding: 20px;">
          <children>
             <HBox spacing="10" style="-fx-padding: 0 0 10 0;">
@@ -38,7 +38,7 @@
                <Button text="Réinitialiser" onAction="#handleResetSearch"
                   style="-fx-background-color: #cccccc;" />
             </HBox>
-            <TableView fx:id="preparateurTable" prefHeight="500.0" prefWidth="1260.0">
+            <TableView fx:id="preparateurTable" prefHeight="380.0" prefWidth="1260.0">
                <columns>
                   <TableColumn fx:id="idColumn" text="ID" prefWidth="50" />
                   <TableColumn fx:id="nomColumn" text="Nom" prefWidth="100" />

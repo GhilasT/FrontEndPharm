@@ -15,7 +15,7 @@
         <Button fx:id="btnSearch" text="Rechercher" disable="true"/>
     </HBox>
 
-    <TableView fx:id="fournisseursTable" prefHeight="400">
+    <TableView fx:id="fournisseursTable" prefHeight="350">
         <columns>
             <TableColumn text="Nom" reorderable="false" resizable="false" prefWidth="120"/>
             <TableColumn text="Prénom" reorderable="false" resizable="false" prefWidth="120"/>
