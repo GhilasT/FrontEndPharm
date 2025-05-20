@@ -133,11 +133,15 @@ public class PharmacyDashboard extends StackPane {
     private void configureAdminButton() {
         btnSwitchToAdmin.setVisible(true);
         
+        // Ensure button width is properly set
+        btnSwitchToAdmin.setPrefWidth(200);
+        btnSwitchToAdmin.setMinWidth(200);
+        
         // Set the button action based on user role
         boolean isAdmin = "ADMINISTRATEUR".equals(LoggedSeller.getInstance().getRole());
         
-        // Add hover effect 
-        setupButtonHoverEffect(btnSwitchToAdmin, "#007B3D", "#009E4F");
+        // Add hover effect with blue colors
+        setupButtonHoverEffect(btnSwitchToAdmin, "#2E86C1", "#3498DB");
         
         btnSwitchToAdmin.setOnAction(event -> {
             if (isAdmin) {

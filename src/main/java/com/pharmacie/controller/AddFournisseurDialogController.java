@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+/**
+ * Controller for the dialog that allows adding a new supplier (fournisseur).
+ * This class manages the validation and collection of supplier information through a JavaFX dialog.
+ */
 public class AddFournisseurDialogController {
     @FXML
     private TextField nomSocieteField, sujetFonctionField, faxField, emailField, telephoneField, adresseField;
@@ -18,6 +22,12 @@ public class AddFournisseurDialogController {
     private final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
     private final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
 
+    /**
+     * Initializes the dialog controller, loads the FXML and sets up the dialog.
+     * Configures form validation to be triggered when the user attempts to submit the form.
+     *
+     * @throws RuntimeException if there's an error loading the dialog FXML
+     */
     public AddFournisseurDialogController() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/AddFournisseurDialog.fxml"));
@@ -31,6 +41,10 @@ public class AddFournisseurDialogController {
         }
     }
 
+    /**
+     * Configures validation to run when the OK button is clicked.
+     * Prevents dialog closing if validation fails.
+     */
     private void configureValidation() {
         ButtonType okButtonType = dialog.getDialogPane().getButtonTypes()
                 .stream()
@@ -47,6 +61,12 @@ public class AddFournisseurDialogController {
         }
     }
 
+    /**
+     * Validates all user inputs and displays error messages if validation fails.
+     * Checks that required fields are filled and that email and phone formats are valid.
+     *
+     * @return true if all inputs are valid, false otherwise
+     */
     private boolean validateInputs() {
         StringBuilder errors = new StringBuilder();
         
@@ -74,6 +94,11 @@ public class AddFournisseurDialogController {
         return errors.length() == 0;
     }
 
+    /**
+     * Creates and returns a supplier creation request object with the data entered in the form.
+     *
+     * @return FournisseurCreateRequest populated with the user's input
+     */
     public FournisseurCreateRequest getCreateRequest() {
         FournisseurCreateRequest req = new FournisseurCreateRequest();
         req.setNomSociete(nomSocieteField.getText().trim());
@@ -85,6 +110,11 @@ public class AddFournisseurDialogController {
         return req;
     }
 
+    /**
+     * Displays the dialog and waits for user response.
+     *
+     * @return an Optional containing the ButtonType clicked by the user
+     */
     public Optional<ButtonType> showAndWait() {
         return dialog.showAndWait();
     }

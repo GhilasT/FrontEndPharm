@@ -13,6 +13,11 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+/**
+ * Controller for the dialog that allows adding a new administrator.
+ * Manages form validation and data collection for creating new admin users in the system.
+ * Includes validation for personal information, professional details, and account credentials.
+ */
 public class AddAdminDialogController {
     @FXML
     private TextField nomField;
@@ -47,6 +52,12 @@ public class AddAdminDialogController {
     private final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
     private final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
 
+    /**
+     * Initializes the dialog controller, loads the FXML and sets up the dialog.
+     * Sets up form validation and initialization of form components.
+     *
+     * @throws RuntimeException if there's an error loading the dialog FXML
+     */
     public AddAdminDialogController() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacie/view/AddAdminDialog.fxml"));
@@ -79,6 +90,12 @@ public class AddAdminDialogController {
         }
     }
 
+    /**
+     * Initializes form components with default values.
+     * - Populates the contract status combo box
+     * - Sets the default hire date to today
+     * - Adds input validation for salary field to ensure only numeric values
+     */
     private void initialize() {
         // Initialisation des valeurs du ComboBox
         statutContratCombo.getItems().addAll("CDI", "CDD", "STAGE", "ALTERNANCE");
@@ -94,10 +111,21 @@ public class AddAdminDialogController {
         });
     }
 
+    /**
+     * Displays the dialog and waits for user response.
+     *
+     * @return an Optional containing the ButtonType clicked by the user
+     */
     public Optional<ButtonType> showAndWait() {
         return dialog.showAndWait();
     }
 
+    /**
+     * Validates all user inputs and displays error messages if validation fails.
+     * Checks required fields, email format, phone format, salary format, matching passwords.
+     *
+     * @return true if all inputs are valid, false otherwise
+     */
     private boolean validateInputs() {
         StringBuilder errors = new StringBuilder();
 
@@ -178,6 +206,12 @@ public class AddAdminDialogController {
         return true;
     }
 
+    /**
+     * Creates and returns an administrator creation request object with the data entered in the form.
+     * All form field values are trimmed and converted to appropriate formats.
+     *
+     * @return AdministrateurCreateRequest populated with the user's input
+     */
     public AdministrateurCreateRequest getCreateRequest() {
         AdministrateurCreateRequest request = new AdministrateurCreateRequest();
         request.setNom(nomField.getText().trim());

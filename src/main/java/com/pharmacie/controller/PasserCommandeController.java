@@ -1,5 +1,6 @@
 package com.pharmacie.controller;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -27,6 +28,8 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -36,6 +39,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
@@ -70,11 +74,12 @@ public class PasserCommandeController {
     @FXML private TextField textFieldNomMedicament, textFieldQte, textFieldNewQTE;
     @FXML private Label labelNomMedicament, labelPrixTotal;
     @FXML private ChoiceBox<Fournisseur> ChoiceBoxFournisseur;
-    @FXML private Button buttonRecherche, buttonAjouterPanier, buttonValiderCommande, buttonModifierQte;
+    @FXML private Button buttonRecherche, buttonAjouterPanier, buttonValiderCommande,btnRetour, buttonModifierQte;
     @FXML private TableView<PanierItem> tableViewPanier;
     @FXML private TableColumn<PanierItem, String> columnMedicamentPanier, columnPrixPanier;
     @FXML private TableColumn<PanierItem, Integer> columnQuantitePanier;
     @FXML private HBox paginationBar;
+    @FXML private Pane paneParent;
     
     // Données
     private LoggedSeller vendeur;
@@ -93,6 +98,17 @@ public class PasserCommandeController {
     @FXML
     public void initialize() {
         tableViewPanier.setEditable(true);
+        btnRetour.setOnAction(event -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/pharmacie/view/GestionCommande.fxml")
+                );
+                Parent retourView = loader.load();
+                paneParent.getChildren().setAll(retourView);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
         configurerTables();
         configurerControles();
         chargerDonnees();
@@ -184,7 +200,6 @@ public class PasserCommandeController {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(FOURNISSEURS_URL))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + Global.getToken())
                     .GET()
                     .build();
     
@@ -329,7 +344,7 @@ public class PasserCommandeController {
                 if (!ApiRest.isBackendAccessible()) {
                     throw new Exception("Le backend n'est pas accessible.");
                 }
-                List<Medicament> resultats = chargerMedicamentsDepuisAPI(nomMedicament, pageActuelle);
+                List<Medicament> resultats = ApiRest.getMedicaments(nomMedicament);
                 
                 if (!resultats.isEmpty()) {
                     trierResultatsParPertinence(resultats, nomMedicament);

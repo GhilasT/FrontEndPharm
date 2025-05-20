@@ -40,23 +40,18 @@
                            <Font name="Open Sans" size="24.0" />
                         </font>
                      </Label>
-                     <Label fx:id="headerTitle" HBox.hgrow="ALWAYS" maxWidth="Infinity" minWidth="300.0" 
+                     <Label fx:id="headerTitle" HBox.hgrow="SOMETIMES" maxWidth="Infinity" minWidth="100.0" 
                         text="Tableau de bord" textFill="WHITE" wrapText="true">
                         <font>
                            <Font name="Open Sans" size="24.0" />
                         </font>
                         <HBox.margin>
-                           <Insets left="10.0" right="20.0" />
+                           <Insets left="10.0" right="10.0" />
                         </HBox.margin>
                      </Label>
-                     <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                        <image>
-                           <Image url="@../Images/Icones/icons8-rappels-de-rendez-vous-40.png" />
-                        </image>
-                     </ImageView>
-                     <HBox alignment="CENTER_RIGHT" spacing="15">
-                        <Button fx:id="btnSwitchToAdmin" mnemonicParsing="false"
-                           style="-fx-background-color: #007B3D; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2); -fx-padding: 8 15 8 15; -fx-min-width: 150; -fx-min-height: 40;"
+                     <HBox alignment="CENTER" HBox.hgrow="NEVER" minWidth="200.0" prefWidth="200.0">
+                        <Button fx:id="btnSwitchToAdmin" mnemonicParsing="false" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                           style="-fx-background-color: #2E86C1; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2); -fx-padding: 8 15 8 15; -fx-min-width: 200; -fx-pref-width: 200; -fx-min-height: 40;"
                            text="Mode Admin" textFill="WHITE">
                            <font>
                               <Font name="Open Sans Semibold" size="16.0"/>
@@ -67,13 +62,12 @@
                                  fill="WHITE"/>
                            </graphic>
                         </Button>
-                        <Button fx:id="btnLogout" maxWidth="Infinity" minHeight="50.0" prefHeight="50.0" mnemonicParsing="false"
-                           styleClass="menu-button" style="-fx-background-color: transparent;" text="Déconnexion" textFill="WHITE">
-                           <font>
-                              <Font name="Open Sans Semibold" size="18.0" />
-                           </font>
-                        </Button>
                      </HBox>
+                     <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@../Images/Icones/icons8-rappels-de-rendez-vous-40.png" />
+                        </image>
+                     </ImageView>
                   </children>
                </HBox>
             </top>

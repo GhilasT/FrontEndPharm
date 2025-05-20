@@ -23,27 +23,59 @@ import com.pharmacie.model.dto.LoginResponse;
 import com.pharmacie.util.Global;
 import com.pharmacie.util.LoggedSeller;
 
+/**
+ * Main application class for the pharmacy management system.
+ * This class is responsible for initializing the JavaFX application,
+ * handling user authentication, and managing scene transitions based on user roles.
+ */
 public class App extends Application {
+    /** The primary stage of the application. */
     private static Stage primaryStage;
+    
+    /** The login scene that will be shown to users. */
     private static Scene loginScene;
 
+    /**
+     * Gets the primary stage of the application.
+     * @return The primary stage.
+     */
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
 
+    /**
+     * Gets the login scene of the application.
+     * @return The login scene.
+     */
     public static Scene getLoginScene() {
         return loginScene;
     }
 
+    /** The API endpoint for user authentication. */
     private static final String API_URL = Global.getBaseUrl() + "/auth/login";
+    
+    /** Dashboard controller for pharmacy users. */
     PharmacyDashboard dashboard = new PharmacyDashboard();
+    
+    /** The root node for the admin dashboard UI. */
     private Parent dashboardAdmin;
+    
+    /** The scene for the admin dashboard. */
     Scene adminScene;
 
+    /**
+     * Main method that launches the JavaFX application.
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
+    /**
+     * Initializes the application, sets up the UI components and event handlers.
+     * This method is called automatically when the application starts.
+     * @param primaryStage The primary stage for this application.
+     */
     @Override
     public void start(Stage primaryStage) {
         App.primaryStage = primaryStage;
@@ -76,6 +108,14 @@ public class App extends Application {
         login.getLoginButton().setOnAction(e -> handleLogin(login, primaryStage, dashBoardScene));
     }
 
+    /**
+     * Handles the login process when the user clicks the login button.
+     * Validates input fields and initiates the authentication process.
+     *
+     * @param login The login controller containing user credentials.
+     * @param primaryStage The main application window.
+     * @param dashBoardScene The scene to show if login is successful for non-admin users.
+     */
     private void handleLogin(Login login, Stage primaryStage, Scene dashBoardScene) {
         String email = login.getEmail();
         String password = login.getPassword();
@@ -90,6 +130,13 @@ public class App extends Application {
         new Thread(loginTask).start();
     }
 
+    /**
+     * Creates a background task that performs the API call for user authentication.
+     *
+     * @param email User's email address.
+     * @param password User's password.
+     * @return A Task that will return the login response from the server.
+     */
     private Task<LoginResponse> createLoginTask(String email, String password) {
         return new Task<>() {
             @Override
@@ -115,6 +162,14 @@ public class App extends Application {
         };
     }
 
+    /**
+     * Sets up handlers for the login task completion or failure.
+     * Handles UI updates based on login result and user role.
+     *
+     * @param loginTask The task performing the login operation.
+     * @param primaryStage The main application window.
+     * @param dashBoardScene The scene to show if login is successful for non-admin users.
+     */
     private void setupLoginTaskHandlers(Task<LoginResponse> loginTask, Stage primaryStage, Scene dashBoardScene) {
         loginTask.setOnSucceeded(event -> {
             try {
@@ -165,6 +220,13 @@ public class App extends Application {
         });
     }
 
+    /**
+     * Displays an alert dialog with the specified title and content.
+     * Used for showing error messages and notifications to the user.
+     *
+     * @param title The title of the alert dialog.
+     * @param content The message to display in the alert dialog.
+     */
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
