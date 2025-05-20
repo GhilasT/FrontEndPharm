@@ -393,7 +393,7 @@ public class PasserCommandeController {
                 if (!ApiRest.isBackendAccessible()) {
                     throw new Exception("Le backend n'est pas accessible.");
                 }
-                List<Medicament> resultats = ApiRest.getMedicaments(nomMedicament);
+                List<Medicament> resultats = chargerMedicamentsDepuisAPI(nomMedicament,pageActuelle);
                 
                 if (!resultats.isEmpty()) {
                     trierResultatsParPertinence(resultats, nomMedicament);
@@ -804,6 +804,7 @@ public class PasserCommandeController {
             HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(COMMANDES_URL))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Global.getToken())
                 .timeout(Duration.ofSeconds(15))
                 .POST(HttpRequest.BodyPublishers.ofString(commandeRequest.toString()))
                 .build();
